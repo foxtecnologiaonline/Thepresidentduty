@@ -261,6 +261,12 @@
   align-self: center;
 }
 
+.best-result {
+  color: var(--gold);
+  font-size: 14px;
+  font-weight: 600;
+}
+
 .end-screen h1 {
   font-size: 30px;
 }

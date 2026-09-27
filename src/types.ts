@@ -39,6 +39,7 @@ export interface EndResult {
   victory: boolean;
   title: string;
   narrative: string;
+  average: number;
 }
 
 export interface GameState {

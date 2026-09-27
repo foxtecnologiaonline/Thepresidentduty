@@ -6,6 +6,7 @@ import { EventCard } from "./components/EventCard";
 import { ResolutionPanel } from "./components/ResolutionPanel";
 import { StartScreen } from "./components/StartScreen";
 import { applyChoice, createNewGame, createStartState, formatTurnLabel } from "./game/engine";
+import { loadBestResult, saveBestResultIfBetter, type BestResult } from "./game/storage";
 import type { EventChoice, GameEvent, GameState } from "./types";
 
 interface Resolution {
@@ -16,6 +17,7 @@ interface Resolution {
 function App() {
   const [game, setGame] = useState<GameState>(() => createStartState());
   const [resolution, setResolution] = useState<Resolution | null>(null);
+  const [bestResult, setBestResult] = useState<BestResult | null>(() => loadBestResult());
 
   function handleStart() {
     setGame(createNewGame());
@@ -25,7 +27,20 @@ function App() {
   function handleChoose(choice: EventChoice) {
     if (!game.currentEvent) return;
     setResolution({ event: game.currentEvent, choice });
-    setGame((current) => applyChoice(current, choice));
+
+    const next = applyChoice(game, choice);
+    setGame(next);
+
+    if (next.phase === "ended" && next.endResult) {
+      setBestResult(
+        saveBestResultIfBetter({
+          title: next.endResult.title,
+          average: next.endResult.average,
+          turnReached: next.history.length,
+          victory: next.endResult.victory,
+        })
+      );
+    }
   }
 
   function handleContinue() {
@@ -34,7 +49,7 @@ function App() {
 
   return (
     <div className="app-shell">
-      {game.phase === "start" && <StartScreen onStart={handleStart} />}
+      {game.phase === "start" && <StartScreen onStart={handleStart} bestResult={bestResult} />}
 
       {game.phase !== "start" && (
         <>

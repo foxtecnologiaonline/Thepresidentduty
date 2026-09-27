@@ -1,8 +1,11 @@
+import type { BestResult } from "../game/storage";
+
 interface Props {
   onStart: () => void;
+  bestResult: BestResult | null;
 }
 
-export function StartScreen({ onStart }: Props) {
+export function StartScreen({ onStart, bestResult }: Props) {
   return (
     <div className="screen start-screen">
       <h1>A Presidência</h1>
@@ -14,6 +17,12 @@ export function StartScreen({ onStart }: Props) {
         Sobreviva aos 16 trimestres do mandato sem perder o controle da situação — e
         deixe um legado à altura da história.
       </p>
+      {bestResult && (
+        <p className="best-result">
+          Seu melhor mandato até agora: <strong>{bestResult.title}</strong> (média{" "}
+          {Math.round(bestResult.average)}, {bestResult.turnReached} trimestres)
+        </p>
+      )}
       <button type="button" className="primary-button" onClick={onStart}>
         Assumir a Presidência
       </button>

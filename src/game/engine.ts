@@ -59,6 +59,10 @@ export function applyEffects(indicators: Indicators, effects: EventChoice["effec
   return next;
 }
 
+export function computeAverage(indicators: Indicators): number {
+  return INDICATOR_ORDER.reduce((sum, key) => sum + indicators[key], 0) / INDICATOR_ORDER.length;
+}
+
 function checkCriticalFailure(indicators: Indicators): EndResult | null {
   for (const key of CRITICAL_INDICATORS) {
     if (indicators[key] <= 0) {
@@ -66,6 +70,7 @@ function checkCriticalFailure(indicators: Indicators): EndResult | null {
         victory: false,
         title: "Mandato Encerrado",
         narrative: INDICATOR_META[key].loseMessage,
+        average: computeAverage(indicators),
       };
     }
   }
@@ -73,8 +78,7 @@ function checkCriticalFailure(indicators: Indicators): EndResult | null {
 }
 
 function computeLegado(indicators: Indicators): EndResult {
-  const average =
-    INDICATOR_ORDER.reduce((sum, key) => sum + indicators[key], 0) / INDICATOR_ORDER.length;
+  const average = computeAverage(indicators);
 
   if (average >= 75) {
     return {
@@ -82,6 +86,7 @@ function computeLegado(indicators: Indicators): EndResult {
       title: "Estadista Histórico",
       narrative:
         "Você concluiu o mandato deixando um legado admirado por todo o país. Seu nome entra para a história como referência de bom governo.",
+      average,
     };
   }
   if (average >= 60) {
@@ -90,6 +95,7 @@ function computeLegado(indicators: Indicators): EndResult {
       title: "Bom Governo",
       narrative:
         "Seu mandato foi bem-sucedido. Nem tudo saiu perfeito, mas o país termina seu governo em situação melhor do que começou.",
+      average,
     };
   }
   if (average >= 45) {
@@ -98,6 +104,7 @@ function computeLegado(indicators: Indicators): EndResult {
       title: "Mandato Mediano",
       narrative:
         "Você concluiu o mandato, mas sem grandes marcas. O país segue enfrentando desafios semelhantes aos do início do seu governo.",
+      average,
     };
   }
   return {
@@ -105,6 +112,7 @@ function computeLegado(indicators: Indicators): EndResult {
     title: "Governo Fraco",
     narrative:
       "Você sobreviveu até o fim do mandato, mas deixa o país em situação frágil, com sérios desafios para o próximo governo.",
+    average,
   };
 }
 
