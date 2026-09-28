@@ -1,9 +1,12 @@
 import { INDICATOR_META } from "../data/indicators";
-import type { EventChoice, GameEvent } from "../types";
+import type { EventChoice, GameEvent, PresidentialAction } from "../types";
 
 interface Props {
   event: GameEvent;
   turnLabel: string;
+  actions: PresidentialAction[];
+  selectedAction: PresidentialAction | null;
+  onSelectAction: (action: PresidentialAction) => void;
   onChoose: (choice: EventChoice) => void;
 }
 
@@ -21,24 +24,54 @@ function EffectsPreview({ effects }: { effects: EventChoice["effects"] }) {
   );
 }
 
-export function EventCard({ event, turnLabel, onChoose }: Props) {
+export function EventCard({
+  event,
+  turnLabel,
+  actions,
+  selectedAction,
+  onSelectAction,
+  onChoose,
+}: Props) {
   return (
-    <div className="event-card">
-      <div className="event-turn">{turnLabel}</div>
-      <h2>{event.title}</h2>
-      <p className="event-description">{event.description}</p>
-      <div className="choices">
-        {event.choices.map((choice) => (
-          <button
-            key={choice.id}
-            type="button"
-            className="choice-button"
-            onClick={() => onChoose(choice)}
-          >
-            <span className="choice-label">{choice.label}</span>
-            <EffectsPreview effects={choice.effects} />
-          </button>
-        ))}
+    <div className="event-card-wrap">
+      <div className="actions-panel">
+        <div className="actions-heading">
+          <span>Diretiva do trimestre</span>
+          <span className="actions-hint">opcional · no máximo uma</span>
+        </div>
+        <div className="actions-list">
+          {actions.map((action) => (
+            <button
+              key={action.id}
+              type="button"
+              className={`action-chip${selectedAction?.id === action.id ? " selected" : ""}`}
+              onClick={() => onSelectAction(action)}
+              title={action.description}
+            >
+              <span className="choice-label">{action.label}</span>
+              <EffectsPreview effects={action.effects} />
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="event-card">
+        <div className="event-turn">{turnLabel}</div>
+        <h2>{event.title}</h2>
+        <p className="event-description">{event.description}</p>
+        <div className="choices">
+          {event.choices.map((choice) => (
+            <button
+              key={choice.id}
+              type="button"
+              className="choice-button"
+              onClick={() => onChoose(choice)}
+            >
+              <span className="choice-label">{choice.label}</span>
+              <EffectsPreview effects={choice.effects} />
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   );

@@ -33,6 +33,17 @@ export interface GameEvent {
   choices: EventChoice[];
 }
 
+/**
+ * Ação de governo que o jogador pode emitir por conta própria a cada trimestre,
+ * independente do evento sorteado — no máximo uma por turno.
+ */
+export interface PresidentialAction {
+  id: string;
+  label: string;
+  description: string;
+  effects: Partial<Record<IndicatorKey, number>>;
+}
+
 export type GamePhase = "start" | "playing" | "ended";
 
 export interface EndResult {
@@ -49,6 +60,6 @@ export interface GameState {
   totalTurns: number;
   deck: GameEvent[];
   currentEvent: GameEvent | null;
-  history: { event: GameEvent; choice: EventChoice }[];
+  history: { event: GameEvent; choice: EventChoice; action: PresidentialAction | null }[];
   endResult: EndResult | null;
 }

@@ -1,6 +1,6 @@
 import { EVENTS } from "../data/events";
 import { CRITICAL_INDICATORS, INDICATOR_META, INDICATOR_ORDER, createInitialIndicators } from "../data/indicators";
-import type { EndResult, EventChoice, GameEvent, GameState, Indicators } from "../types";
+import type { EndResult, EventChoice, GameEvent, GameState, Indicators, PresidentialAction } from "../types";
 
 export const TOTAL_TURNS = 16;
 
@@ -57,6 +57,21 @@ export function applyEffects(indicators: Indicators, effects: EventChoice["effec
     }
   }
   return next;
+}
+
+export function mergeEffects(
+  a: EventChoice["effects"],
+  b: EventChoice["effects"] | undefined
+): EventChoice["effects"] {
+  if (!b) return a;
+  const merged: EventChoice["effects"] = { ...a };
+  for (const key of INDICATOR_ORDER) {
+    const delta = b[key];
+    if (delta) {
+      merged[key] = (merged[key] ?? 0) + delta;
+    }
+  }
+  return merged;
 }
 
 export function computeAverage(indicators: Indicators): number {
@@ -116,13 +131,18 @@ function computeLegado(indicators: Indicators): EndResult {
   };
 }
 
-export function applyChoice(state: GameState, choice: EventChoice): GameState {
+export function applyChoice(
+  state: GameState,
+  choice: EventChoice,
+  action: PresidentialAction | null = null
+): GameState {
   if (!state.currentEvent || state.phase !== "playing") {
     return state;
   }
 
-  const indicators = applyEffects(state.indicators, choice.effects);
-  const history = [...state.history, { event: state.currentEvent, choice }];
+  const combinedEffects = mergeEffects(choice.effects, action?.effects);
+  const indicators = applyEffects(state.indicators, combinedEffects);
+  const history = [...state.history, { event: state.currentEvent, choice, action }];
 
   const failure = checkCriticalFailure(indicators);
   if (failure) {

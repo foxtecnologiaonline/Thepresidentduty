@@ -5,18 +5,21 @@ import { EndScreen } from "./components/EndScreen";
 import { EventCard } from "./components/EventCard";
 import { ResolutionPanel } from "./components/ResolutionPanel";
 import { StartScreen } from "./components/StartScreen";
-import { applyChoice, createNewGame, createStartState, formatTurnLabel } from "./game/engine";
+import { ACTIONS } from "./data/actions";
+import { applyChoice, createNewGame, createStartState, formatTurnLabel, mergeEffects } from "./game/engine";
 import { loadBestResult, saveBestResultIfBetter, type BestResult } from "./game/storage";
-import type { EventChoice, GameEvent, GameState } from "./types";
+import type { EventChoice, GameEvent, PresidentialAction, GameState } from "./types";
 
 interface Resolution {
   event: GameEvent;
   choice: EventChoice;
+  action: PresidentialAction | null;
 }
 
 function App() {
   const [game, setGame] = useState<GameState>(() => createStartState());
   const [resolution, setResolution] = useState<Resolution | null>(null);
+  const [selectedAction, setSelectedAction] = useState<PresidentialAction | null>(null);
   const [bestResult, setBestResult] = useState<BestResult | null>(() => loadBestResult());
   // Trava síncrona contra duplo clique/duplo disparo do evento antes do próximo render:
   // estado do React só reflete a mudança após o commit, então um clique duplicado no
@@ -27,15 +30,20 @@ function App() {
   function handleStart() {
     setGame(createNewGame());
     setResolution(null);
+    setSelectedAction(null);
     isProcessingChoice.current = false;
+  }
+
+  function handleSelectAction(action: PresidentialAction) {
+    setSelectedAction((current) => (current?.id === action.id ? null : action));
   }
 
   function handleChoose(choice: EventChoice) {
     if (!game.currentEvent || isProcessingChoice.current) return;
     isProcessingChoice.current = true;
 
-    const next = applyChoice(game, choice);
-    setResolution({ event: game.currentEvent, choice });
+    const next = applyChoice(game, choice, selectedAction);
+    setResolution({ event: game.currentEvent, choice, action: selectedAction });
     setGame(next);
 
     if (next.phase === "ended" && next.endResult) {
@@ -52,8 +60,13 @@ function App() {
 
   function handleContinue() {
     setResolution(null);
+    setSelectedAction(null);
     isProcessingChoice.current = false;
   }
+
+  const dashboardDeltas = resolution
+    ? mergeEffects(resolution.choice.effects, resolution.action?.effects)
+    : undefined;
 
   return (
     <div className="app-shell">
@@ -70,19 +83,23 @@ function App() {
             )}
           </header>
 
-          <Dashboard indicators={game.indicators} lastDeltas={resolution?.choice.effects} />
+          <Dashboard indicators={game.indicators} lastDeltas={dashboardDeltas} />
 
           <main className="game-main">
             {resolution ? (
               <ResolutionPanel
                 event={resolution.event}
                 choice={resolution.choice}
+                action={resolution.action}
                 onContinue={handleContinue}
               />
             ) : game.phase === "playing" && game.currentEvent ? (
               <EventCard
                 event={game.currentEvent}
                 turnLabel={formatTurnLabel(game.turn)}
+                actions={ACTIONS}
+                selectedAction={selectedAction}
+                onSelectAction={handleSelectAction}
                 onChoose={handleChoose}
               />
             ) : game.phase === "ended" && game.endResult ? (
