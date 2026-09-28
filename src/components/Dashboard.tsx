@@ -1,10 +1,10 @@
 import { INDICATOR_META, INDICATOR_ORDER } from "../data/indicators";
-import type { Indicators } from "../types";
+import type { IndicatorKey, Indicators } from "../types";
 import { IndicatorBar } from "./IndicatorBar";
 
 interface Props {
   indicators: Indicators;
-  lastDeltas?: Partial<Record<string, number>>;
+  lastDeltas?: Partial<Record<IndicatorKey, number>>;
 }
 
 export function Dashboard({ indicators, lastDeltas }: Props) {

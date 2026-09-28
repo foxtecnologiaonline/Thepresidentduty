@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import "./App.css";
 import { Dashboard } from "./components/Dashboard";
 import { EndScreen } from "./components/EndScreen";
@@ -18,17 +18,24 @@ function App() {
   const [game, setGame] = useState<GameState>(() => createStartState());
   const [resolution, setResolution] = useState<Resolution | null>(null);
   const [bestResult, setBestResult] = useState<BestResult | null>(() => loadBestResult());
+  // Trava síncrona contra duplo clique/duplo disparo do evento antes do próximo render:
+  // estado do React só reflete a mudança após o commit, então um clique duplicado no
+  // mesmo instante ainda veria o mesmo `game`/`resolution` "antigos". Um ref é mutado
+  // na hora e é compartilhado entre as chamadas, então bloqueia de fato a segunda.
+  const isProcessingChoice = useRef(false);
 
   function handleStart() {
     setGame(createNewGame());
     setResolution(null);
+    isProcessingChoice.current = false;
   }
 
   function handleChoose(choice: EventChoice) {
-    if (!game.currentEvent) return;
-    setResolution({ event: game.currentEvent, choice });
+    if (!game.currentEvent || isProcessingChoice.current) return;
+    isProcessingChoice.current = true;
 
     const next = applyChoice(game, choice);
+    setResolution({ event: game.currentEvent, choice });
     setGame(next);
 
     if (next.phase === "ended" && next.endResult) {
@@ -45,6 +52,7 @@ function App() {
 
   function handleContinue() {
     setResolution(null);
+    isProcessingChoice.current = false;
   }
 
   return (
@@ -62,7 +70,7 @@ function App() {
             )}
           </header>
 
-          <Dashboard indicators={game.indicators} />
+          <Dashboard indicators={game.indicators} lastDeltas={resolution?.choice.effects} />
 
           <main className="game-main">
             {resolution ? (

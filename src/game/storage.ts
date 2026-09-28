@@ -7,11 +7,23 @@ export interface BestResult {
 
 const STORAGE_KEY = "presidencia:best-result";
 
+function isBestResult(value: unknown): value is BestResult {
+  if (!value || typeof value !== "object") return false;
+  const candidate = value as Record<string, unknown>;
+  return (
+    typeof candidate.title === "string" &&
+    typeof candidate.average === "number" &&
+    typeof candidate.turnReached === "number" &&
+    typeof candidate.victory === "boolean"
+  );
+}
+
 export function loadBestResult(): BestResult | null {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return null;
-    return JSON.parse(raw) as BestResult;
+    const parsed = JSON.parse(raw);
+    return isBestResult(parsed) ? parsed : null;
   } catch {
     return null;
   }
@@ -19,9 +31,15 @@ export function loadBestResult(): BestResult | null {
 
 export function saveBestResultIfBetter(result: BestResult): BestResult {
   const current = loadBestResult();
-  if (current && current.average >= result.average) {
+  const isNewBetter =
+    !current ||
+    (result.victory && !current.victory) ||
+    (result.victory === current.victory && result.average > current.average);
+
+  if (!isNewBetter) {
     return current;
   }
+
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(result));
   } catch {
