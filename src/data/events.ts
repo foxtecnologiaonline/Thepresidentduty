@@ -13,6 +13,7 @@ export const EVENTS: GameEvent[] = [
         consequence:
           "A reforma passa. O caixa público melhora, mas grandes empresários reduzem investimentos e pressionam sua base no Congresso.",
         effects: { economia: 8, popularidade: 4, governabilidade: -6 },
+        leaning: -2,
       },
       {
         id: "recuar",
@@ -20,6 +21,7 @@ export const EVENTS: GameEvent[] = [
         consequence:
           "Você evita o embate, mas a população vê como recuo diante das elites.",
         effects: { governabilidade: 4, popularidade: -5 },
+        leaning: 1,
       },
     ],
   },
@@ -35,6 +37,7 @@ export const EVENTS: GameEvent[] = [
         consequence:
           "A greve termina rápido e a segurança se estabiliza, mas o orçamento sofre um rombo.",
         effects: { seguranca: 10, economia: -8 },
+        leaning: 1,
       },
       {
         id: "negociar-parcelado",
@@ -42,6 +45,7 @@ export const EVENTS: GameEvent[] = [
         consequence:
           "Solução intermediária: a greve arrefece aos poucos e o impacto fiscal é menor.",
         effects: { seguranca: 4, economia: -3, popularidade: -2 },
+        leaning: 0,
       },
       {
         id: "linha-dura",
@@ -49,6 +53,7 @@ export const EVENTS: GameEvent[] = [
         consequence:
           "Você mantém o orçamento, mas a insegurança aumenta e sua imagem é desgastada.",
         effects: { seguranca: -10, popularidade: -6 },
+        leaning: 2,
       },
     ],
   },
@@ -64,6 +69,7 @@ export const EVENTS: GameEvent[] = [
         consequence:
           "Novos leitos e equipamentos aliviam a crise, mas o gasto extra pesa no orçamento.",
         effects: { saude: 12, popularidade: 5, economia: -6 },
+        leaning: -2,
       },
       {
         id: "parceria-privada",
@@ -71,6 +77,7 @@ export const EVENTS: GameEvent[] = [
         consequence:
           "Solução rápida e mais barata, mas gera críticas de privatização disfarçada da saúde pública.",
         effects: { saude: 6, economia: -1, popularidade: -2 },
+        leaning: 2,
       },
     ],
   },
@@ -86,6 +93,7 @@ export const EVENTS: GameEvent[] = [
         consequence:
           "A educação avança no médio prazo, mas o processo é turbulento e gera desgaste com sindicatos.",
         effects: { educacao: 10, popularidade: -3, governabilidade: -2 },
+        leaning: -1,
       },
       {
         id: "piloto",
@@ -93,6 +101,7 @@ export const EVENTS: GameEvent[] = [
         consequence:
           "Abordagem cautelosa: ganho menor, porém sem grandes atritos.",
         effects: { educacao: 4, governabilidade: 2 },
+        leaning: 0,
       },
     ],
   },
@@ -108,6 +117,7 @@ export const EVENTS: GameEvent[] = [
         consequence:
           "A economia agrícola cresce e o agronegócio apoia seu governo, mas o desmatamento dispara e a comunidade internacional reage mal.",
         effects: { economia: 8, meioAmbiente: -12, relacoesInternacionais: -6 },
+        leaning: 2,
       },
       {
         id: "proteger",
@@ -115,6 +125,7 @@ export const EVENTS: GameEvent[] = [
         consequence:
           "Você preserva o meio ambiente e ganha respeito internacional, mas perde apoio do setor rural.",
         effects: { meioAmbiente: 8, relacoesInternacionais: 5, popularidade: -3 },
+        leaning: -2,
       },
     ],
   },
@@ -130,6 +141,7 @@ export const EVENTS: GameEvent[] = [
         consequence:
           "As exportações crescem e sua imagem externa melhora, mas setores industriais locais protestam com demissões.",
         effects: { economia: 6, relacoesInternacionais: 9, popularidade: -4 },
+        leaning: 2,
       },
       {
         id: "recusar",
@@ -137,6 +149,7 @@ export const EVENTS: GameEvent[] = [
         consequence:
           "Trabalhadores da indústria local agradecem, mas o país perde relevância diplomática.",
         effects: { popularidade: 3, relacoesInternacionais: -7 },
+        leaning: -1,
       },
     ],
   },
@@ -152,6 +165,7 @@ export const EVENTS: GameEvent[] = [
         consequence:
           "Transparência acalma a opinião pública, mas fragiliza sua base política interna.",
         effects: { popularidade: 6, governabilidade: -7 },
+        leaning: 0,
       },
       {
         id: "proteger",
@@ -159,6 +173,7 @@ export const EVENTS: GameEvent[] = [
         consequence:
           "Você mantém a base de apoio, mas o escândalo vaza para a imprensa e sua credibilidade cai.",
         effects: { governabilidade: 4, popularidade: -10 },
+        leaning: 0,
       },
     ],
   },
@@ -174,6 +189,7 @@ export const EVENTS: GameEvent[] = [
         consequence:
           "O gesto acalma os ânimos e melhora sua imagem, embora nada seja resolvido de imediato.",
         effects: { popularidade: 6, seguranca: 1 },
+        leaning: -1,
       },
       {
         id: "reprimir",
@@ -181,6 +197,7 @@ export const EVENTS: GameEvent[] = [
         consequence:
           "Os protestos diminuem rapidamente, mas imagens de violência policial chocam o país.",
         effects: { seguranca: 5, popularidade: -12 },
+        leaning: 2,
       },
     ],
   },
@@ -196,6 +213,7 @@ export const EVENTS: GameEvent[] = [
         consequence:
           "A ajuda rápida salva vidas e é bem recebida, mas consome recursos significativos do orçamento.",
         effects: { popularidade: 8, meioAmbiente: 2, economia: -5 },
+        leaning: -1,
       },
       {
         id: "resposta-lenta",
@@ -203,6 +221,7 @@ export const EVENTS: GameEvent[] = [
         consequence:
           "Você preserva o orçamento, mas a lentidão da resposta gera revolta popular.",
         effects: { economia: 2, popularidade: -9 },
+        leaning: 1,
       },
     ],
   },
@@ -218,6 +237,7 @@ export const EVENTS: GameEvent[] = [
         consequence:
           "O Congresso permanece ao seu lado, mas a população reage negativamente à medida.",
         effects: { governabilidade: 8, popularidade: -6 },
+        leaning: 0,
       },
       {
         id: "recusar",
@@ -225,6 +245,7 @@ export const EVENTS: GameEvent[] = [
         consequence:
           "Você agrada a opinião pública, mas perde apoio de aliados importantes no Legislativo.",
         effects: { popularidade: 5, governabilidade: -8 },
+        leaning: 0,
       },
     ],
   },
@@ -240,6 +261,7 @@ export const EVENTS: GameEvent[] = [
         consequence:
           "O país se posiciona como líder ambiental, mas o investimento pesa nas contas públicas no curto prazo.",
         effects: { meioAmbiente: 10, relacoesInternacionais: 4, economia: -5 },
+        leaning: -2,
       },
       {
         id: "adiar",
@@ -247,6 +269,7 @@ export const EVENTS: GameEvent[] = [
         consequence:
           "O orçamento fica intacto, mas o país perde uma oportunidade de destaque internacional.",
         effects: { economia: 2, meioAmbiente: -3 },
+        leaning: 1,
       },
     ],
   },
@@ -262,6 +285,7 @@ export const EVENTS: GameEvent[] = [
         consequence:
           "Sua postura é elogiada internacionalmente, mas parte da população teme sobrecarga dos serviços locais.",
         effects: { relacoesInternacionais: 8, popularidade: -4, saude: -2 },
+        leaning: -2,
       },
       {
         id: "fechar",
@@ -269,6 +293,7 @@ export const EVENTS: GameEvent[] = [
         consequence:
           "Parte da população local aprova a medida, mas o país é criticado internacionalmente por direitos humanos.",
         effects: { seguranca: 4, relacoesInternacionais: -8, popularidade: 3 },
+        leaning: 2,
       },
     ],
   },
@@ -284,6 +309,7 @@ export const EVENTS: GameEvent[] = [
         consequence:
           "O ataque é contido e a confiança é restaurada, mas o gasto extra pesa no orçamento.",
         effects: { seguranca: 8, economia: -4 },
+        leaning: 0,
       },
       {
         id: "resposta-minima",
@@ -291,6 +317,7 @@ export const EVENTS: GameEvent[] = [
         consequence:
           "Você economiza recursos, mas o episódio expõe fragilidades e abala a confiança dos mercados.",
         effects: { economia: -6, seguranca: -5 },
+        leaning: 0,
       },
     ],
   },
@@ -306,6 +333,7 @@ export const EVENTS: GameEvent[] = [
         consequence:
           "O impacto da crise é amenizado e empregos são preservados, mas a dívida pública cresce.",
         effects: { economia: 6, popularidade: 3, governabilidade: -3 },
+        leaning: -2,
       },
       {
         id: "austeridade",
@@ -313,6 +341,7 @@ export const EVENTS: GameEvent[] = [
         consequence:
           "As contas públicas ficam sob controle, mas o desemprego sobe e a população sofre no curto prazo.",
         effects: { economia: 3, popularidade: -7 },
+        leaning: 2,
       },
     ],
   },
@@ -328,6 +357,7 @@ export const EVENTS: GameEvent[] = [
         consequence:
           "Os recursos naturais são preservados, mas a população sofre com a rotina de restrições.",
         effects: { meioAmbiente: 6, popularidade: -8 },
+        leaning: -1,
       },
       {
         id: "importar",
@@ -335,6 +365,7 @@ export const EVENTS: GameEvent[] = [
         consequence:
           "A população não sente o impacto direto, mas o custo é alto para os cofres públicos.",
         effects: { economia: -9, popularidade: 3 },
+        leaning: 1,
       },
     ],
   },
@@ -350,6 +381,7 @@ export const EVENTS: GameEvent[] = [
         consequence:
           "A transparência fortalece sua imagem pública, mas expõe fragilidades da sua gestão ao Congresso.",
         effects: { popularidade: 5, governabilidade: -5 },
+        leaning: 0,
       },
       {
         id: "resistir",
@@ -357,6 +389,7 @@ export const EVENTS: GameEvent[] = [
         consequence:
           "Você protege informações sensíveis, mas a resistência é vista como sinal de culpa.",
         effects: { governabilidade: 2, popularidade: -8 },
+        leaning: 0,
       },
     ],
   },
@@ -372,6 +405,7 @@ export const EVENTS: GameEvent[] = [
         consequence:
           "O surto é contido rapidamente, mas a atividade econômica local é fortemente impactada.",
         effects: { saude: 10, economia: -7, popularidade: -3 },
+        leaning: -1,
       },
       {
         id: "monitoramento",
@@ -379,6 +413,7 @@ export const EVENTS: GameEvent[] = [
         consequence:
           "A economia segue normalmente, mas o surto se espalha mais rápido, sobrecarregando o sistema de saúde.",
         effects: { saude: -6, economia: 2 },
+        leaning: 1,
       },
     ],
   },
@@ -394,6 +429,7 @@ export const EVENTS: GameEvent[] = [
         consequence:
           "Trabalhadores comemoram o ganho de poder de compra, mas pequenas empresas reduzem contratações.",
         effects: { popularidade: 8, economia: -5 },
+        leaning: -2,
       },
       {
         id: "reajuste-minimo",
@@ -401,6 +437,7 @@ export const EVENTS: GameEvent[] = [
         consequence:
           "Solução neutra que evita grandes impactos econômicos, mas frustra expectativas dos trabalhadores.",
         effects: { economia: 1, popularidade: -2 },
+        leaning: 1,
       },
     ],
   },
@@ -416,6 +453,7 @@ export const EVENTS: GameEvent[] = [
         consequence:
           "O país ganha protagonismo internacional, mas setores industriais pressionam contra os novos custos regulatórios.",
         effects: { relacoesInternacionais: 9, meioAmbiente: 6, economia: -4 },
+        leaning: -2,
       },
       {
         id: "metas-moderadas",
@@ -423,6 +461,7 @@ export const EVENTS: GameEvent[] = [
         consequence:
           "Uma posição de meio-termo, sem grandes ganhos nem grandes perdas.",
         effects: { relacoesInternacionais: 2, meioAmbiente: 2 },
+        leaning: 0,
       },
     ],
   },
@@ -438,6 +477,7 @@ export const EVENTS: GameEvent[] = [
         consequence:
           "A tensão institucional diminui, mas o gasto público aumenta e outras áreas ficam com menos recursos.",
         effects: { governabilidade: 8, seguranca: 4, economia: -6 },
+        leaning: 1,
       },
       {
         id: "manter-cortes",
@@ -445,6 +485,7 @@ export const EVENTS: GameEvent[] = [
         consequence:
           "Você reforça o controle civil sobre os militares, mas a tensão institucional aumenta perigosamente.",
         effects: { governabilidade: -9, seguranca: -3 },
+        leaning: -1,
       },
     ],
   },

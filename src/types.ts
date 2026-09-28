@@ -19,11 +19,18 @@ export interface IndicatorMeta {
   loseMessage: string;
 }
 
+/**
+ * Posição da escolha/diretiva no espectro político, numa escala de -2 (esquerda) a
+ * +2 (direita); 0 é uma decisão técnica/de sobrevivência política sem carga ideológica.
+ */
+export type Leaning = -2 | -1 | 0 | 1 | 2;
+
 export interface EventChoice {
   id: string;
   label: string;
   consequence: string;
   effects: Partial<Record<IndicatorKey, number>>;
+  leaning: Leaning;
 }
 
 export interface GameEvent {
@@ -42,6 +49,7 @@ export interface PresidentialAction {
   label: string;
   description: string;
   effects: Partial<Record<IndicatorKey, number>>;
+  leaning: Leaning;
 }
 
 export type GamePhase = "start" | "playing" | "ended";

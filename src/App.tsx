@@ -106,7 +106,7 @@ function App() {
               <EndScreen
                 result={game.endResult}
                 indicators={game.indicators}
-                turnReached={game.history.length}
+                history={game.history}
                 totalTurns={game.totalTurns}
                 onRestart={handleStart}
               />
