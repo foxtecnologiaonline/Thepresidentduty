@@ -17,6 +17,10 @@ export interface IndicatorMeta {
   /** Se true, este indicador chegar a 0 encerra o mandato imediatamente. */
   critical: boolean;
   loseMessage: string;
+  /** Explicação curta do que o indicador representa, usada em tooltip. */
+  description: string;
+  /** Cor categórica fixa do indicador (paleta validada para uso em gráficos). */
+  chartColor: string;
 }
 
 /**
@@ -50,9 +54,13 @@ export interface PresidentialAction {
   description: string;
   effects: Partial<Record<IndicatorKey, number>>;
   leaning: Leaning;
+  /** Turno mínimo em que a diretiva fica disponível; ausente = disponível desde o início. */
+  minTurn?: number;
 }
 
 export type GamePhase = "start" | "playing" | "ended";
+
+export type Difficulty = "facil" | "normal" | "dificil";
 
 export interface EndResult {
   victory: boolean;
@@ -63,11 +71,14 @@ export interface EndResult {
 
 export interface GameState {
   phase: GamePhase;
+  difficulty: Difficulty;
   indicators: Indicators;
   turn: number;
   totalTurns: number;
   deck: GameEvent[];
   currentEvent: GameEvent | null;
   history: { event: GameEvent; choice: EventChoice; action: PresidentialAction | null }[];
+  /** Retrato dos indicadores ao final de cada turno (índice 0 = estado inicial). */
+  indicatorSnapshots: Indicators[];
   endResult: EndResult | null;
 }

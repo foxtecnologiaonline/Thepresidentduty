@@ -39,16 +39,20 @@ export const ACTIONS: PresidentialAction[] = [
   {
     id: "diplomacia-presidencial",
     label: "Diplomacia Presidencial",
-    description: "Dedica a agenda do trimestre a viagens e negociações internacionais.",
+    description:
+      "Dedica a agenda do trimestre a viagens e negociações internacionais. Exige um governo já consolidado.",
     effects: { relacoesInternacionais: 5, governabilidade: -3 },
     leaning: 0,
+    minTurn: 5,
   },
   {
     id: "articulacao-politica",
     label: "Articulação Política",
-    description: "Negocia nos bastidores com líderes do Congresso para ampliar sua base aliada.",
+    description:
+      "Negocia nos bastidores com líderes do Congresso para ampliar sua base aliada. Exige capital político acumulado.",
     effects: { governabilidade: 5, popularidade: -3 },
     leaning: 0,
+    minTurn: 5,
   },
   {
     id: "agenda-ambiental",

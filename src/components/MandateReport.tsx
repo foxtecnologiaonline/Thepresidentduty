@@ -1,10 +1,16 @@
 import { INDICATOR_META, INDICATOR_ORDER, createInitialIndicators } from "../data/indicators";
 import { computeLeanProfile, describeLean, leanToPercent } from "../game/leaning";
 import type { GameState, Indicators } from "../types";
+import { AchievementsPanel } from "./AchievementsPanel";
+import { MandateTimeline } from "./MandateTimeline";
+import { TrajectoryChart } from "./TrajectoryChart";
 
 interface Props {
   indicators: Indicators;
   history: GameState["history"];
+  indicatorSnapshots: Indicators[];
+  earnedAchievementIds: Set<string>;
+  newAchievementIds: Set<string>;
 }
 
 function trendMessage(trend: "direita" | "esquerda" | "estavel"): string {
@@ -17,12 +23,23 @@ function trendMessage(trend: "direita" | "esquerda" | "estavel"): string {
   return "Sua linha ideológica se manteve estável do início ao fim do mandato.";
 }
 
-export function MandateReport({ indicators, history }: Props) {
+export function MandateReport({
+  indicators,
+  history,
+  indicatorSnapshots,
+  earnedAchievementIds,
+  newAchievementIds,
+}: Props) {
   const initial = createInitialIndicators();
   const profile = computeLeanProfile(history);
 
   return (
     <div className="mandate-report">
+      <section className="report-section">
+        <h3>Trajetória do mandato</h3>
+        <TrajectoryChart snapshots={indicatorSnapshots} />
+      </section>
+
       <section className="report-section">
         <h3>Como o país mudou</h3>
         <div className="comparison-list">
@@ -49,6 +66,7 @@ export function MandateReport({ indicators, history }: Props) {
             );
           })}
         </div>
+        <MandateTimeline history={history} />
       </section>
 
       {profile && (
@@ -86,6 +104,11 @@ export function MandateReport({ indicators, history }: Props) {
           </div>
         </section>
       )}
+
+      <section className="report-section">
+        <h3>Conquistas</h3>
+        <AchievementsPanel earnedIds={earnedAchievementIds} newIds={newAchievementIds} />
+      </section>
     </div>
   );
 }

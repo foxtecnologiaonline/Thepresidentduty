@@ -4,6 +4,7 @@ import type { EventChoice, GameEvent, PresidentialAction } from "../types";
 interface Props {
   event: GameEvent;
   turnLabel: string;
+  turn: number;
   actions: PresidentialAction[];
   selectedAction: PresidentialAction | null;
   onSelectAction: (action: PresidentialAction) => void;
@@ -27,6 +28,7 @@ function EffectsPreview({ effects }: { effects: EventChoice["effects"] }) {
 export function EventCard({
   event,
   turnLabel,
+  turn,
   actions,
   selectedAction,
   onSelectAction,
@@ -40,18 +42,31 @@ export function EventCard({
           <span className="actions-hint">opcional · no máximo uma</span>
         </div>
         <div className="actions-list">
-          {actions.map((action) => (
-            <button
-              key={action.id}
-              type="button"
-              className={`action-chip${selectedAction?.id === action.id ? " selected" : ""}`}
-              onClick={() => onSelectAction(action)}
-              title={action.description}
-            >
-              <span className="choice-label">{action.label}</span>
-              <EffectsPreview effects={action.effects} />
-            </button>
-          ))}
+          {actions.map((action) => {
+            const isLocked = !!action.minTurn && turn < action.minTurn;
+            return (
+              <button
+                key={action.id}
+                type="button"
+                disabled={isLocked}
+                className={`action-chip${selectedAction?.id === action.id ? " selected" : ""}${isLocked ? " locked" : ""}`}
+                onClick={() => onSelectAction(action)}
+                title={isLocked ? `Disponível a partir do Ano ${Math.ceil((action.minTurn ?? 1) / 4)}` : action.description}
+              >
+                <span className="choice-label">
+                  {isLocked && "🔒 "}
+                  {action.label}
+                </span>
+                {isLocked ? (
+                  <span className="actions-hint">
+                    Disponível a partir do Ano {Math.ceil((action.minTurn ?? 1) / 4)}
+                  </span>
+                ) : (
+                  <EffectsPreview effects={action.effects} />
+                )}
+              </button>
+            );
+          })}
         </div>
       </div>
 

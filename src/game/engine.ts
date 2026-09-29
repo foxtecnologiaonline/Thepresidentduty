@@ -1,8 +1,23 @@
 import { EVENTS } from "../data/events";
 import { CRITICAL_INDICATORS, INDICATOR_META, INDICATOR_ORDER, createInitialIndicators } from "../data/indicators";
-import type { EndResult, EventChoice, GameEvent, GameState, Indicators, PresidentialAction } from "../types";
+import type { Difficulty, EndResult, EventChoice, GameEvent, GameState, Indicators, PresidentialAction } from "../types";
 
 export const TOTAL_TURNS = 16;
+
+const QUARTER_MONTHS = ["Jan–Mar", "Abr–Jun", "Jul–Set", "Out–Dez"];
+
+/** Multiplica a magnitude de todos os efeitos (escolha + diretiva); dificuldade não muda as regras, só o quanto cada decisão pesa. */
+export const DIFFICULTY_MULTIPLIERS: Record<Difficulty, number> = {
+  facil: 0.7,
+  normal: 1,
+  dificil: 1.35,
+};
+
+export const DIFFICULTY_LABELS: Record<Difficulty, string> = {
+  facil: "Fácil",
+  normal: "Normal",
+  dificil: "Difícil",
+};
 
 function shuffle<T>(items: T[]): T[] {
   const array = [...items];
@@ -20,26 +35,31 @@ export function buildDeck(): GameEvent[] {
 export function createStartState(): GameState {
   return {
     phase: "start",
+    difficulty: "normal",
     indicators: createInitialIndicators(),
     turn: 0,
     totalTurns: TOTAL_TURNS,
     deck: [],
     currentEvent: null,
     history: [],
+    indicatorSnapshots: [createInitialIndicators()],
     endResult: null,
   };
 }
 
-export function createNewGame(): GameState {
+export function createNewGame(difficulty: Difficulty = "normal"): GameState {
   const deck = buildDeck();
+  const initial = createInitialIndicators();
   return {
     phase: "playing",
-    indicators: createInitialIndicators(),
+    difficulty,
+    indicators: initial,
     turn: 1,
     totalTurns: TOTAL_TURNS,
     deck: deck.slice(1),
     currentEvent: deck[0] ?? null,
     history: [],
+    indicatorSnapshots: [initial],
     endResult: null,
   };
 }
@@ -72,6 +92,18 @@ export function mergeEffects(
     }
   }
   return merged;
+}
+
+export function scaleEffects(effects: EventChoice["effects"], multiplier: number): EventChoice["effects"] {
+  if (multiplier === 1) return effects;
+  const scaled: EventChoice["effects"] = {};
+  for (const key of INDICATOR_ORDER) {
+    const delta = effects[key];
+    if (delta) {
+      scaled[key] = Math.round(delta * multiplier);
+    }
+  }
+  return scaled;
 }
 
 export function computeAverage(indicators: Indicators): number {
@@ -140,9 +172,11 @@ export function applyChoice(
     return state;
   }
 
-  const combinedEffects = mergeEffects(choice.effects, action?.effects);
+  const multiplier = DIFFICULTY_MULTIPLIERS[state.difficulty];
+  const combinedEffects = scaleEffects(mergeEffects(choice.effects, action?.effects), multiplier);
   const indicators = applyEffects(state.indicators, combinedEffects);
   const history = [...state.history, { event: state.currentEvent, choice, action }];
+  const indicatorSnapshots = [...state.indicatorSnapshots, indicators];
 
   const failure = checkCriticalFailure(indicators);
   if (failure) {
@@ -150,6 +184,7 @@ export function applyChoice(
       ...state,
       indicators,
       history,
+      indicatorSnapshots,
       phase: "ended",
       currentEvent: null,
       endResult: failure,
@@ -161,6 +196,7 @@ export function applyChoice(
       ...state,
       indicators,
       history,
+      indicatorSnapshots,
       phase: "ended",
       currentEvent: null,
       endResult: computeLegado(indicators),
@@ -172,6 +208,7 @@ export function applyChoice(
     ...state,
     indicators,
     history,
+    indicatorSnapshots,
     turn: state.turn + 1,
     deck: restDeck,
     currentEvent: nextEvent ?? null,
@@ -181,5 +218,5 @@ export function applyChoice(
 export function formatTurnLabel(turn: number): string {
   const year = Math.ceil(turn / 4);
   const quarter = ((turn - 1) % 4) + 1;
-  return `Ano ${year} · ${quarter}º trimestre`;
+  return `${QUARTER_MONTHS[quarter - 1]} · Ano ${year}`;
 }

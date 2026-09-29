@@ -47,3 +47,28 @@ export function saveBestResultIfBetter(result: BestResult): BestResult {
   }
   return result;
 }
+
+const ACHIEVEMENTS_KEY = "presidencia:achievements";
+
+export function loadUnlockedAchievements(): Set<string> {
+  try {
+    const raw = localStorage.getItem(ACHIEVEMENTS_KEY);
+    if (!raw) return new Set();
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? new Set(parsed.filter((id) => typeof id === "string")) : new Set();
+  } catch {
+    return new Set();
+  }
+}
+
+/** Mescla os ids conquistados nesta partida com os já salvos e persiste a união. */
+export function unlockAchievements(ids: string[]): Set<string> {
+  const current = loadUnlockedAchievements();
+  ids.forEach((id) => current.add(id));
+  try {
+    localStorage.setItem(ACHIEVEMENTS_KEY, JSON.stringify([...current]));
+  } catch {
+    // Armazenamento indisponível — segue sem persistir.
+  }
+  return current;
+}

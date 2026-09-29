@@ -5,10 +5,17 @@ import { EndScreen } from "./components/EndScreen";
 import { EventCard } from "./components/EventCard";
 import { ResolutionPanel } from "./components/ResolutionPanel";
 import { StartScreen } from "./components/StartScreen";
+import { ACHIEVEMENTS } from "./data/achievements";
 import { ACTIONS } from "./data/actions";
 import { applyChoice, createNewGame, createStartState, formatTurnLabel, mergeEffects } from "./game/engine";
-import { loadBestResult, saveBestResultIfBetter, type BestResult } from "./game/storage";
-import type { EventChoice, GameEvent, PresidentialAction, GameState } from "./types";
+import {
+  loadBestResult,
+  loadUnlockedAchievements,
+  saveBestResultIfBetter,
+  unlockAchievements,
+  type BestResult,
+} from "./game/storage";
+import type { Difficulty, EventChoice, GameEvent, PresidentialAction, GameState } from "./types";
 
 interface Resolution {
   event: GameEvent;
@@ -21,16 +28,20 @@ function App() {
   const [resolution, setResolution] = useState<Resolution | null>(null);
   const [selectedAction, setSelectedAction] = useState<PresidentialAction | null>(null);
   const [bestResult, setBestResult] = useState<BestResult | null>(() => loadBestResult());
+  const [earnedAchievementIds, setEarnedAchievementIds] = useState<Set<string>>(new Set());
+  const [newAchievementIds, setNewAchievementIds] = useState<Set<string>>(new Set());
   // Trava síncrona contra duplo clique/duplo disparo do evento antes do próximo render:
   // estado do React só reflete a mudança após o commit, então um clique duplicado no
   // mesmo instante ainda veria o mesmo `game`/`resolution` "antigos". Um ref é mutado
   // na hora e é compartilhado entre as chamadas, então bloqueia de fato a segunda.
   const isProcessingChoice = useRef(false);
 
-  function handleStart() {
-    setGame(createNewGame());
+  function handleStart(difficulty: Difficulty) {
+    setGame(createNewGame(difficulty));
     setResolution(null);
     setSelectedAction(null);
+    setEarnedAchievementIds(new Set());
+    setNewAchievementIds(new Set());
     isProcessingChoice.current = false;
   }
 
@@ -55,6 +66,13 @@ function App() {
           victory: next.endResult.victory,
         })
       );
+
+      const earnedNow = ACHIEVEMENTS.filter((a) => a.check(next)).map((a) => a.id);
+      const previouslyUnlocked = loadUnlockedAchievements();
+      unlockAchievements(earnedNow);
+      const isNew = new Set(earnedNow.filter((id) => !previouslyUnlocked.has(id)));
+      setEarnedAchievementIds(new Set(earnedNow));
+      setNewAchievementIds(isNew);
     }
   }
 
@@ -97,6 +115,7 @@ function App() {
               <EventCard
                 event={game.currentEvent}
                 turnLabel={formatTurnLabel(game.turn)}
+                turn={game.turn}
                 actions={ACTIONS}
                 selectedAction={selectedAction}
                 onSelectAction={handleSelectAction}
@@ -107,8 +126,11 @@ function App() {
                 result={game.endResult}
                 indicators={game.indicators}
                 history={game.history}
+                indicatorSnapshots={game.indicatorSnapshots}
                 totalTurns={game.totalTurns}
-                onRestart={handleStart}
+                earnedAchievementIds={earnedAchievementIds}
+                newAchievementIds={newAchievementIds}
+                onRestart={() => handleStart(game.difficulty)}
               />
             ) : null}
           </main>

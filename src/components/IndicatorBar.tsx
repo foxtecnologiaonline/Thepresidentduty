@@ -1,3 +1,5 @@
+import { CRITICAL_WARNING_THRESHOLD } from "../data/indicators";
+import { useCountUp } from "../hooks/useCountUp";
 import type { IndicatorMeta } from "../types";
 
 interface Props {
@@ -13,15 +15,21 @@ function statusClass(value: number): string {
 }
 
 export function IndicatorBar({ meta, value, delta }: Props) {
+  const displayedValue = useCountUp(Math.round(value));
+  const isCriticalWarning = meta.critical && value <= CRITICAL_WARNING_THRESHOLD;
+
   return (
-    <div className={`indicator ${statusClass(value)}`}>
+    <div
+      className={`indicator ${statusClass(value)}${isCriticalWarning ? " critical-warning" : ""}`}
+      title={meta.description}
+    >
       <div className="indicator-label">
         <span className="indicator-icon" aria-hidden="true">
           {meta.icon}
         </span>
         <span>{meta.label}</span>
         <span className="indicator-value">
-          {Math.round(value)}
+          {displayedValue}
           {typeof delta === "number" && delta !== 0 && (
             <span className={`indicator-delta ${delta > 0 ? "positive" : "negative"}`}>
               {delta > 0 ? `+${delta}` : delta}
