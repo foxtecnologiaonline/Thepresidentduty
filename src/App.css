@@ -135,10 +135,10 @@
   background: var(--bg-elevated);
   border: 1px dashed var(--border);
   border-radius: 14px;
-  padding: 14px 16px;
+  padding: 12px 14px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
 
 .actions-heading {
@@ -158,24 +158,34 @@
   text-transform: none;
 }
 
+/* Grade em vez de pilha: 7 diretivas empilhadas em coluna única tomavam a tela
+   inteira no mobile antes mesmo do evento do turno aparecer. Duas colunas (três
+   a partir de ~480px) cabem no mesmo espaço de antes usado por 3-4 chips. */
 .actions-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+}
+
+@media (min-width: 480px) {
+  .actions-list {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
 .action-chip {
   background: #182236;
   border: 1px solid var(--border);
   border-radius: 10px;
-  padding: 8px 12px;
+  padding: 7px 9px;
   text-align: left;
   color: var(--text);
   cursor: pointer;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
   font-size: 13px;
+  min-width: 0;
   transition: border-color 0.15s ease, background 0.15s ease;
 }
 
@@ -189,12 +199,13 @@
 }
 
 .action-chip .choice-label {
-  font-size: 13px;
+  font-size: 12px;
+  line-height: 1.25;
 }
 
 .action-chip .effects-preview {
-  font-size: 12px;
-  gap: 6px;
+  font-size: 11px;
+  gap: 5px;
 }
 
 .action-summary {
