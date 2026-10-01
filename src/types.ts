@@ -24,6 +24,30 @@ export interface IndicatorMeta {
 }
 
 /**
+ * Setores da sociedade: camada separada dos indicadores de governo, acompanhando a
+ * aprovação de grupos específicos. Não tem limiar crítico nem afeta vitória/derrota
+ * (que continua baseada só nos indicadores) — é um retrato à parte de quem o governo
+ * está agradando ou afastando, visível no dashboard e no relatório final.
+ */
+export type SectorKey =
+  | "politicos"
+  | "militares"
+  | "populacao"
+  | "academicos"
+  | "movimentosSociais"
+  | "empresariado";
+
+export type Sectors = Record<SectorKey, number>;
+
+export interface SectorMeta {
+  key: SectorKey;
+  label: string;
+  icon: string;
+  /** Explicação curta do que o setor representa, usada em tooltip. */
+  description: string;
+}
+
+/**
  * Posição da escolha/diretiva no espectro político, numa escala de -2 (esquerda) a
  * +2 (direita); 0 é uma decisão técnica/de sobrevivência política sem carga ideológica.
  */
@@ -34,6 +58,8 @@ export interface EventChoice {
   label: string;
   consequence: string;
   effects: Partial<Record<IndicatorKey, number>>;
+  /** Como essa escolha repercute entre os setores da sociedade; ausente = nenhum efeito notável. */
+  sectorEffects?: Partial<Record<SectorKey, number>>;
   leaning: Leaning;
 }
 
@@ -53,6 +79,8 @@ export interface PresidentialAction {
   label: string;
   description: string;
   effects: Partial<Record<IndicatorKey, number>>;
+  /** Como essa diretiva repercute entre os setores da sociedade; ausente = nenhum efeito notável. */
+  sectorEffects?: Partial<Record<SectorKey, number>>;
   leaning: Leaning;
   /** Turno mínimo em que a diretiva fica disponível; ausente = disponível desde o início. */
   minTurn?: number;
@@ -73,6 +101,7 @@ export interface GameState {
   phase: GamePhase;
   difficulty: Difficulty;
   indicators: Indicators;
+  sectors: Sectors;
   turn: number;
   totalTurns: number;
   deck: GameEvent[];
@@ -80,5 +109,7 @@ export interface GameState {
   history: { event: GameEvent; choice: EventChoice; action: PresidentialAction | null }[];
   /** Retrato dos indicadores ao final de cada turno (índice 0 = estado inicial). */
   indicatorSnapshots: Indicators[];
+  /** Retrato dos setores ao final de cada turno (índice 0 = estado inicial). */
+  sectorSnapshots: Sectors[];
   endResult: EndResult | null;
 }

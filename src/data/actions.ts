@@ -13,6 +13,7 @@ export const ACTIONS: PresidentialAction[] = [
     label: "Campanha de Comunicação",
     description: "Investe em publicidade institucional para melhorar a imagem do governo.",
     effects: { popularidade: 5, economia: -3 },
+    sectorEffects: { populacao: 4 },
     leaning: 0,
   },
   {
@@ -20,6 +21,7 @@ export const ACTIONS: PresidentialAction[] = [
     label: "Reforço do Policiamento",
     description: "Destina verba extra para reforçar o policiamento nas ruas.",
     effects: { seguranca: 5, economia: -3 },
+    sectorEffects: { militares: 4, movimentosSociais: -4 },
     leaning: 2,
   },
   {
@@ -27,6 +29,7 @@ export const ACTIONS: PresidentialAction[] = [
     label: "Corte de Gastos Públicos",
     description: "Reduz despesas do governo para equilibrar as contas.",
     effects: { economia: 5, popularidade: -3 },
+    sectorEffects: { empresariado: 5, populacao: -4 },
     leaning: 2,
   },
   {
@@ -34,6 +37,7 @@ export const ACTIONS: PresidentialAction[] = [
     label: "Investimento Social",
     description: "Amplia recursos para a rede pública de saúde e educação.",
     effects: { saude: 3, educacao: 3, economia: -4 },
+    sectorEffects: { populacao: 5, movimentosSociais: 3 },
     leaning: -2,
   },
   {
@@ -42,6 +46,7 @@ export const ACTIONS: PresidentialAction[] = [
     description:
       "Dedica a agenda do trimestre a viagens e negociações internacionais. Exige um governo já consolidado.",
     effects: { relacoesInternacionais: 5, governabilidade: -3 },
+    sectorEffects: { empresariado: 3, politicos: -3 },
     leaning: 0,
     minTurn: 5,
   },
@@ -51,6 +56,7 @@ export const ACTIONS: PresidentialAction[] = [
     description:
       "Negocia nos bastidores com líderes do Congresso para ampliar sua base aliada. Exige capital político acumulado.",
     effects: { governabilidade: 5, popularidade: -3 },
+    sectorEffects: { politicos: 6 },
     leaning: 0,
     minTurn: 5,
   },
@@ -59,6 +65,7 @@ export const ACTIONS: PresidentialAction[] = [
     label: "Agenda Ambiental",
     description: "Lança medidas de proteção ambiental e fiscalização do desmatamento.",
     effects: { meioAmbiente: 5, economia: -3 },
+    sectorEffects: { movimentosSociais: 5, empresariado: -4 },
     leaning: -1,
   },
 ];

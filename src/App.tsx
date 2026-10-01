@@ -4,6 +4,7 @@ import { Dashboard } from "./components/Dashboard";
 import { EndScreen } from "./components/EndScreen";
 import { EventCard } from "./components/EventCard";
 import { ResolutionPanel } from "./components/ResolutionPanel";
+import { SectorsPanel } from "./components/SectorsPanel";
 import { StartScreen } from "./components/StartScreen";
 import { ACHIEVEMENTS } from "./data/achievements";
 import { ACTIONS } from "./data/actions";
@@ -96,6 +97,10 @@ function App() {
     ? scaleEffects(mergeEffects(resolution.choice.effects, resolution.action?.effects), multiplier)
     : undefined;
 
+  const sectorDeltas = resolution
+    ? scaleEffects(mergeEffects(resolution.choice.sectorEffects ?? {}, resolution.action?.sectorEffects), multiplier)
+    : undefined;
+
   return (
     <div className="app-shell">
       {game.phase === "start" && <StartScreen onStart={handleStart} bestResult={bestResult} />}
@@ -111,7 +116,12 @@ function App() {
             )}
           </header>
 
-          <Dashboard indicators={game.indicators} lastDeltas={dashboardDeltas} />
+          <SectorsPanel sectors={game.sectors} lastDeltas={sectorDeltas} />
+
+          <div className="indicators-panel">
+            <span className="panel-heading">Indicadores</span>
+            <Dashboard indicators={game.indicators} lastDeltas={dashboardDeltas} />
+          </div>
 
           <main className="game-main">
             {resolution ? (
@@ -137,6 +147,7 @@ function App() {
               <EndScreen
                 result={game.endResult}
                 indicators={game.indicators}
+                sectors={game.sectors}
                 history={game.history}
                 indicatorSnapshots={game.indicatorSnapshots}
                 totalTurns={game.totalTurns}

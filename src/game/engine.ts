@@ -1,5 +1,6 @@
 import { EVENTS } from "../data/events";
 import { CRITICAL_INDICATORS, INDICATOR_META, INDICATOR_ORDER, createInitialIndicators } from "../data/indicators";
+import { createInitialSectors } from "../data/sectors";
 import type { Difficulty, EndResult, EventChoice, GameEvent, GameState, Indicators, PresidentialAction } from "../types";
 
 export const TOTAL_TURNS = 16;
@@ -33,33 +34,40 @@ export function buildDeck(): GameEvent[] {
 }
 
 export function createStartState(): GameState {
+  const initialIndicators = createInitialIndicators();
+  const initialSectors = createInitialSectors();
   return {
     phase: "start",
     difficulty: "normal",
-    indicators: createInitialIndicators(),
+    indicators: initialIndicators,
+    sectors: initialSectors,
     turn: 0,
     totalTurns: TOTAL_TURNS,
     deck: [],
     currentEvent: null,
     history: [],
-    indicatorSnapshots: [createInitialIndicators()],
+    indicatorSnapshots: [initialIndicators],
+    sectorSnapshots: [initialSectors],
     endResult: null,
   };
 }
 
 export function createNewGame(difficulty: Difficulty = "normal"): GameState {
   const deck = buildDeck();
-  const initial = createInitialIndicators();
+  const initialIndicators = createInitialIndicators();
+  const initialSectors = createInitialSectors();
   return {
     phase: "playing",
     difficulty,
-    indicators: initial,
+    indicators: initialIndicators,
+    sectors: initialSectors,
     turn: 1,
     totalTurns: TOTAL_TURNS,
     deck: deck.slice(1),
     currentEvent: deck[0] ?? null,
     history: [],
-    indicatorSnapshots: [initial],
+    indicatorSnapshots: [initialIndicators],
+    sectorSnapshots: [initialSectors],
     endResult: null,
   };
 }
@@ -68,9 +76,13 @@ function clamp(value: number): number {
   return Math.max(0, Math.min(100, value));
 }
 
-export function applyEffects(indicators: Indicators, effects: EventChoice["effects"]): Indicators {
-  const next = { ...indicators };
-  for (const key of INDICATOR_ORDER) {
+/** Aplica um conjunto de efeitos (indicadores OU setores — qualquer registro 0-100) a um estado atual. */
+export function applyEffects<K extends string>(
+  current: Record<K, number>,
+  effects: Partial<Record<K, number>>
+): Record<K, number> {
+  const next = { ...current };
+  for (const key of Object.keys(effects) as K[]) {
     const delta = effects[key];
     if (delta) {
       next[key] = clamp(next[key] + delta);
@@ -79,13 +91,13 @@ export function applyEffects(indicators: Indicators, effects: EventChoice["effec
   return next;
 }
 
-export function mergeEffects(
-  a: EventChoice["effects"],
-  b: EventChoice["effects"] | undefined
-): EventChoice["effects"] {
+export function mergeEffects<K extends string>(
+  a: Partial<Record<K, number>>,
+  b: Partial<Record<K, number>> | undefined
+): Partial<Record<K, number>> {
   if (!b) return a;
-  const merged: EventChoice["effects"] = { ...a };
-  for (const key of INDICATOR_ORDER) {
+  const merged: Partial<Record<K, number>> = { ...a };
+  for (const key of Object.keys(b) as K[]) {
     const delta = b[key];
     if (delta) {
       merged[key] = (merged[key] ?? 0) + delta;
@@ -94,10 +106,13 @@ export function mergeEffects(
   return merged;
 }
 
-export function scaleEffects(effects: EventChoice["effects"], multiplier: number): EventChoice["effects"] {
+export function scaleEffects<K extends string>(
+  effects: Partial<Record<K, number>>,
+  multiplier: number
+): Partial<Record<K, number>> {
   if (multiplier === 1) return effects;
-  const scaled: EventChoice["effects"] = {};
-  for (const key of INDICATOR_ORDER) {
+  const scaled: Partial<Record<K, number>> = {};
+  for (const key of Object.keys(effects) as K[]) {
     const delta = effects[key];
     if (delta) {
       scaled[key] = Math.round(delta * multiplier);
@@ -178,13 +193,22 @@ export function applyChoice(
   const history = [...state.history, { event: state.currentEvent, choice, action }];
   const indicatorSnapshots = [...state.indicatorSnapshots, indicators];
 
+  const combinedSectorEffects = scaleEffects(
+    mergeEffects(choice.sectorEffects ?? {}, action?.sectorEffects),
+    multiplier
+  );
+  const sectors = applyEffects(state.sectors, combinedSectorEffects);
+  const sectorSnapshots = [...state.sectorSnapshots, sectors];
+
   const failure = checkCriticalFailure(indicators);
   if (failure) {
     return {
       ...state,
       indicators,
+      sectors,
       history,
       indicatorSnapshots,
+      sectorSnapshots,
       phase: "ended",
       currentEvent: null,
       endResult: failure,
@@ -195,8 +219,10 @@ export function applyChoice(
     return {
       ...state,
       indicators,
+      sectors,
       history,
       indicatorSnapshots,
+      sectorSnapshots,
       phase: "ended",
       currentEvent: null,
       endResult: computeLegado(indicators),
@@ -207,8 +233,10 @@ export function applyChoice(
   return {
     ...state,
     indicators,
+    sectors,
     history,
     indicatorSnapshots,
+    sectorSnapshots,
     turn: state.turn + 1,
     deck: restDeck,
     currentEvent: nextEvent ?? null,

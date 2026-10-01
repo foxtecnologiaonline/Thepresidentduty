@@ -1,7 +1,7 @@
 import { Component, lazy, Suspense, type ReactNode } from "react";
 import { ShareButton } from "./ShareButton";
 import { buildShareText } from "../game/share";
-import type { EndResult, GameState, Indicators } from "../types";
+import type { EndResult, GameState, Indicators, Sectors } from "../types";
 
 // O relatório (gráfico + timeline + conquistas) só é necessário quando o
 // mandato termina, então fica num chunk separado em vez de pesar no
@@ -37,6 +37,7 @@ class ReportErrorBoundary extends Component<{ children: ReactNode }, { hasError:
 interface Props {
   result: EndResult;
   indicators: Indicators;
+  sectors: Sectors;
   history: GameState["history"];
   indicatorSnapshots: Indicators[];
   totalTurns: number;
@@ -48,6 +49,7 @@ interface Props {
 export function EndScreen({
   result,
   indicators,
+  sectors,
   history,
   indicatorSnapshots,
   totalTurns,
@@ -67,6 +69,7 @@ export function EndScreen({
         <Suspense fallback={<p className="report-loading">Carregando relatório do mandato…</p>}>
           <MandateReport
             indicators={indicators}
+            sectors={sectors}
             history={history}
             indicatorSnapshots={indicatorSnapshots}
             earnedAchievementIds={earnedAchievementIds}

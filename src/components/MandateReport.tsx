@@ -1,12 +1,14 @@
 import { INDICATOR_META, INDICATOR_ORDER, createInitialIndicators } from "../data/indicators";
+import { SECTOR_META, SECTOR_ORDER, createInitialSectors } from "../data/sectors";
 import { computeLeanProfile, describeLean, leanToPercent } from "../game/leaning";
-import type { GameState, Indicators } from "../types";
+import type { GameState, IndicatorKey, Indicators, SectorKey, Sectors } from "../types";
 import { AchievementsPanel } from "./AchievementsPanel";
 import { MandateTimeline } from "./MandateTimeline";
 import { TrajectoryChart } from "./TrajectoryChart";
 
 interface Props {
   indicators: Indicators;
+  sectors: Sectors;
   history: GameState["history"];
   indicatorSnapshots: Indicators[];
   earnedAchievementIds: Set<string>;
@@ -23,14 +25,52 @@ function trendMessage(trend: "direita" | "esquerda" | "estavel"): string {
   return "Sua linha ideológica se manteve estável do início ao fim do mandato.";
 }
 
+interface ComparisonListProps<K extends string> {
+  order: K[];
+  meta: Record<K, { label: string; icon: string }>;
+  initial: Record<K, number>;
+  current: Record<K, number>;
+}
+
+function ComparisonList<K extends string>({ order, meta, initial, current }: ComparisonListProps<K>) {
+  return (
+    <div className="comparison-list">
+      {order.map((key) => {
+        const start = Math.round(initial[key]);
+        const end = Math.round(current[key]);
+        const delta = end - start;
+        const trendClass = delta > 0 ? "up" : delta < 0 ? "down" : "flat";
+        return (
+          <div key={key} className="comparison-row">
+            <span className="indicator-icon" aria-hidden="true">
+              {meta[key].icon}
+            </span>
+            <span className="comparison-label">{meta[key].label}</span>
+            <span className="comparison-values">
+              {start} → {end}
+            </span>
+            <span className={`comparison-delta ${trendClass}`}>
+              {trendClass === "up" && `▲ avançou +${delta}`}
+              {trendClass === "down" && `▼ recuou ${delta}`}
+              {trendClass === "flat" && "• estável"}
+            </span>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 export function MandateReport({
   indicators,
+  sectors,
   history,
   indicatorSnapshots,
   earnedAchievementIds,
   newAchievementIds,
 }: Props) {
-  const initial = createInitialIndicators();
+  const initialIndicators = createInitialIndicators();
+  const initialSectors = createInitialSectors();
   const profile = computeLeanProfile(history);
 
   return (
@@ -42,31 +82,18 @@ export function MandateReport({
 
       <section className="report-section">
         <h3>Como o país mudou</h3>
-        <div className="comparison-list">
-          {INDICATOR_ORDER.map((key) => {
-            const start = Math.round(initial[key]);
-            const end = Math.round(indicators[key]);
-            const delta = end - start;
-            const trendClass = delta > 0 ? "up" : delta < 0 ? "down" : "flat";
-            return (
-              <div key={key} className="comparison-row">
-                <span className="indicator-icon" aria-hidden="true">
-                  {INDICATOR_META[key].icon}
-                </span>
-                <span className="comparison-label">{INDICATOR_META[key].label}</span>
-                <span className="comparison-values">
-                  {start} → {end}
-                </span>
-                <span className={`comparison-delta ${trendClass}`}>
-                  {trendClass === "up" && `▲ avançou +${delta}`}
-                  {trendClass === "down" && `▼ recuou ${delta}`}
-                  {trendClass === "flat" && "• estável"}
-                </span>
-              </div>
-            );
-          })}
-        </div>
+        <ComparisonList<IndicatorKey>
+          order={INDICATOR_ORDER}
+          meta={INDICATOR_META}
+          initial={initialIndicators}
+          current={indicators}
+        />
         <MandateTimeline history={history} />
+      </section>
+
+      <section className="report-section">
+        <h3>Como os setores reagiram</h3>
+        <ComparisonList<SectorKey> order={SECTOR_ORDER} meta={SECTOR_META} initial={initialSectors} current={sectors} />
       </section>
 
       {profile && (

@@ -1,5 +1,6 @@
 import { computeLeanProfile, describeLean } from "../game/leaning";
 import { CRITICAL_INDICATORS, CRITICAL_WARNING_THRESHOLD } from "./indicators";
+import { SECTOR_ORDER } from "./sectors";
 import type { GameState } from "../types";
 
 export interface Achievement {
@@ -74,6 +75,21 @@ export const ACHIEVEMENTS: Achievement[] = [
     check: (state) => {
       const profile = computeLeanProfile(state.history);
       return !!profile && profile.trend !== "estavel";
+    },
+  },
+  {
+    id: "unidade-nacional",
+    label: "Unidade Nacional",
+    description: "Encerrou o mandato com apoio de pelo menos 60 em todos os setores da sociedade.",
+    check: (state) => !!state.endResult?.victory && SECTOR_ORDER.every((key) => state.sectors[key] >= 60),
+  },
+  {
+    id: "pais-dividido",
+    label: "País Dividido",
+    description: "Terminou o mandato com um setor em forte rejeição e outro em forte apoio ao mesmo tempo.",
+    check: (state) => {
+      const values = SECTOR_ORDER.map((key) => state.sectors[key]);
+      return Math.min(...values) <= 20 && Math.max(...values) >= 80;
     },
   },
 ];

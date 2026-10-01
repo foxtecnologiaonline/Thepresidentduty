@@ -27,6 +27,24 @@
   font-weight: 600;
 }
 
+/* Painéis de setores sociais e indicadores: mesmo cabeçalho discreto para
+   diferenciar as duas grades empilhadas sem competir visualmente com elas. */
+.panel-heading {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.sectors-panel,
+.indicators-panel {
+  display: flex;
+  flex-direction: column;
+}
+
 /* Dashboard */
 
 .dashboard {
@@ -209,6 +227,15 @@
 }
 
 .action-summary {
+  border-top: 1px dashed var(--border);
+  padding-top: 12px;
+  margin-top: 2px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sector-repercussion {
   border-top: 1px dashed var(--border);
   padding-top: 12px;
   margin-top: 2px;
