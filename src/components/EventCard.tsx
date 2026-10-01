@@ -1,4 +1,5 @@
 import { INDICATOR_META } from "../data/indicators";
+import { scaleEffects } from "../game/engine";
 import type { EventChoice, GameEvent, PresidentialAction } from "../types";
 
 interface Props {
@@ -7,6 +8,8 @@ interface Props {
   turn: number;
   actions: PresidentialAction[];
   selectedAction: PresidentialAction | null;
+  /** Multiplicador da dificuldade atual — a prévia precisa refletir o que será de fato aplicado. */
+  multiplier: number;
   onSelectAction: (action: PresidentialAction) => void;
   onChoose: (choice: EventChoice) => void;
 }
@@ -31,6 +34,7 @@ export function EventCard({
   turn,
   actions,
   selectedAction,
+  multiplier,
   onSelectAction,
   onChoose,
 }: Props) {
@@ -62,7 +66,7 @@ export function EventCard({
                     Disponível a partir do Ano {Math.ceil((action.minTurn ?? 1) / 4)}
                   </span>
                 ) : (
-                  <EffectsPreview effects={action.effects} />
+                  <EffectsPreview effects={scaleEffects(action.effects, multiplier)} />
                 )}
               </button>
             );
@@ -83,7 +87,7 @@ export function EventCard({
               onClick={() => onChoose(choice)}
             >
               <span className="choice-label">{choice.label}</span>
-              <EffectsPreview effects={choice.effects} />
+              <EffectsPreview effects={scaleEffects(choice.effects, multiplier)} />
             </button>
           ))}
         </div>

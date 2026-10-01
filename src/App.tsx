@@ -7,7 +7,15 @@ import { ResolutionPanel } from "./components/ResolutionPanel";
 import { StartScreen } from "./components/StartScreen";
 import { ACHIEVEMENTS } from "./data/achievements";
 import { ACTIONS } from "./data/actions";
-import { applyChoice, createNewGame, createStartState, formatTurnLabel, mergeEffects } from "./game/engine";
+import {
+  applyChoice,
+  createNewGame,
+  createStartState,
+  DIFFICULTY_MULTIPLIERS,
+  formatTurnLabel,
+  mergeEffects,
+  scaleEffects,
+} from "./game/engine";
 import {
   loadBestResult,
   loadUnlockedAchievements,
@@ -82,8 +90,10 @@ function App() {
     isProcessingChoice.current = false;
   }
 
+  const multiplier = DIFFICULTY_MULTIPLIERS[game.difficulty];
+
   const dashboardDeltas = resolution
-    ? mergeEffects(resolution.choice.effects, resolution.action?.effects)
+    ? scaleEffects(mergeEffects(resolution.choice.effects, resolution.action?.effects), multiplier)
     : undefined;
 
   return (
@@ -109,6 +119,7 @@ function App() {
                 event={resolution.event}
                 choice={resolution.choice}
                 action={resolution.action}
+                multiplier={multiplier}
                 onContinue={handleContinue}
               />
             ) : game.phase === "playing" && game.currentEvent ? (
@@ -118,6 +129,7 @@ function App() {
                 turn={game.turn}
                 actions={ACTIONS}
                 selectedAction={selectedAction}
+                multiplier={multiplier}
                 onSelectAction={handleSelectAction}
                 onChoose={handleChoose}
               />
