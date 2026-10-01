@@ -590,6 +590,16 @@
   }
 }
 
+/* Quem pediu menos movimento ao sistema ainda vê o alerta (anel estático
+   vermelho), só sem o pulso contínuo — justo no momento de mais tensão do
+   jogo não é hora de ignorar essa preferência. */
+@media (prefers-reduced-motion: reduce) {
+  .indicator.critical-warning {
+    animation: none;
+    box-shadow: 0 0 0 2px rgba(229, 72, 77, 0.55);
+  }
+}
+
 /* Locked directive chip */
 
 .action-chip.locked {

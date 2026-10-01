@@ -1,4 +1,4 @@
-import { lazy, Suspense } from "react";
+import { Component, lazy, Suspense, type ReactNode } from "react";
 import { ShareButton } from "./ShareButton";
 import { buildShareText } from "../game/share";
 import type { EndResult, GameState, Indicators } from "../types";
@@ -9,6 +9,30 @@ import type { EndResult, GameState, Indicators } from "../types";
 const MandateReport = lazy(() =>
   import("./MandateReport").then((module) => ({ default: module.MandateReport }))
 );
+
+// O carregamento do chunk é uma requisição de rede (pode falhar por estar
+// offline, por um deploy novo ter invalidado o hash do chunk em cache, etc.).
+// Sem esse boundary, uma falha no import() derrubaria a tela inteira em vez
+// de só o relatório.
+class ReportErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean }> {
+  state = { hasError: false };
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <p className="report-loading">
+          Não foi possível carregar o relatório do mandato. Recarregue a página para tentar
+          novamente.
+        </p>
+      );
+    }
+    return this.props.children;
+  }
+}
 
 interface Props {
   result: EndResult;
@@ -39,15 +63,17 @@ export function EndScreen({
         Mandato encerrado no trimestre {history.length} de {totalTurns}.
       </p>
 
-      <Suspense fallback={<p className="report-loading">Carregando relatório do mandato…</p>}>
-        <MandateReport
-          indicators={indicators}
-          history={history}
-          indicatorSnapshots={indicatorSnapshots}
-          earnedAchievementIds={earnedAchievementIds}
-          newAchievementIds={newAchievementIds}
-        />
-      </Suspense>
+      <ReportErrorBoundary>
+        <Suspense fallback={<p className="report-loading">Carregando relatório do mandato…</p>}>
+          <MandateReport
+            indicators={indicators}
+            history={history}
+            indicatorSnapshots={indicatorSnapshots}
+            earnedAchievementIds={earnedAchievementIds}
+            newAchievementIds={newAchievementIds}
+          />
+        </Suspense>
+      </ReportErrorBoundary>
 
       <div className="end-screen-actions">
         <button type="button" className="primary-button" onClick={onRestart}>

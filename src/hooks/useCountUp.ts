@@ -12,6 +12,11 @@ export function useCountUp(target: number): number {
     const delta = target - start;
     if (delta === 0) return;
 
+    if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) {
+      setDisplayed(target);
+      return;
+    }
+
     const startTime = performance.now();
 
     function tick(now: number) {
