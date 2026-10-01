@@ -4,6 +4,7 @@ export const EVENTS: GameEvent[] = [
   {
     id: "reforma-tributaria",
     title: "Reforma Tributária",
+    category: "economia",
     description:
       "Seu ministério da Fazenda propõe uma reforma tributária que simplifica impostos, mas taxa mais os mais ricos. Empresários pressionam contra; a população pobre apoia.",
     choices: [
@@ -30,6 +31,7 @@ export const EVENTS: GameEvent[] = [
   {
     id: "greve-policial",
     title: "Greve da Polícia",
+    category: "seguranca",
     description:
       "Policiais estaduais entram em greve por salários melhores. A criminalidade começa a subir enquanto a categoria pede reajuste imediato.",
     choices: [
@@ -59,12 +61,14 @@ export const EVENTS: GameEvent[] = [
         effects: { seguranca: -10, popularidade: -6 },
         sectorEffects: { militares: -8, movimentosSociais: -5, populacao: -4 },
         leaning: 2,
+        triggersEventId: "ataque-cibernetico",
       },
     ],
   },
   {
     id: "crise-hospitalar",
     title: "Colapso na Rede Hospitalar",
+    category: "saude",
     description:
       "Hospitais públicos relatam superlotação e falta de leitos. A imprensa cobra uma resposta imediata do governo.",
     choices: [
@@ -91,6 +95,7 @@ export const EVENTS: GameEvent[] = [
   {
     id: "reforma-educacional",
     title: "Reforma do Ensino Médio",
+    category: "educacao",
     description:
       "Especialistas propõem uma reforma curricular ampla. Professores temem precarização; parte da sociedade quer modernização rápida.",
     choices: [
@@ -117,6 +122,7 @@ export const EVENTS: GameEvent[] = [
   {
     id: "desmatamento",
     title: "Pressão do Agronegócio",
+    category: "ambiental",
     description:
       "Ruralistas pedem liberação de novas áreas para agricultura em regiões de proteção ambiental, alegando ganhos econômicos urgentes.",
     choices: [
@@ -128,6 +134,7 @@ export const EVENTS: GameEvent[] = [
         effects: { economia: 8, meioAmbiente: -12, relacoesInternacionais: -6 },
         sectorEffects: { empresariado: 10, movimentosSociais: -10, academicos: -6 },
         leaning: 2,
+        triggersEventId: "cupula-clima",
       },
       {
         id: "proteger",
@@ -143,6 +150,7 @@ export const EVENTS: GameEvent[] = [
   {
     id: "acordo-comercial",
     title: "Acordo Comercial Internacional",
+    category: "internacional",
     description:
       "Um grande bloco econômico oferece um acordo de livre comércio. Ele abre mercados, mas ameaça indústrias nacionais menos competitivas.",
     choices: [
@@ -169,6 +177,7 @@ export const EVENTS: GameEvent[] = [
   {
     id: "escandalo-corrupcao",
     title: "Escândalo de Corrupção",
+    category: "institucional",
     description:
       "Um ministro de confiança é flagrado em um esquema de desvio de verbas. A oposição pede sua cabeça; aliados pedem discrição.",
     choices: [
@@ -189,12 +198,14 @@ export const EVENTS: GameEvent[] = [
         effects: { governabilidade: 4, popularidade: -10 },
         sectorEffects: { politicos: 6, movimentosSociais: -8, academicos: -6 },
         leaning: 0,
+        triggersEventId: "cpi-investigacao",
       },
     ],
   },
   {
     id: "protesto-popular",
     title: "Protesto Popular Massivo",
+    category: "social",
     description:
       "Milhares de pessoas tomam as ruas contra o custo de vida. Parte dos manifestantes pede sua renúncia; a polícia pede autorização para agir com rigor.",
     choices: [
@@ -215,12 +226,14 @@ export const EVENTS: GameEvent[] = [
         effects: { seguranca: 5, popularidade: -12 },
         sectorEffects: { militares: 5, movimentosSociais: -12, populacao: -7 },
         leaning: 2,
+        triggersEventId: "cpi-investigacao",
       },
     ],
   },
   {
     id: "enchente",
     title: "Enchentes Devastadoras",
+    category: "ambiental",
     description:
       "Chuvas históricas causam enchentes em várias cidades, deixando milhares desabrigados. O país espera uma resposta rápida do governo federal.",
     choices: [
@@ -247,6 +260,7 @@ export const EVENTS: GameEvent[] = [
   {
     id: "pauta-impopular",
     title: "Pauta Impopular no Congresso",
+    category: "institucional",
     description:
       "Para manter sua base aliada, líderes do Congresso pedem que você apoie publicamente uma pauta polêmica e impopular.",
     choices: [
@@ -273,6 +287,7 @@ export const EVENTS: GameEvent[] = [
   {
     id: "energia-limpa",
     title: "Programa de Energia Limpa",
+    category: "ambiental",
     description:
       "Seu governo pode lançar um grande programa de incentivo a energias renováveis, com custo inicial alto mas retorno ambiental e de imagem no longo prazo.",
     choices: [
@@ -299,6 +314,7 @@ export const EVENTS: GameEvent[] = [
   {
     id: "crise-migratoria",
     title: "Crise Migratória na Fronteira",
+    category: "internacional",
     description:
       "Um fluxo migratório intenso vindo de um país vizinho em crise pressiona cidades fronteiriças e divide a opinião pública.",
     choices: [
@@ -325,6 +341,7 @@ export const EVENTS: GameEvent[] = [
   {
     id: "ataque-cibernetico",
     title: "Ataque Cibernético a Infraestrutura",
+    category: "seguranca",
     description:
       "Hackers atacam sistemas de energia e bancos públicos, causando instabilidade e assustando investidores.",
     choices: [
@@ -351,6 +368,7 @@ export const EVENTS: GameEvent[] = [
   {
     id: "recessao-global",
     title: "Recessão Econômica Global",
+    category: "economia",
     description:
       "Uma crise financeira internacional reduz as exportações e ameaça a economia nacional. O mercado espera sinais claros do governo.",
     choices: [
@@ -377,6 +395,7 @@ export const EVENTS: GameEvent[] = [
   {
     id: "racionamento",
     title: "Racionamento de Água e Energia",
+    category: "ambiental",
     description:
       "Uma seca severa reduz os reservatórios do país, forçando decisões impopulares sobre racionamento.",
     choices: [
@@ -403,6 +422,7 @@ export const EVENTS: GameEvent[] = [
   {
     id: "cpi-investigacao",
     title: "CPI no Congresso",
+    category: "institucional",
     description:
       "Parlamentares da oposição instauram uma Comissão Parlamentar de Inquérito para investigar supostas irregularidades no seu governo.",
     choices: [
@@ -429,6 +449,7 @@ export const EVENTS: GameEvent[] = [
   {
     id: "epidemia-regional",
     title: "Epidemia Regional",
+    category: "saude",
     description:
       "Um surto de doença infecciosa se espalha em regiões do país, sobrecarregando postos de saúde locais.",
     choices: [
@@ -455,6 +476,7 @@ export const EVENTS: GameEvent[] = [
   {
     id: "salario-minimo",
     title: "Aumento do Salário Mínimo",
+    category: "economia",
     description:
       "Centrais sindicais pressionam por um reajuste real do salário mínimo acima da inflação. Empresários alertam para o impacto nos custos.",
     choices: [
@@ -481,6 +503,7 @@ export const EVENTS: GameEvent[] = [
   {
     id: "cupula-clima",
     title: "Cúpula Internacional do Clima",
+    category: "internacional",
     description:
       "Seu país é convidado a assumir metas ambiciosas de redução de emissões em uma cúpula global de clima, com prazos apertados.",
     choices: [
@@ -507,6 +530,7 @@ export const EVENTS: GameEvent[] = [
   {
     id: "motim-militar",
     title: "Tensão nas Forças Armadas",
+    category: "seguranca",
     description:
       "Setores das Forças Armadas expressam publicamente insatisfação com cortes no orçamento militar, gerando um clima de tensão institucional.",
     choices: [

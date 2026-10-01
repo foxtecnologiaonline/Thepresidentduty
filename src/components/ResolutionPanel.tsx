@@ -64,6 +64,10 @@ export function ResolutionPanel({ event, choice, action, multiplier, onContinue 
 
       <SectorEffectsList effects={sectorEffects} />
 
+      {choice.triggersEventId && (
+        <p className="chain-hint">⚡ Essa decisão pode gerar consequências num trimestre futuro.</p>
+      )}
+
       <button type="button" className="primary-button" onClick={onContinue}>
         Continuar
       </button>

@@ -53,6 +53,24 @@ export interface SectorMeta {
  */
 export type Leaning = -2 | -1 | 0 | 1 | 2;
 
+/** Tema predominante do evento — usado na tag visual do card e para variar o baralho. */
+export type EventCategory =
+  | "economia"
+  | "seguranca"
+  | "saude"
+  | "educacao"
+  | "ambiental"
+  | "internacional"
+  | "institucional"
+  | "social";
+
+export interface EventCategoryMeta {
+  key: EventCategory;
+  label: string;
+  icon: string;
+  color: string;
+}
+
 export interface EventChoice {
   id: string;
   label: string;
@@ -61,12 +79,20 @@ export interface EventChoice {
   /** Como essa escolha repercute entre os setores da sociedade; ausente = nenhum efeito notável. */
   sectorEffects?: Partial<Record<SectorKey, number>>;
   leaning: Leaning;
+  /**
+   * Id de um evento que essa escolha "convoca" para o trimestre seguinte, se ele ainda
+   * estiver no baralho e não tiver sido jogado — uma consequência narrativa concreta além
+   * dos números. Sem garantia: se o evento alvo não foi sorteado para esta partida, não
+   * tem efeito.
+   */
+  triggersEventId?: string;
 }
 
 export interface GameEvent {
   id: string;
   title: string;
   description: string;
+  category: EventCategory;
   choices: EventChoice[];
 }
 
@@ -112,4 +138,6 @@ export interface GameState {
   /** Retrato dos setores ao final de cada turno (índice 0 = estado inicial). */
   sectorSnapshots: Sectors[];
   endResult: EndResult | null;
+  /** Quantos mandatos consecutivos dessa dinastia já foram jogados (1 = o primeiro). */
+  dynastyTerm: number;
 }

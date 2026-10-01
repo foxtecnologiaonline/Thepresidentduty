@@ -1,3 +1,5 @@
+import type { Difficulty, GameState } from "../types";
+
 export interface BestResult {
   title: string;
   average: number;
@@ -71,4 +73,139 @@ export function unlockAchievements(ids: string[]): Set<string> {
     // Armazenamento indisponível — segue sem persistir.
   }
   return current;
+}
+
+export type Theme = "dark" | "light";
+
+const THEME_KEY = "presidencia:theme";
+
+export function loadTheme(): Theme {
+  try {
+    const raw = localStorage.getItem(THEME_KEY);
+    return raw === "light" ? "light" : "dark";
+  } catch {
+    return "dark";
+  }
+}
+
+export function saveTheme(theme: Theme): void {
+  try {
+    localStorage.setItem(THEME_KEY, theme);
+  } catch {
+    // Armazenamento indisponível — segue sem persistir.
+  }
+}
+
+const ONBOARDING_KEY = "presidencia:onboarding-seen";
+
+export function hasSeenOnboarding(): boolean {
+  try {
+    return localStorage.getItem(ONBOARDING_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
+export function markOnboardingSeen(): void {
+  try {
+    localStorage.setItem(ONBOARDING_KEY, "1");
+  } catch {
+    // Armazenamento indisponível — segue sem persistir.
+  }
+}
+
+export interface MandateHistoryEntry {
+  title: string;
+  average: number;
+  turnReached: number;
+  victory: boolean;
+  difficulty: Difficulty;
+  playedAt: number;
+}
+
+const MANDATE_HISTORY_KEY = "presidencia:mandate-history";
+const MANDATE_HISTORY_LIMIT = 5;
+
+function isMandateHistoryEntry(value: unknown): value is MandateHistoryEntry {
+  if (!value || typeof value !== "object") return false;
+  const candidate = value as Record<string, unknown>;
+  return (
+    typeof candidate.title === "string" &&
+    typeof candidate.average === "number" &&
+    typeof candidate.turnReached === "number" &&
+    typeof candidate.victory === "boolean" &&
+    typeof candidate.difficulty === "string" &&
+    typeof candidate.playedAt === "number"
+  );
+}
+
+export function loadMandateHistory(): MandateHistoryEntry[] {
+  try {
+    const raw = localStorage.getItem(MANDATE_HISTORY_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed.filter(isMandateHistoryEntry) : [];
+  } catch {
+    return [];
+  }
+}
+
+/** Adiciona um mandato ao topo do histórico (mais recente primeiro), mantendo só os últimos 5. */
+export function addMandateHistoryEntry(entry: MandateHistoryEntry): MandateHistoryEntry[] {
+  const next = [entry, ...loadMandateHistory()].slice(0, MANDATE_HISTORY_LIMIT);
+  try {
+    localStorage.setItem(MANDATE_HISTORY_KEY, JSON.stringify(next));
+  } catch {
+    // Armazenamento indisponível — segue sem persistir.
+  }
+  return next;
+}
+
+const IN_PROGRESS_KEY = "presidencia:in-progress";
+
+/**
+ * Checagem leve de forma, não exaustiva: o bastante para recusar um save de uma versão
+ * incompatível do jogo (chaves de indicadores/setores diferentes, formato de fase inválido)
+ * em vez de travar tentando retomar um GameState que não bate com o código atual.
+ */
+function isLikelyGameState(value: unknown): value is GameState {
+  if (!value || typeof value !== "object") return false;
+  const candidate = value as Record<string, unknown>;
+  return (
+    (candidate.phase === "playing" || candidate.phase === "ended") &&
+    typeof candidate.indicators === "object" &&
+    candidate.indicators !== null &&
+    typeof candidate.sectors === "object" &&
+    candidate.sectors !== null &&
+    typeof candidate.dynastyTerm === "number" &&
+    Array.isArray(candidate.deck) &&
+    Array.isArray(candidate.history)
+  );
+}
+
+export function loadInProgressGame(): GameState | null {
+  try {
+    const raw = localStorage.getItem(IN_PROGRESS_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    return isLikelyGameState(parsed) && parsed.phase === "playing" ? parsed : null;
+  } catch {
+    return null;
+  }
+}
+
+export function saveInProgressGame(state: GameState): void {
+  try {
+    localStorage.setItem(IN_PROGRESS_KEY, JSON.stringify(state));
+  } catch {
+    // Armazenamento indisponível — segue sem persistir.
+  }
+}
+
+export function clearInProgressGame(): void {
+  try {
+    localStorage.removeItem(IN_PROGRESS_KEY);
+  } catch {
+    // Armazenamento indisponível — nada a limpar.
+  }
 }

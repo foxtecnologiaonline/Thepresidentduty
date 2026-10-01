@@ -3,6 +3,13 @@ import { CRITICAL_INDICATORS, INDICATOR_META, INDICATOR_ORDER, createInitialIndi
 import { createInitialSectors } from "../data/sectors";
 import type { Difficulty, EndResult, EventChoice, GameEvent, GameState, Indicators, PresidentialAction } from "../types";
 
+/** Legado que um mandato concluído transmite ao próximo da mesma dinastia (Nova Partida+). */
+export interface DynastyLegacy {
+  /** Delta aplicado aos indicadores iniciais do novo mandato (já pronto para somar, sem precisar reclampar antes). */
+  indicatorBonus: Partial<Record<keyof Indicators, number>>;
+  dynastyTerm: number;
+}
+
 export const TOTAL_TURNS = 16;
 
 const QUARTER_MONTHS = ["Jan–Mar", "Abr–Jun", "Jul–Set", "Out–Dez"];
@@ -29,8 +36,48 @@ function shuffle<T>(items: T[]): T[] {
   return array;
 }
 
+/** Soma das magnitudes de efeito de um evento — proxy simples de "o quanto essa crise pesa". */
+function eventIntensity(event: GameEvent): number {
+  const total = event.choices.reduce(
+    (sum, choice) => sum + Object.values(choice.effects).reduce((s, v) => s + Math.abs(v ?? 0), 0),
+    0
+  );
+  return total / event.choices.length;
+}
+
+// Jitter grande o bastante para não virar uma ordenação estritamente crescente (o que
+// tornaria o mandato previsível e mudaria a curva de dificuldade já validada), mas que
+// ainda inclina o baralho para crises mais pesadas acontecerem mais perto do fim —
+// a sequência resultante aplica exatamente os mesmos efeitos totais, só muda a ordem.
+const INTENSITY_JITTER = 7;
+
+function orderByEscalatingIntensity(events: GameEvent[]): GameEvent[] {
+  return events
+    .map((event) => ({ event, sortKey: eventIntensity(event) + Math.random() * INTENSITY_JITTER }))
+    .sort((a, b) => a.sortKey - b.sortKey)
+    .map((entry) => entry.event);
+}
+
+/** Evita (sem garantir) duas crises seguidas da mesma categoria temática, trocando a
+    segunda ocorrência de lugar com o primeiro evento mais à frente que já resolva o choque. */
+function avoidConsecutiveCategories(events: GameEvent[]): GameEvent[] {
+  const result = [...events];
+  for (let i = 1; i < result.length; i++) {
+    if (result[i].category !== result[i - 1].category) continue;
+    for (let j = i + 1; j < result.length; j++) {
+      const nextCategory = result[i + 1]?.category;
+      if (result[j].category !== result[i - 1].category && result[j].category !== nextCategory) {
+        [result[i], result[j]] = [result[j], result[i]];
+        break;
+      }
+    }
+  }
+  return result;
+}
+
 export function buildDeck(): GameEvent[] {
-  return shuffle(EVENTS).slice(0, TOTAL_TURNS);
+  const drawn = shuffle(EVENTS).slice(0, TOTAL_TURNS);
+  return avoidConsecutiveCategories(orderByEscalatingIntensity(drawn));
 }
 
 export function createStartState(): GameState {
@@ -49,12 +96,14 @@ export function createStartState(): GameState {
     indicatorSnapshots: [initialIndicators],
     sectorSnapshots: [initialSectors],
     endResult: null,
+    dynastyTerm: 1,
   };
 }
 
-export function createNewGame(difficulty: Difficulty = "normal"): GameState {
+export function createNewGame(difficulty: Difficulty = "normal", legacy?: DynastyLegacy): GameState {
   const deck = buildDeck();
-  const initialIndicators = createInitialIndicators();
+  const baseIndicators = createInitialIndicators();
+  const initialIndicators = legacy ? applyEffects(baseIndicators, legacy.indicatorBonus) : baseIndicators;
   const initialSectors = createInitialSectors();
   return {
     phase: "playing",
@@ -69,6 +118,7 @@ export function createNewGame(difficulty: Difficulty = "normal"): GameState {
     indicatorSnapshots: [initialIndicators],
     sectorSnapshots: [initialSectors],
     endResult: null,
+    dynastyTerm: legacy?.dynastyTerm ?? 1,
   };
 }
 
@@ -229,7 +279,7 @@ export function applyChoice(
     };
   }
 
-  const [nextEvent, ...restDeck] = state.deck;
+  const [nextEvent, ...restDeck] = applyEventTrigger(state.deck, choice.triggersEventId);
   return {
     ...state,
     indicators,
@@ -241,6 +291,22 @@ export function applyChoice(
     deck: restDeck,
     currentEvent: nextEvent ?? null,
   };
+}
+
+/**
+ * Traz um evento "convocado" para o topo do baralho, se ele ainda estiver por vir —
+ * dá à escolha uma consequência narrativa concreta no próximo trimestre. Sem garantia:
+ * se o evento alvo não estiver mais no baralho (não foi sorteado para esta partida, ou
+ * já foi jogado), a função é um no-op.
+ */
+function applyEventTrigger(deck: GameEvent[], triggersEventId: string | undefined): GameEvent[] {
+  if (!triggersEventId) return deck;
+  const index = deck.findIndex((event) => event.id === triggersEventId);
+  if (index <= 0) return deck;
+  const reordered = [...deck];
+  const [triggered] = reordered.splice(index, 1);
+  reordered.unshift(triggered);
+  return reordered;
 }
 
 export function formatTurnLabel(turn: number): string {

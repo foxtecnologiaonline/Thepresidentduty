@@ -1,3 +1,4 @@
+import { CATEGORY_META } from "../data/categories";
 import { INDICATOR_META } from "../data/indicators";
 import { scaleEffects } from "../game/engine";
 import type { EventChoice, GameEvent, PresidentialAction } from "../types";
@@ -74,8 +75,13 @@ export function EventCard({
         </div>
       </div>
 
-      <div className="event-card">
-        <div className="event-turn">{turnLabel}</div>
+      <div className="event-card" style={{ borderTopColor: CATEGORY_META[event.category].color }}>
+        <div className="event-card-header">
+          <span className="event-turn">{turnLabel}</span>
+          <span className="event-category-tag" style={{ color: CATEGORY_META[event.category].color }}>
+            {CATEGORY_META[event.category].icon} {CATEGORY_META[event.category].label}
+          </span>
+        </div>
         <h2>{event.title}</h2>
         <p className="event-description">{event.description}</p>
         <div className="choices">

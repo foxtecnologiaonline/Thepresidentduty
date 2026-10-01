@@ -115,7 +115,7 @@
 .indicator-track {
   height: 6px;
   border-radius: 4px;
-  background: #1d2740;
+  background: var(--border);
   overflow: hidden;
 }
 
@@ -192,7 +192,7 @@
 }
 
 .action-chip {
-  background: #182236;
+  background: var(--surface-2);
   border: 1px solid var(--border);
   border-radius: 10px;
   padding: 7px 9px;
@@ -280,7 +280,7 @@
 }
 
 .choice-button {
-  background: #182236;
+  background: var(--surface-2);
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 14px;
@@ -335,7 +335,7 @@
 .primary-button {
   align-self: flex-start;
   background: var(--gold);
-  color: #1a1200;
+  color: var(--accent-ink);
   border: none;
   border-radius: 10px;
   padding: 12px 22px;
@@ -498,7 +498,7 @@
   height: 14px;
   border-radius: 50%;
   background: var(--gold);
-  border: 2px solid #1a1200;
+  border: 2px solid var(--accent-ink);
   box-shadow: 0 0 0 2px var(--gold);
 }
 
@@ -537,7 +537,7 @@
 }
 
 .lean-highlight {
-  background: #182236;
+  background: var(--surface-2);
   border: 1px solid var(--border);
   border-radius: 10px;
   padding: 10px 12px;
@@ -590,7 +590,7 @@
 }
 
 .difficulty-chip {
-  background: #182236;
+  background: var(--surface-2);
   border: 1px solid var(--border);
   border-radius: 999px;
   padding: 8px 18px;
@@ -684,7 +684,7 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
-  background: #182236;
+  background: var(--surface-2);
   border: 1px solid var(--border);
   border-radius: 10px;
   padding: 10px 12px;
@@ -762,7 +762,7 @@
   gap: 6px 8px;
   font-size: 12.5px;
   padding: 8px 10px;
-  background: #182236;
+  background: var(--surface-2);
   border: 1px solid var(--border);
   border-radius: 8px;
 }
@@ -808,7 +808,7 @@
   align-items: center;
   text-align: center;
   gap: 4px;
-  background: #182236;
+  background: var(--surface-2);
   border: 1px solid var(--border);
   border-radius: 10px;
   padding: 10px 8px;
@@ -867,4 +867,205 @@
   color: var(--text-muted);
   font-size: 13px;
   padding: 20px 0;
+}
+
+/* Theme toggle */
+
+.top-bar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: -8px;
+}
+
+.theme-toggle {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.theme-toggle:hover {
+  border-color: var(--gold);
+}
+
+/* Event category tag */
+
+.event-card {
+  border-top: 3px solid var(--border);
+}
+
+.event-card-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.event-category-tag {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+/* Chain hint (consequência futura de uma escolha) */
+
+.chain-hint {
+  font-size: 12.5px;
+  color: var(--gold);
+  font-weight: 600;
+}
+
+/* Stats tabs (telas muito estreitas) */
+
+.stats-tabs {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.stats-tab-buttons {
+  display: flex;
+  gap: 6px;
+}
+
+.stats-tab-buttons button {
+  flex: 1;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 8px 12px;
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.stats-tab-buttons button.active {
+  border-color: var(--gold);
+  color: var(--gold);
+  background: rgba(242, 193, 78, 0.12);
+}
+
+/* Onboarding modal */
+
+.onboarding-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  z-index: 30;
+}
+
+.onboarding-modal {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+  max-width: 480px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.onboarding-modal h2 {
+  font-size: 20px;
+  color: var(--gold);
+}
+
+.onboarding-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  color: var(--text-muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.onboarding-list strong {
+  color: var(--text);
+}
+
+.onboarding-modal .primary-button {
+  align-self: center;
+}
+
+/* Mandate history (start screen) */
+
+.history-details {
+  width: 100%;
+  max-width: 420px;
+}
+
+.history-details summary {
+  cursor: pointer;
+  color: var(--gold);
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.history-list {
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.history-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 12.5px;
+  padding: 8px 10px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--border);
+  border-radius: 8px;
+  text-align: left;
+}
+
+.history-item.victory {
+  border-left-color: var(--ok);
+}
+
+.history-item.defeat {
+  border-left-color: var(--danger);
+}
+
+.history-title {
+  font-weight: 700;
+  color: var(--text);
+}
+
+.history-meta {
+  color: var(--text-muted);
+}
+
+/* Dynasty continuation */
+
+.dynasty-hint {
+  color: var(--text-muted);
+  font-size: 12.5px;
+  font-style: italic;
 }

@@ -1,10 +1,12 @@
 :root {
   --bg: #0b1220;
   --bg-elevated: #131c30;
+  --surface-2: #182236;
   --text: #e6e9f2;
   --text-muted: #9aa4bb;
   --border: #263149;
   --gold: #f2c14e;
+  --accent-ink: #1a1200;
   --ok: #3ecf8e;
   --warning: #f2c14e;
   --danger: #e5484d;
@@ -17,6 +19,23 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Tema claro opcional, alternado pelo jogador (ThemeToggle) e persistido — o escuro
+   ("night briefing room") continua sendo a identidade padrão do jogo. */
+:root[data-theme="light"] {
+  --bg: #f3efe4;
+  --bg-elevated: #fffdf7;
+  --surface-2: #f7f1e1;
+  --text: #241d0f;
+  --text-muted: #6d6248;
+  --border: #ddd2b3;
+  --gold: #a3671b;
+  --accent-ink: #fffaf0;
+  --ok: #1f7a4d;
+  --warning: #a3671b;
+  --danger: #b3282f;
+  color-scheme: light;
 }
 
 * {

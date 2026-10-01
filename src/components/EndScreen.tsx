@@ -41,9 +41,11 @@ interface Props {
   history: GameState["history"];
   indicatorSnapshots: Indicators[];
   totalTurns: number;
+  dynastyTerm: number;
   earnedAchievementIds: Set<string>;
   newAchievementIds: Set<string>;
-  onRestart: () => void;
+  onContinueDynasty: () => void;
+  onNewDynasty: () => void;
 }
 
 export function EndScreen({
@@ -53,9 +55,11 @@ export function EndScreen({
   history,
   indicatorSnapshots,
   totalTurns,
+  dynastyTerm,
   earnedAchievementIds,
   newAchievementIds,
-  onRestart,
+  onContinueDynasty,
+  onNewDynasty,
 }: Props) {
   return (
     <div className={`screen end-screen ${result.victory ? "victory" : "defeat"}`}>
@@ -78,9 +82,16 @@ export function EndScreen({
         </Suspense>
       </ReportErrorBoundary>
 
+      <p className="dynasty-hint">
+        Mandato nº {dynastyTerm} da sua dinastia. Ao continuar, seu sucessor herda um pouco da sua popularidade
+        final.
+      </p>
       <div className="end-screen-actions">
-        <button type="button" className="primary-button" onClick={onRestart}>
+        <button type="button" className="primary-button" onClick={onContinueDynasty}>
           Jogar Novamente
+        </button>
+        <button type="button" className="secondary-button" onClick={onNewDynasty}>
+          Começar nova dinastia
         </button>
         <ShareButton text={buildShareText(result, indicators, history)} />
       </div>

@@ -1,11 +1,13 @@
 import { useState } from "react";
+import { MandateHistoryList } from "./MandateHistoryList";
 import { DIFFICULTY_LABELS } from "../game/engine";
-import type { BestResult } from "../game/storage";
+import type { BestResult, MandateHistoryEntry } from "../game/storage";
 import type { Difficulty } from "../types";
 
 interface Props {
   onStart: (difficulty: Difficulty) => void;
   bestResult: BestResult | null;
+  mandateHistory: MandateHistoryEntry[];
 }
 
 const DIFFICULTIES: Difficulty[] = ["facil", "normal", "dificil"];
@@ -16,7 +18,7 @@ const DIFFICULTY_HINTS: Record<Difficulty, string> = {
   dificil: "Decisões pesam mais — cada escolha tem consequências fortes.",
 };
 
-export function StartScreen({ onStart, bestResult }: Props) {
+export function StartScreen({ onStart, bestResult, mandateHistory }: Props) {
   const [difficulty, setDifficulty] = useState<Difficulty>("normal");
 
   return (
@@ -54,6 +56,7 @@ export function StartScreen({ onStart, bestResult }: Props) {
           {Math.round(bestResult.average)}, {bestResult.turnReached} trimestres)
         </p>
       )}
+      <MandateHistoryList entries={mandateHistory} />
       <button type="button" className="primary-button" onClick={() => onStart(difficulty)}>
         Assumir a Presidência
       </button>

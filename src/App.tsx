@@ -1,11 +1,14 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./App.css";
 import { Dashboard } from "./components/Dashboard";
 import { EndScreen } from "./components/EndScreen";
 import { EventCard } from "./components/EventCard";
+import { OnboardingModal } from "./components/OnboardingModal";
 import { ResolutionPanel } from "./components/ResolutionPanel";
 import { SectorsPanel } from "./components/SectorsPanel";
 import { StartScreen } from "./components/StartScreen";
+import { StatsTabs } from "./components/StatsTabs";
+import { ThemeToggle } from "./components/ThemeToggle";
 import { ACHIEVEMENTS } from "./data/achievements";
 import { ACTIONS } from "./data/actions";
 import {
@@ -16,14 +19,25 @@ import {
   formatTurnLabel,
   mergeEffects,
   scaleEffects,
+  type DynastyLegacy,
 } from "./game/engine";
 import {
+  addMandateHistoryEntry,
+  clearInProgressGame,
+  hasSeenOnboarding,
   loadBestResult,
+  loadInProgressGame,
+  loadMandateHistory,
   loadUnlockedAchievements,
+  markOnboardingSeen,
   saveBestResultIfBetter,
+  saveInProgressGame,
   unlockAchievements,
   type BestResult,
+  type MandateHistoryEntry,
 } from "./game/storage";
+import { useNarrowViewport } from "./hooks/useNarrowViewport";
+import { useTheme } from "./hooks/useTheme";
 import type { Difficulty, EventChoice, GameEvent, PresidentialAction, GameState } from "./types";
 
 interface Resolution {
@@ -32,26 +46,76 @@ interface Resolution {
   action: PresidentialAction | null;
 }
 
+/** Fração da popularidade final que o sucessor herda ao continuar a dinastia — modesta de
+    propósito, para dar peso à continuidade sem deixar um mandato ruim travar os seguintes. */
+const DYNASTY_CARRYOVER = 0.2;
+const INITIAL_POPULARIDADE = 60;
+
+const NARROW_TABS_BREAKPOINT = 380;
+
 function App() {
-  const [game, setGame] = useState<GameState>(() => createStartState());
+  const [game, setGame] = useState<GameState>(() => loadInProgressGame() ?? createStartState());
   const [resolution, setResolution] = useState<Resolution | null>(null);
   const [selectedAction, setSelectedAction] = useState<PresidentialAction | null>(null);
   const [bestResult, setBestResult] = useState<BestResult | null>(() => loadBestResult());
+  const [mandateHistory, setMandateHistory] = useState<MandateHistoryEntry[]>(() => loadMandateHistory());
   const [earnedAchievementIds, setEarnedAchievementIds] = useState<Set<string>>(new Set());
   const [newAchievementIds, setNewAchievementIds] = useState<Set<string>>(new Set());
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [theme, toggleTheme] = useTheme();
+  const isNarrowViewport = useNarrowViewport(NARROW_TABS_BREAKPOINT);
   // Trava síncrona contra duplo clique/duplo disparo do evento antes do próximo render:
   // estado do React só reflete a mudança após o commit, então um clique duplicado no
   // mesmo instante ainda veria o mesmo `game`/`resolution` "antigos". Um ref é mutado
   // na hora e é compartilhado entre as chamadas, então bloqueia de fato a segunda.
   const isProcessingChoice = useRef(false);
 
-  function handleStart(difficulty: Difficulty) {
+  // Salva o mandato em andamento a cada mudança para sobreviver a um reload acidental;
+  // some assim que o mandato termina (nada para retomar) ou volta à tela inicial.
+  useEffect(() => {
+    if (game.phase === "playing") {
+      saveInProgressGame(game);
+    } else {
+      clearInProgressGame();
+    }
+  }, [game]);
+
+  function startFresh(difficulty: Difficulty) {
     setGame(createNewGame(difficulty));
     setResolution(null);
     setSelectedAction(null);
     setEarnedAchievementIds(new Set());
     setNewAchievementIds(new Set());
     isProcessingChoice.current = false;
+    if (!hasSeenOnboarding()) {
+      setShowOnboarding(true);
+    }
+  }
+
+  function handleDismissOnboarding() {
+    markOnboardingSeen();
+    setShowOnboarding(false);
+  }
+
+  function handleContinueDynasty() {
+    const legacy: DynastyLegacy = {
+      indicatorBonus: {
+        popularidade: Math.round((game.indicators.popularidade - INITIAL_POPULARIDADE) * DYNASTY_CARRYOVER),
+      },
+      dynastyTerm: game.dynastyTerm + 1,
+    };
+    setGame(createNewGame(game.difficulty, legacy));
+    setResolution(null);
+    setSelectedAction(null);
+    setEarnedAchievementIds(new Set());
+    setNewAchievementIds(new Set());
+    isProcessingChoice.current = false;
+  }
+
+  function handleNewDynasty() {
+    setGame(createStartState());
+    setResolution(null);
+    setSelectedAction(null);
   }
 
   function handleSelectAction(action: PresidentialAction) {
@@ -73,6 +137,17 @@ function App() {
           average: next.endResult.average,
           turnReached: next.history.length,
           victory: next.endResult.victory,
+        })
+      );
+
+      setMandateHistory(
+        addMandateHistoryEntry({
+          title: next.endResult.title,
+          average: next.endResult.average,
+          turnReached: next.history.length,
+          victory: next.endResult.victory,
+          difficulty: next.difficulty,
+          playedAt: Date.now(),
         })
       );
 
@@ -103,7 +178,15 @@ function App() {
 
   return (
     <div className="app-shell">
-      {game.phase === "start" && <StartScreen onStart={handleStart} bestResult={bestResult} />}
+      <div className="top-bar">
+        <ThemeToggle theme={theme} onToggle={toggleTheme} />
+      </div>
+
+      {showOnboarding && <OnboardingModal onDismiss={handleDismissOnboarding} />}
+
+      {game.phase === "start" && (
+        <StartScreen onStart={startFresh} bestResult={bestResult} mandateHistory={mandateHistory} />
+      )}
 
       {game.phase !== "start" && (
         <>
@@ -116,12 +199,22 @@ function App() {
             )}
           </header>
 
-          <SectorsPanel sectors={game.sectors} lastDeltas={sectorDeltas} />
-
-          <div className="indicators-panel">
-            <span className="panel-heading">Indicadores</span>
-            <Dashboard indicators={game.indicators} lastDeltas={dashboardDeltas} />
-          </div>
+          {isNarrowViewport ? (
+            <StatsTabs
+              sectors={game.sectors}
+              sectorDeltas={sectorDeltas}
+              indicators={game.indicators}
+              indicatorDeltas={dashboardDeltas}
+            />
+          ) : (
+            <>
+              <SectorsPanel sectors={game.sectors} lastDeltas={sectorDeltas} />
+              <div className="indicators-panel">
+                <span className="panel-heading">Indicadores</span>
+                <Dashboard indicators={game.indicators} lastDeltas={dashboardDeltas} />
+              </div>
+            </>
+          )}
 
           <main className="game-main">
             {resolution ? (
@@ -151,9 +244,11 @@ function App() {
                 history={game.history}
                 indicatorSnapshots={game.indicatorSnapshots}
                 totalTurns={game.totalTurns}
+                dynastyTerm={game.dynastyTerm}
                 earnedAchievementIds={earnedAchievementIds}
                 newAchievementIds={newAchievementIds}
-                onRestart={() => handleStart(game.difficulty)}
+                onContinueDynasty={handleContinueDynasty}
+                onNewDynasty={handleNewDynasty}
               />
             ) : null}
           </main>
