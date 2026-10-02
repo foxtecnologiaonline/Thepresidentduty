@@ -13,6 +13,18 @@
   </head>
   <body>
     <div id="root"></div>
+    <script>
+      // Aplica o tema salvo antes do primeiro paint — sem isso, a página sempre nasce no
+      // tema escuro padrão e só troca para claro depois que o React monta e o useEffect de
+      // useTheme roda, causando um flash visível do tema errado para quem usa o tema claro.
+      try {
+        if (localStorage.getItem("presidencia:theme") === "light") {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      } catch {
+        // Armazenamento indisponível — segue com o tema padrão.
+      }
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

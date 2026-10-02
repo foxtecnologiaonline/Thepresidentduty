@@ -38,6 +38,7 @@ import {
 } from "./game/storage";
 import { useNarrowViewport } from "./hooks/useNarrowViewport";
 import { useTheme } from "./hooks/useTheme";
+import { createInitialIndicators } from "./data/indicators";
 import type { Difficulty, EventChoice, GameEvent, PresidentialAction, GameState } from "./types";
 
 interface Resolution {
@@ -49,7 +50,9 @@ interface Resolution {
 /** Fração da popularidade final que o sucessor herda ao continuar a dinastia — modesta de
     propósito, para dar peso à continuidade sem deixar um mandato ruim travar os seguintes. */
 const DYNASTY_CARRYOVER = 0.2;
-const INITIAL_POPULARIDADE = 60;
+// Derivado do estado inicial em vez de hardcoded, para não dessincronizar se o valor
+// inicial de popularidade em data/indicators.ts mudar.
+const INITIAL_POPULARIDADE = createInitialIndicators().popularidade;
 
 const NARROW_TABS_BREAKPOINT = 380;
 
