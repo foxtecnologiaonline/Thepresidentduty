@@ -15,14 +15,14 @@ interface Props {
   newAchievementIds: Set<string>;
 }
 
-function trendMessage(trend: "tecnocrata" | "populista" | "estavel"): string {
-  if (trend === "tecnocrata") {
-    return "Ao longo do mandato, suas decisões avançaram para o lado tecnocrata e recuaram do populista.";
+function trendMessage(trend: "expansionista" | "preservacionista" | "estavel"): string {
+  if (trend === "expansionista") {
+    return "Ao longo do mandato, suas decisões avançaram para o lado expansionista e recuaram do preservacionista.";
   }
-  if (trend === "populista") {
-    return "Ao longo do mandato, suas decisões avançaram para o lado populista e recuaram do tecnocrata.";
+  if (trend === "preservacionista") {
+    return "Ao longo do mandato, suas decisões avançaram para o lado preservacionista e recuaram do expansionista.";
   }
-  return "Seu estilo de gestão se manteve estável do início ao fim do mandato.";
+  return "Seu perfil urbanístico se manteve estável do início ao fim do mandato.";
 }
 
 interface ComparisonListProps<K extends string> {
@@ -92,21 +92,21 @@ export function MandateReport({
       </section>
 
       <section className="report-section">
-        <h3>Como os setores reagiram</h3>
+        <h3>Como as facções reagiram</h3>
         <ComparisonList<SectorKey> order={SECTOR_ORDER} meta={SECTOR_META} initial={initialSectors} current={sectors} />
       </section>
 
       {profile && (
         <section className="report-section">
-          <h3>Estilo de gestão do mandato</h3>
+          <h3>Perfil urbanístico do mandato</h3>
           <div className="lean-spectrum">
             <div className="lean-track">
               <div className="lean-marker" style={{ left: `${leanToPercent(profile.average)}%` }} />
             </div>
             <div className="lean-labels">
-              <span>Populista</span>
+              <span>Preservacionista</span>
               <span>Equilibrado</span>
-              <span>Tecnocrata</span>
+              <span>Expansionista</span>
             </div>
           </div>
           <p className="lean-summary">
@@ -115,17 +115,17 @@ export function MandateReport({
           <p className="lean-trend">{trendMessage(profile.trend)}</p>
           <div className="lean-highlights">
             <div className="lean-highlight">
-              <span className="lean-highlight-tag left">Decisão mais populista</span>
+              <span className="lean-highlight-tag left">Decisão mais preservacionista</span>
               <p>
-                {profile.mostPopulist.choiceLabel}
-                {profile.mostPopulist.actionLabel ? ` + ${profile.mostPopulist.actionLabel}` : ""}
+                {profile.mostPreservationist.choiceLabel}
+                {profile.mostPreservationist.actionLabel ? ` + ${profile.mostPreservationist.actionLabel}` : ""}
               </p>
             </div>
             <div className="lean-highlight">
-              <span className="lean-highlight-tag right">Decisão mais tecnocrata</span>
+              <span className="lean-highlight-tag right">Decisão mais expansionista</span>
               <p>
-                {profile.mostTechnocratic.choiceLabel}
-                {profile.mostTechnocratic.actionLabel ? ` + ${profile.mostTechnocratic.actionLabel}` : ""}
+                {profile.mostExpansionist.choiceLabel}
+                {profile.mostExpansionist.actionLabel ? ` + ${profile.mostExpansionist.actionLabel}` : ""}
               </p>
             </div>
           </div>

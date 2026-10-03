@@ -83,7 +83,7 @@ export function EndScreen({
       </ReportErrorBoundary>
 
       <p className="dynasty-hint">
-        Mandato nº {dynastyTerm} da sua dinastia. Ao continuar, seu sucessor herda um pouco da sua popularidade
+        Mandato nº {dynastyTerm} da sua dinastia. Ao continuar, seu sucessor herda um pouco da sua aprovação
         final.
       </p>
       <div className="end-screen-actions">

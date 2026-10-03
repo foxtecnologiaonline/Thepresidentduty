@@ -14,7 +14,7 @@ function SectorBar({ meta, value, delta }: { meta: SectorMeta; value: number; de
 export function SectorsPanel({ sectors, lastDeltas }: Props) {
   return (
     <section className="sectors-panel">
-      <span className="panel-heading">Setores da Cidade</span>
+      <span className="panel-heading">Facções da Cidade</span>
       <div className="dashboard">
         {SECTOR_ORDER.map((key) => (
           <SectorBar key={key} meta={SECTOR_META[key]} value={sectors[key]} delta={lastDeltas?.[key]} />

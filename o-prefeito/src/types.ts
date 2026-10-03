@@ -1,12 +1,12 @@
 export type IndicatorKey =
-  | "orcamento"
-  | "popularidade"
-  | "seguranca"
-  | "saude"
-  | "educacao"
+  | "caixaMunicipal"
+  | "aprovacao"
   | "mobilidade"
-  | "meioAmbiente"
-  | "governabilidade";
+  | "saneamento"
+  | "zeladoria"
+  | "cultura"
+  | "camara"
+  | "ministerioPublico";
 
 export type Indicators = Record<IndicatorKey, number>;
 
@@ -24,18 +24,18 @@ export interface IndicatorMeta {
 }
 
 /**
- * Setores da cidade: camada separada dos indicadores de governo, acompanhando a
+ * Facções da cidade: camada separada dos indicadores de governo, acompanhando a
  * aprovação de grupos específicos. Não tem limiar crítico nem afeta vitória/derrota
  * (que continua baseada só nos indicadores) — é um retrato à parte de quem a prefeitura
  * está agradando ou afastando, visível no dashboard e no relatório final.
  */
 export type SectorKey =
   | "vereadores"
-  | "guardaMunicipal"
-  | "populacao"
-  | "servidoresPublicos"
-  | "associacoesBairro"
-  | "empresariadoLocal";
+  | "servidores"
+  | "comerciantes"
+  | "moradoresPeriferia"
+  | "imprensaLocal"
+  | "igrejas";
 
 export type Sectors = Record<SectorKey, number>;
 
@@ -43,26 +43,26 @@ export interface SectorMeta {
   key: SectorKey;
   label: string;
   icon: string;
-  /** Explicação curta do que o setor representa, usada em tooltip. */
+  /** Explicação curta do que a facção representa, usada em tooltip. */
   description: string;
 }
 
 /**
- * Posição da escolha/diretiva no espectro de estilo de gestão, numa escala de -2
- * (populista) a +2 (tecnocrata); 0 é uma decisão de sobrevivência política sem
- * carga de estilo marcada.
+ * Posição da escolha/diretiva no eixo urbanístico, numa escala de -2 (preservação de
+ * bairro) a +2 (expansão urbana); 0 é uma decisão de sobrevivência política sem carga
+ * urbanística marcada.
  */
 export type Leaning = -2 | -1 | 0 | 1 | 2;
 
 /** Tema predominante do evento — usado na tag visual do card e para variar o baralho. */
 export type EventCategory =
   | "orcamento"
-  | "seguranca"
-  | "saude"
-  | "educacao"
   | "mobilidade"
-  | "ambiental"
+  | "saneamento"
+  | "urbanismo"
+  | "cultura"
   | "institucional"
+  | "judicial"
   | "social";
 
 export interface EventCategoryMeta {
@@ -77,7 +77,7 @@ export interface EventChoice {
   label: string;
   consequence: string;
   effects: Partial<Record<IndicatorKey, number>>;
-  /** Como essa escolha repercute entre os setores da cidade; ausente = nenhum efeito notável. */
+  /** Como essa escolha repercute entre as facções da cidade; ausente = nenhum efeito notável. */
   sectorEffects?: Partial<Record<SectorKey, number>>;
   leaning: Leaning;
   /**
@@ -106,7 +106,7 @@ export interface MayorAction {
   label: string;
   description: string;
   effects: Partial<Record<IndicatorKey, number>>;
-  /** Como essa diretiva repercute entre os setores da cidade; ausente = nenhum efeito notável. */
+  /** Como essa diretiva repercute entre as facções da cidade; ausente = nenhum efeito notável. */
   sectorEffects?: Partial<Record<SectorKey, number>>;
   leaning: Leaning;
   /** Turno mínimo em que a diretiva fica disponível; ausente = disponível desde o início. */
@@ -136,7 +136,7 @@ export interface GameState {
   history: { event: GameEvent; choice: EventChoice; action: MayorAction | null }[];
   /** Retrato dos indicadores ao final de cada turno (índice 0 = estado inicial). */
   indicatorSnapshots: Indicators[];
-  /** Retrato dos setores ao final de cada turno (índice 0 = estado inicial). */
+  /** Retrato das facções ao final de cada turno (índice 0 = estado inicial). */
   sectorSnapshots: Sectors[];
   endResult: EndResult | null;
   /** Quantos mandatos consecutivos dessa dinastia política já foram jogados (1 = o primeiro). */

@@ -11,9 +11,9 @@ export interface LeanProfile {
   average: number;
   firstHalfAverage: number;
   secondHalfAverage: number;
-  trend: "tecnocrata" | "populista" | "estavel";
-  mostPopulist: LeanHighlight;
-  mostTechnocratic: LeanHighlight;
+  trend: "expansionista" | "preservacionista" | "estavel";
+  mostPreservationist: LeanHighlight;
+  mostExpansionist: LeanHighlight;
 }
 
 type HistoryEntry = GameState["history"][number];
@@ -40,14 +40,14 @@ export function computeLeanProfile(history: HistoryEntry[]): LeanProfile | null 
   const diff = secondHalfAverage - firstHalfAverage;
 
   let trend: LeanProfile["trend"] = "estavel";
-  if (diff > TREND_THRESHOLD) trend = "tecnocrata";
-  else if (diff < -TREND_THRESHOLD) trend = "populista";
+  if (diff > TREND_THRESHOLD) trend = "expansionista";
+  else if (diff < -TREND_THRESHOLD) trend = "preservacionista";
 
-  let mostPopulistIndex = 0;
-  let mostTechnocraticIndex = 0;
+  let mostPreservationistIndex = 0;
+  let mostExpansionistIndex = 0;
   values.forEach((value, index) => {
-    if (value < values[mostPopulistIndex]) mostPopulistIndex = index;
-    if (value > values[mostTechnocraticIndex]) mostTechnocraticIndex = index;
+    if (value < values[mostPreservationistIndex]) mostPreservationistIndex = index;
+    if (value > values[mostExpansionistIndex]) mostExpansionistIndex = index;
   });
 
   const toHighlight = (index: number): LeanHighlight => {
@@ -65,21 +65,21 @@ export function computeLeanProfile(history: HistoryEntry[]): LeanProfile | null 
     firstHalfAverage,
     secondHalfAverage,
     trend,
-    mostPopulist: toHighlight(mostPopulistIndex),
-    mostTechnocratic: toHighlight(mostTechnocraticIndex),
+    mostPreservationist: toHighlight(mostPreservationistIndex),
+    mostExpansionist: toHighlight(mostExpansionistIndex),
   };
 }
 
 // Uma escolha isolada varia de -2 a +2; sem usar diretivas, a MÉDIA de um mandato inteiro
 // nunca sai desse intervalo. Os limiares ficam dentro de -2..2 (não de -4..4) para que
-// "Populista" e "Tecnocrata" sejam alcançáveis por quem consistentemente escolhe os
-// extremos, e não faixas que só uma combinação perfeita de escolha+diretiva extremas atingiria.
+// "Preservacionista" e "Expansionista" sejam alcançáveis por quem consistentemente escolhe
+// os extremos, e não faixas que só uma combinação perfeita de escolha+diretiva extremas atingiria.
 const LEAN_BUCKETS: { max: number; label: string }[] = [
-  { max: -1.5, label: "Populista" },
-  { max: -0.5, label: "Centro-populista" },
+  { max: -1.5, label: "Preservacionista" },
+  { max: -0.5, label: "Centro-preservacionista" },
   { max: 0.5, label: "Equilibrado" },
-  { max: 1.5, label: "Centro-técnico" },
-  { max: Infinity, label: "Tecnocrata" },
+  { max: 1.5, label: "Centro-expansionista" },
+  { max: Infinity, label: "Expansionista" },
 ];
 
 export function describeLean(score: number): string {

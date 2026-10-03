@@ -26,12 +26,13 @@ export function StartScreen({ onStart, bestResult, mandateHistory }: Props) {
       <h1>O Prefeito</h1>
       <p className="tagline">
         Você acaba de ser eleito prefeito. Um mandato de 4 anos está em suas mãos: cada
-        decisão molda o Orçamento, a Popularidade, a Segurança e mais cinco frentes da sua
-        gestão municipal.
+        decisão molda o Caixa Municipal, a Aprovação, a Mobilidade e mais quatro frentes da
+        sua gestão — mas é a Câmara de Vereadores e o Ministério Público que podem
+        encerrar seu mandato antes da hora.
       </p>
       <p className="tagline">
-        Sobreviva aos 16 trimestres do mandato sem perder o controle da cidade — e
-        deixe um legado à altura da sua gestão.
+        Sobreviva aos 16 trimestres sem sofrer impeachment ou cassação — e deixe um legado
+        à altura da sua gestão.
       </p>
 
       <div className="difficulty-picker">

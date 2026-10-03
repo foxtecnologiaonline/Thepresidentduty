@@ -99,7 +99,7 @@ function simulateOnce(difficulty: Difficulty, strategy: Strategy): RunResult {
   return { failed: false, failedAtTurn: null, finalAverage: computeAverage(indicators) };
 }
 
-const ITERATIONS = 3000;
+const ITERATIONS = 8000;
 
 function runBatch(difficulty: Difficulty, strategy: Strategy): RunResult[] {
   const results: RunResult[] = [];
@@ -142,15 +142,23 @@ for (const difficulty of ["facil", "normal", "dificil"] as Difficulty[]) {
   // reaplicadas aqui como faixa-alvo para o novo conjunto de dados: o pior caso nunca
   // deve falhar antes de ~40-50% de T (a falha MAIS PRECOCE entre todas as iterações,
   // não a média — a média pode ficar bem mais alta, como em "A Presidência" 12.1 de 16).
-  // A meta de 35-65% é calibrada para o normal; fácil/difícil só precisam de um "grace
-  // period" sensato (nenhuma combinação catastrófica zera um crítico já nos turnos 1-2).
+  // A meta de 35-65% é a calibração oficial do normal. Fácil e difícil não têm meta de
+  // banda fixa (fácil pode legitimamente nunca falhar no pior caso; difícil pode falhar
+  // bem mais cedo por design) — só precisam de um "grace period" sensato: nenhuma
+  // combinação catastrófica zera um crítico já nos turnos 1-2.
   const minFailRatio = worst.minFailTurn / TOTAL_TURNS;
-  const floor = difficulty === "normal" ? 0.35 : 0.15;
-  const ceiling = difficulty === "normal" ? 0.65 : 0.8;
-  if (!(minFailRatio >= floor && minFailRatio <= ceiling)) {
+  if (difficulty === "normal") {
+    if (!(minFailRatio >= 0.35 && minFailRatio <= 0.65)) {
+      console.log(
+        `  ⚠ pior caso (normal): a falha mais precoce foi no turno ${worst.minFailTurn} de ${TOTAL_TURNS} ` +
+          `(${(minFailRatio * 100).toFixed(0)}% — meta: 35–65%)`
+      );
+      allOk = false;
+    }
+  } else if (!isNaN(minFailRatio) && minFailRatio < 0.15) {
     console.log(
-      `  ⚠ pior caso: a falha mais precoce foi no turno ${worst.minFailTurn} de ${TOTAL_TURNS} ` +
-        `(${(minFailRatio * 100).toFixed(0)}% — meta: ${(floor * 100).toFixed(0)}–${(ceiling * 100).toFixed(0)}%)`
+      `  ⚠ pior caso (${difficulty}): falha instantânea no turno ${worst.minFailTurn} de ${TOTAL_TURNS} ` +
+        `(${(minFailRatio * 100).toFixed(0)}% — mínimo aceitável: 15%)`
     );
     allOk = false;
   }

@@ -39,19 +39,19 @@ export const ACHIEVEMENTS: Achievement[] = [
   {
     id: "gestao-tranquila",
     label: "Gestão Tranquila",
-    description: "Terminou o mandato sem nenhum indicador crítico chegar perto de zerar.",
+    description: "Terminou o mandato sem a Câmara ou o Ministério Público chegarem perto de derrubá-lo.",
     check: (state) => !!state.endResult?.victory && !wasEverInDanger(state),
   },
   {
     id: "fenix-municipal",
     label: "Fênix Municipal",
-    description: "Chegou perto do colapso em algum indicador crítico e ainda assim completou o mandato.",
+    description: "Chegou perto do impeachment ou da cassação e ainda assim completou o mandato.",
     check: (state) => !!state.endResult?.victory && wasEverInDanger(state),
   },
   {
     id: "equilibrista",
     label: "Equilibrista",
-    description: "Encerrou o mandato com o estilo de gestão rotulado como Equilibrado.",
+    description: "Encerrou o mandato com o perfil urbanístico rotulado como Equilibrado.",
     check: (state) => {
       const profile = computeLeanProfile(state.history);
       return !!profile && describeLean(profile.average) === "Equilibrado";
@@ -60,18 +60,18 @@ export const ACHIEVEMENTS: Achievement[] = [
   {
     id: "estilo-convicto",
     label: "Estilo Convicto",
-    description: "Manteve um estilo de gestão consistentemente extremo (Populista ou Tecnocrata).",
+    description: "Manteve um perfil urbanístico consistentemente extremo (Preservacionista ou Expansionista).",
     check: (state) => {
       const profile = computeLeanProfile(state.history);
       if (!profile) return false;
       const label = describeLean(profile.average);
-      return label === "Populista" || label === "Tecnocrata";
+      return label === "Preservacionista" || label === "Expansionista";
     },
   },
   {
     id: "virada-de-mandato",
     label: "Virada de Mandato",
-    description: "Seu estilo de gestão mudou de direção entre a primeira e a segunda metade do mandato.",
+    description: "Seu perfil urbanístico mudou de direção entre a primeira e a segunda metade do mandato.",
     check: (state) => {
       const profile = computeLeanProfile(state.history);
       return !!profile && profile.trend !== "estavel";
@@ -80,13 +80,13 @@ export const ACHIEVEMENTS: Achievement[] = [
   {
     id: "cidade-unida",
     label: "Cidade Unida",
-    description: "Encerrou o mandato com apoio de pelo menos 60 em todos os setores da cidade.",
+    description: "Encerrou o mandato com apoio de pelo menos 60 em todas as facções da cidade.",
     check: (state) => !!state.endResult?.victory && SECTOR_ORDER.every((key) => state.sectors[key] >= 60),
   },
   {
     id: "cidade-dividida",
     label: "Cidade Dividida",
-    description: "Terminou o mandato com um setor em forte rejeição e outro em forte apoio ao mesmo tempo.",
+    description: "Terminou o mandato com uma facção em forte rejeição e outra em forte apoio ao mesmo tempo.",
     check: (state) => {
       const values = SECTOR_ORDER.map((key) => state.sectors[key]);
       return Math.min(...values) <= 20 && Math.max(...values) >= 80;

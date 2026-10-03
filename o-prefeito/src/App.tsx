@@ -47,12 +47,12 @@ interface Resolution {
   action: MayorAction | null;
 }
 
-/** Fração da popularidade final que o sucessor herda ao continuar a dinastia — modesta de
+/** Fração da aprovação final que o sucessor herda ao continuar a dinastia — modesta de
     propósito, para dar peso à continuidade sem deixar um mandato ruim travar os seguintes. */
 const DYNASTY_CARRYOVER = 0.2;
 // Derivado do estado inicial em vez de hardcoded, para não dessincronizar se o valor
-// inicial de popularidade em data/indicators.ts mudar.
-const INITIAL_POPULARIDADE = createInitialIndicators().popularidade;
+// inicial de aprovação em data/indicators.ts mudar.
+const INITIAL_APROVACAO = createInitialIndicators().aprovacao;
 
 const NARROW_TABS_BREAKPOINT = 380;
 
@@ -103,7 +103,7 @@ function App() {
   function handleContinueDynasty() {
     const legacy: DynastyLegacy = {
       indicatorBonus: {
-        popularidade: Math.round((game.indicators.popularidade - INITIAL_POPULARIDADE) * DYNASTY_CARRYOVER),
+        aprovacao: Math.round((game.indicators.aprovacao - INITIAL_APROVACAO) * DYNASTY_CARRYOVER),
       },
       dynastyTerm: game.dynastyTerm + 1,
     };

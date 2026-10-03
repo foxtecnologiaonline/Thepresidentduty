@@ -1,93 +1,91 @@
 import type { IndicatorKey, IndicatorMeta, Indicators } from "../types";
 
 export const INDICATOR_META: Record<IndicatorKey, IndicatorMeta> = {
-  orcamento: {
-    key: "orcamento",
-    label: "Orçamento Municipal",
+  caixaMunicipal: {
+    key: "caixaMunicipal",
+    label: "Caixa Municipal",
     icon: "💰",
-    critical: true,
-    description: "Saúde das contas da prefeitura: receita, folha de pagamento e dívida. Zerar decreta calamidade financeira.",
-    chartColor: "#3987e5",
-    loseMessage:
-      "O orçamento municipal entrou em colapso total. Sem caixa para pagar folha e fornecedores, a prefeitura decreta calamidade financeira e o Tribunal de Contas assume a gestão.",
-  },
-  popularidade: {
-    key: "popularidade",
-    label: "Popularidade",
-    icon: "😊",
-    critical: true,
-    description: "Aprovação da sua gestão pelos moradores da cidade. Zerar leva a protestos e pedido de cassação.",
-    chartColor: "#d95926",
-    loseMessage:
-      "Sua popularidade despencou a zero. Sob pressão de protestos massivos em frente à Prefeitura, a Câmara de Vereadores abriu e aprovou seu processo de cassação.",
-  },
-  seguranca: {
-    key: "seguranca",
-    label: "Segurança",
-    icon: "🛡️",
-    critical: true,
-    description: "Ordem pública e sensação de segurança nas ruas e bairros. Zerar mergulha a cidade no caos.",
-    chartColor: "#199e70",
-    loseMessage:
-      "A cidade mergulhou no caos total. Sem controle sobre a ordem pública, o Governo do Estado decretou intervenção na segurança municipal.",
-  },
-  saude: {
-    key: "saude",
-    label: "Saúde",
-    icon: "🏥",
     critical: false,
-    description: "Qualidade e capacidade da rede municipal de saúde: UBS, prontos-socorros e programas de atenção básica.",
-    chartColor: "#c98500",
+    description: "Saúde das contas da prefeitura: receita, folha de pagamento e dívida.",
+    chartColor: "#3987e5",
     loseMessage: "",
   },
-  educacao: {
-    key: "educacao",
-    label: "Educação",
-    icon: "🎓",
+  aprovacao: {
+    key: "aprovacao",
+    label: "Aprovação",
+    icon: "😊",
     critical: false,
-    description: "Qualidade da rede municipal de ensino: creches, escolas e merenda escolar.",
-    chartColor: "#d55181",
+    description: "Aprovação da sua gestão pelos moradores da cidade.",
+    chartColor: "#d95926",
     loseMessage: "",
   },
   mobilidade: {
     key: "mobilidade",
-    label: "Mobilidade e Infraestrutura",
+    label: "Mobilidade",
     icon: "🚧",
     critical: false,
-    description: "Trânsito, transporte público, pavimentação e obras da cidade.",
+    description: "Trânsito, transporte público e deslocamento pela cidade.",
     chartColor: "#9085e9",
     loseMessage: "",
   },
-  meioAmbiente: {
-    key: "meioAmbiente",
-    label: "Meio Ambiente",
-    icon: "🌱",
+  saneamento: {
+    key: "saneamento",
+    label: "Saneamento",
+    icon: "🚰",
     critical: false,
-    description: "Saneamento, coleta de lixo, áreas verdes e prevenção de enchentes na cidade.",
-    chartColor: "#008300",
+    description: "Água, esgoto, drenagem e coleta de lixo da cidade.",
+    chartColor: "#199e70",
     loseMessage: "",
   },
-  governabilidade: {
-    key: "governabilidade",
-    label: "Governabilidade",
+  zeladoria: {
+    key: "zeladoria",
+    label: "Zeladoria",
+    icon: "🧹",
+    critical: false,
+    description: "Manutenção urbana: iluminação, pavimentação, praças e limpeza das ruas.",
+    chartColor: "#c98500",
+    loseMessage: "",
+  },
+  cultura: {
+    key: "cultura",
+    label: "Cultura",
+    icon: "🎭",
+    critical: false,
+    description: "Programação cultural, patrimônio histórico e lazer público na cidade.",
+    chartColor: "#d55181",
+    loseMessage: "",
+  },
+  camara: {
+    key: "camara",
+    label: "Câmara",
     icon: "🏛️",
     critical: true,
-    description: "Sua base de apoio na Câmara de Vereadores. Zerar aprova uma cassação por falta de aliados.",
+    description: "Sua base de apoio na Câmara de Vereadores. Zerar aprova um processo de impeachment.",
     chartColor: "#e66767",
     loseMessage:
-      "Você perdeu toda a base aliada na Câmara de Vereadores. Isolado e sem apoio do Legislativo municipal, seu processo de cassação foi aprovado por ampla maioria.",
+      "Você perdeu toda a base aliada na Câmara de Vereadores. Isolado e sem apoio do Legislativo municipal, seu processo de impeachment foi aprovado por ampla maioria.",
+  },
+  ministerioPublico: {
+    key: "ministerioPublico",
+    label: "Ministério Público",
+    icon: "⚖️",
+    critical: true,
+    description: "Sua relação com o Ministério Público e os órgãos de controle. Zerar leva à cassação do mandato.",
+    chartColor: "#9085e9",
+    loseMessage:
+      "O Ministério Público reuniu provas suficientes de irregularidades na sua gestão. A Justiça Eleitoral decretou a cassação do seu mandato com inelegibilidade.",
   },
 };
 
 export const INDICATOR_ORDER: IndicatorKey[] = [
-  "orcamento",
-  "popularidade",
-  "seguranca",
-  "saude",
-  "educacao",
+  "caixaMunicipal",
+  "aprovacao",
   "mobilidade",
-  "meioAmbiente",
-  "governabilidade",
+  "saneamento",
+  "zeladoria",
+  "cultura",
+  "camara",
+  "ministerioPublico",
 ];
 
 export const CRITICAL_INDICATORS: IndicatorKey[] = INDICATOR_ORDER.filter(
@@ -99,13 +97,13 @@ export const CRITICAL_WARNING_THRESHOLD = 15;
 
 export function createInitialIndicators(): Indicators {
   return {
-    orcamento: 55,
-    popularidade: 60,
-    seguranca: 55,
-    saude: 50,
-    educacao: 50,
+    caixaMunicipal: 55,
+    aprovacao: 60,
     mobilidade: 50,
-    meioAmbiente: 50,
-    governabilidade: 55,
+    saneamento: 50,
+    zeladoria: 50,
+    cultura: 45,
+    camara: 40,
+    ministerioPublico: 44,
   };
 }

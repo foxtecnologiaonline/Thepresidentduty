@@ -31,7 +31,7 @@ function SectorEffectsList({ effects }: { effects: Partial<Record<SectorKey, num
   if (entries.length === 0) return null;
   return (
     <div className="sector-repercussion">
-      <span className="event-turn">Repercussão nos setores</span>
+      <span className="event-turn">Repercussão nas facções</span>
       <div className="effects-preview large">
         {entries.map(([key, value]) => (
           <span key={key} className={value > 0 ? "positive" : "negative"}>
