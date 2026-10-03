@@ -6,7 +6,7 @@ export const CATEGORY_META: Record<EventCategory, EventCategoryMeta> = {
   saude: { key: "saude", label: "Saúde", icon: "🏥", color: "#f2a65a" },
   educacao: { key: "educacao", label: "Educação", icon: "🎓", color: "#c77dff" },
   ambiental: { key: "ambiental", label: "Ambiental", icon: "🌱", color: "#52b788" },
-  internacional: { key: "internacional", label: "Internacional", icon: "🌐", color: "#40c4d0" },
+  federativa: { key: "federativa", label: "Federativa", icon: "🤝", color: "#40c4d0" },
   institucional: { key: "institucional", label: "Institucional", icon: "🏛️", color: "#e0b84f" },
   social: { key: "social", label: "Social", icon: "✊", color: "#e07fc0" },
 };

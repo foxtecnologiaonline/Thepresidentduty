@@ -78,14 +78,14 @@ export const ACHIEVEMENTS: Achievement[] = [
     },
   },
   {
-    id: "unidade-nacional",
-    label: "Unidade Nacional",
+    id: "unidade-estadual",
+    label: "Unidade Estadual",
     description: "Encerrou o mandato com apoio de pelo menos 60 em todos os setores da sociedade.",
     check: (state) => !!state.endResult?.victory && SECTOR_ORDER.every((key) => state.sectors[key] >= 60),
   },
   {
-    id: "pais-dividido",
-    label: "País Dividido",
+    id: "estado-dividido",
+    label: "Estado Dividido",
     description: "Terminou o mandato com um setor em forte rejeição e outro em forte apoio ao mesmo tempo.",
     check: (state) => {
       const values = SECTOR_ORDER.map((key) => state.sectors[key]);

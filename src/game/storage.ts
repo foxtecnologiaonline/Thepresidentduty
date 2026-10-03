@@ -7,7 +7,7 @@ export interface BestResult {
   victory: boolean;
 }
 
-const STORAGE_KEY = "presidencia:best-result";
+const STORAGE_KEY = "governador:best-result";
 
 function isBestResult(value: unknown): value is BestResult {
   if (!value || typeof value !== "object") return false;
@@ -50,7 +50,7 @@ export function saveBestResultIfBetter(result: BestResult): BestResult {
   return result;
 }
 
-const ACHIEVEMENTS_KEY = "presidencia:achievements";
+const ACHIEVEMENTS_KEY = "governador:achievements";
 
 export function loadUnlockedAchievements(): Set<string> {
   try {
@@ -77,7 +77,7 @@ export function unlockAchievements(ids: string[]): Set<string> {
 
 export type Theme = "dark" | "light";
 
-const THEME_KEY = "presidencia:theme";
+const THEME_KEY = "governador:theme";
 
 export function loadTheme(): Theme {
   try {
@@ -96,7 +96,7 @@ export function saveTheme(theme: Theme): void {
   }
 }
 
-const ONBOARDING_KEY = "presidencia:onboarding-seen";
+const ONBOARDING_KEY = "governador:onboarding-seen";
 
 export function hasSeenOnboarding(): boolean {
   try {
@@ -123,7 +123,7 @@ export interface MandateHistoryEntry {
   playedAt: number;
 }
 
-const MANDATE_HISTORY_KEY = "presidencia:mandate-history";
+const MANDATE_HISTORY_KEY = "governador:mandate-history";
 const MANDATE_HISTORY_LIMIT = 5;
 
 function isMandateHistoryEntry(value: unknown): value is MandateHistoryEntry {
@@ -161,7 +161,7 @@ export function addMandateHistoryEntry(entry: MandateHistoryEntry): MandateHisto
   return next;
 }
 
-const IN_PROGRESS_KEY = "presidencia:in-progress";
+const IN_PROGRESS_KEY = "governador:in-progress";
 
 /**
  * Checagem leve de forma, não exaustiva: o bastante para recusar um save de uma versão

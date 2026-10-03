@@ -1,7 +1,7 @@
 import { EVENTS } from "../data/events";
 import { CRITICAL_INDICATORS, INDICATOR_META, INDICATOR_ORDER, createInitialIndicators } from "../data/indicators";
 import { createInitialSectors } from "../data/sectors";
-import type { Difficulty, EndResult, EventChoice, GameEvent, GameState, Indicators, PresidentialAction } from "../types";
+import type { Difficulty, EndResult, EventChoice, GameEvent, GameState, GovernorAction, Indicators } from "../types";
 
 /** Legado que um mandato concluído transmite ao próximo da mesma dinastia (Nova Partida+). */
 export interface DynastyLegacy {
@@ -197,7 +197,7 @@ function computeLegado(indicators: Indicators): EndResult {
       victory: true,
       title: "Estadista Histórico",
       narrative:
-        "Você concluiu o mandato deixando um legado admirado por todo o país. Seu nome entra para a história como referência de bom governo.",
+        "Você concluiu o mandato deixando um legado admirado por todo o estado. Seu nome entra para a história como referência de bom governo.",
       average,
     };
   }
@@ -206,7 +206,7 @@ function computeLegado(indicators: Indicators): EndResult {
       victory: true,
       title: "Bom Governo",
       narrative:
-        "Seu mandato foi bem-sucedido. Nem tudo saiu perfeito, mas o país termina seu governo em situação melhor do que começou.",
+        "Seu mandato foi bem-sucedido. Nem tudo saiu perfeito, mas o estado termina seu governo em situação melhor do que começou.",
       average,
     };
   }
@@ -215,7 +215,7 @@ function computeLegado(indicators: Indicators): EndResult {
       victory: true,
       title: "Mandato Mediano",
       narrative:
-        "Você concluiu o mandato, mas sem grandes marcas. O país segue enfrentando desafios semelhantes aos do início do seu governo.",
+        "Você concluiu o mandato, mas sem grandes marcas. O estado segue enfrentando desafios semelhantes aos do início do seu governo.",
       average,
     };
   }
@@ -223,7 +223,7 @@ function computeLegado(indicators: Indicators): EndResult {
     victory: true,
     title: "Governo Fraco",
     narrative:
-      "Você sobreviveu até o fim do mandato, mas deixa o país em situação frágil, com sérios desafios para o próximo governo.",
+      "Você sobreviveu até o fim do mandato, mas deixa o estado em situação frágil, com sérios desafios para o próximo governo.",
     average,
   };
 }
@@ -231,7 +231,7 @@ function computeLegado(indicators: Indicators): EndResult {
 export function applyChoice(
   state: GameState,
   choice: EventChoice,
-  action: PresidentialAction | null = null
+  action: GovernorAction | null = null
 ): GameState {
   if (!state.currentEvent || state.phase !== "playing") {
     return state;

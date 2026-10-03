@@ -5,7 +5,7 @@ export type IndicatorKey =
   | "saude"
   | "educacao"
   | "meioAmbiente"
-  | "relacoesInternacionais"
+  | "relacoesInstitucionais"
   | "governabilidade";
 
 export type Indicators = Record<IndicatorKey, number>;
@@ -60,7 +60,7 @@ export type EventCategory =
   | "saude"
   | "educacao"
   | "ambiental"
-  | "internacional"
+  | "federativa"
   | "institucional"
   | "social";
 
@@ -100,7 +100,7 @@ export interface GameEvent {
  * Ação de governo que o jogador pode emitir por conta própria a cada trimestre,
  * independente do evento sorteado — no máximo uma por turno.
  */
-export interface PresidentialAction {
+export interface GovernorAction {
   id: string;
   label: string;
   description: string;
@@ -132,7 +132,7 @@ export interface GameState {
   totalTurns: number;
   deck: GameEvent[];
   currentEvent: GameEvent | null;
-  history: { event: GameEvent; choice: EventChoice; action: PresidentialAction | null }[];
+  history: { event: GameEvent; choice: EventChoice; action: GovernorAction | null }[];
   /** Retrato dos indicadores ao final de cada turno (índice 0 = estado inicial). */
   indicatorSnapshots: Indicators[];
   /** Retrato dos setores ao final de cada turno (índice 0 = estado inicial). */

@@ -31,7 +31,7 @@ export function ShareButton({ text }: Props) {
   async function handleShare() {
     if (navigator.share) {
       try {
-        await navigator.share({ text, title: "A Presidência" });
+        await navigator.share({ text, title: "O Governador" });
         setStatus("shared");
         scheduleReset();
         return;

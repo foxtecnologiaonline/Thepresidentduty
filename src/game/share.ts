@@ -9,7 +9,7 @@ export function buildShareText(
 ): string {
   const initial = createInitialIndicators();
   const lines: string[] = [
-    `🏛️ A Presidência — ${result.title} (média ${Math.round(result.average)})`,
+    `🏛️ O Governador — ${result.title} (média ${Math.round(result.average)})`,
   ];
 
   const profile = computeLeanProfile(history);

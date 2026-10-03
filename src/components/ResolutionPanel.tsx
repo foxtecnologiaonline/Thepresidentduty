@@ -1,12 +1,12 @@
 import { INDICATOR_META } from "../data/indicators";
 import { SECTOR_META } from "../data/sectors";
 import { mergeEffects, scaleEffects } from "../game/engine";
-import type { EventChoice, GameEvent, PresidentialAction, SectorKey } from "../types";
+import type { EventChoice, GameEvent, GovernorAction, SectorKey } from "../types";
 
 interface Props {
   event: GameEvent;
   choice: EventChoice;
-  action: PresidentialAction | null;
+  action: GovernorAction | null;
   /** Multiplicador da dificuldade atual — o relato precisa refletir o que de fato foi aplicado. */
   multiplier: number;
   onContinue: () => void;

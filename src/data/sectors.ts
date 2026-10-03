@@ -5,25 +5,25 @@ export const SECTOR_META: Record<SectorKey, SectorMeta> = {
     key: "politicos",
     label: "Políticos",
     icon: "🗳️",
-    description: "Apoio de partidos e lideranças políticas aliadas no Congresso.",
+    description: "Apoio de partidos e lideranças políticas aliadas na Assembleia Legislativa.",
   },
   militares: {
     key: "militares",
-    label: "Militares",
+    label: "Polícia Militar",
     icon: "🎖️",
-    description: "Relação com as Forças Armadas e as forças de segurança.",
+    description: "Relação com a Polícia Militar e a Polícia Civil do estado.",
   },
   populacao: {
     key: "populacao",
     label: "População",
     icon: "👥",
-    description: "Sentimento das classes populares e dos cidadãos comuns no dia a dia.",
+    description: "Sentimento das classes populares e dos cidadãos comuns do estado no dia a dia.",
   },
   academicos: {
     key: "academicos",
     label: "Acadêmicos",
     icon: "📚",
-    description: "Apoio de universidades, pesquisadores e da comunidade científica.",
+    description: "Apoio de universidades estaduais, pesquisadores e da comunidade científica.",
   },
   movimentosSociais: {
     key: "movimentosSociais",
@@ -35,7 +35,7 @@ export const SECTOR_META: Record<SectorKey, SectorMeta> = {
     key: "empresariado",
     label: "Empresariado",
     icon: "🏢",
-    description: "Confiança de empresários e investidores no ambiente de negócios.",
+    description: "Confiança de empresários e investidores no ambiente de negócios do estado.",
   },
 };
 

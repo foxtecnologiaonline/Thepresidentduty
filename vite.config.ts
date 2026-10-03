@@ -9,9 +9,9 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       manifest: {
-        name: 'A Presidência',
-        short_name: 'Presidência',
-        description: 'Simulador presidencial de decisões e indicadores de governo.',
+        name: 'O Governador',
+        short_name: 'Governador',
+        description: 'Simulador de decisões e indicadores de um governo estadual.',
         theme_color: '#0b1220',
         background_color: '#0b1220',
         display: 'standalone',

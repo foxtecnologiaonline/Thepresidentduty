@@ -1,17 +1,17 @@
 import { CATEGORY_META } from "../data/categories";
 import { INDICATOR_META } from "../data/indicators";
 import { scaleEffects } from "../game/engine";
-import type { EventChoice, GameEvent, PresidentialAction } from "../types";
+import type { EventChoice, GameEvent, GovernorAction } from "../types";
 
 interface Props {
   event: GameEvent;
   turnLabel: string;
   turn: number;
-  actions: PresidentialAction[];
-  selectedAction: PresidentialAction | null;
+  actions: GovernorAction[];
+  selectedAction: GovernorAction | null;
   /** Multiplicador da dificuldade atual — a prévia precisa refletir o que será de fato aplicado. */
   multiplier: number;
-  onSelectAction: (action: PresidentialAction) => void;
+  onSelectAction: (action: GovernorAction) => void;
   onChoose: (choice: EventChoice) => void;
 }
 

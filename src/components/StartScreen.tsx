@@ -23,14 +23,15 @@ export function StartScreen({ onStart, bestResult, mandateHistory }: Props) {
 
   return (
     <div className="screen start-screen">
-      <h1>A Presidência</h1>
+      <h1>O Governador</h1>
       <p className="tagline">
-        Você acaba de ser eleito. Um mandato de 4 anos está em suas mãos: cada decisão
-        molda a Economia, a Popularidade, a Segurança e mais cinco frentes do seu governo.
+        Você acaba de ser eleito governador do estado. Um mandato de 4 anos está em suas mãos:
+        cada decisão molda a Economia, a Popularidade, a Segurança Pública e mais cinco frentes
+        do seu governo.
       </p>
       <p className="tagline">
         Sobreviva aos 16 trimestres do mandato sem perder o controle da situação — e
-        deixe um legado à altura da história.
+        deixe um legado à altura da história do seu estado.
       </p>
 
       <div className="difficulty-picker">
@@ -58,7 +59,7 @@ export function StartScreen({ onStart, bestResult, mandateHistory }: Props) {
       )}
       <MandateHistoryList entries={mandateHistory} />
       <button type="button" className="primary-button" onClick={() => onStart(difficulty)}>
-        Assumir a Presidência
+        Assumir o Governo do Estado
       </button>
     </div>
   );

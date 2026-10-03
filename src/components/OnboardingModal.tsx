@@ -9,14 +9,14 @@ export function OnboardingModal({ onDismiss }: Props) {
         <h2>Antes de assumir o cargo</h2>
         <ul className="onboarding-list">
           <li>
-            <strong>Indicadores</strong> — Economia, Popularidade, Segurança e Governabilidade são críticos: se
-            qualquer um deles zerar, o mandato acaba ali. Saúde, Educação, Meio Ambiente e Relações
-            Internacionais moldam seu legado, mas não derrubam o governo sozinhos.
+            <strong>Indicadores</strong> — Economia, Popularidade, Segurança Pública e Governabilidade são
+            críticos: se qualquer um deles zerar, o mandato acaba ali. Saúde, Educação, Meio Ambiente e
+            Relações Institucionais moldam seu legado, mas não derrubam o governo sozinhos.
           </li>
           <li>
-            <strong>Setores da Sociedade</strong> — Políticos, Militares, População, Acadêmicos, Movimentos
-            Sociais e Empresariado reagem às suas decisões à parte dos indicadores. Não têm limiar crítico,
-            mas moldam o relatório final e algumas conquistas.
+            <strong>Setores da Sociedade</strong> — Políticos, Polícia Militar, População, Acadêmicos,
+            Movimentos Sociais e Empresariado reagem às suas decisões à parte dos indicadores. Não têm
+            limiar crítico, mas moldam o relatório final e algumas conquistas.
           </li>
           <li>
             <strong>Diretivas</strong> — a cada trimestre você também pode emitir uma diretiva própria

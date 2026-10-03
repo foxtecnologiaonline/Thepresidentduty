@@ -39,12 +39,12 @@ import {
 import { useNarrowViewport } from "./hooks/useNarrowViewport";
 import { useTheme } from "./hooks/useTheme";
 import { createInitialIndicators } from "./data/indicators";
-import type { Difficulty, EventChoice, GameEvent, PresidentialAction, GameState } from "./types";
+import type { Difficulty, EventChoice, GameEvent, GovernorAction, GameState } from "./types";
 
 interface Resolution {
   event: GameEvent;
   choice: EventChoice;
-  action: PresidentialAction | null;
+  action: GovernorAction | null;
 }
 
 /** Fração da popularidade final que o sucessor herda ao continuar a dinastia — modesta de
@@ -59,7 +59,7 @@ const NARROW_TABS_BREAKPOINT = 380;
 function App() {
   const [game, setGame] = useState<GameState>(() => loadInProgressGame() ?? createStartState());
   const [resolution, setResolution] = useState<Resolution | null>(null);
-  const [selectedAction, setSelectedAction] = useState<PresidentialAction | null>(null);
+  const [selectedAction, setSelectedAction] = useState<GovernorAction | null>(null);
   const [bestResult, setBestResult] = useState<BestResult | null>(() => loadBestResult());
   const [mandateHistory, setMandateHistory] = useState<MandateHistoryEntry[]>(() => loadMandateHistory());
   const [earnedAchievementIds, setEarnedAchievementIds] = useState<Set<string>>(new Set());
@@ -121,7 +121,7 @@ function App() {
     setSelectedAction(null);
   }
 
-  function handleSelectAction(action: PresidentialAction) {
+  function handleSelectAction(action: GovernorAction) {
     setSelectedAction((current) => (current?.id === action.id ? null : action));
   }
 
@@ -194,7 +194,7 @@ function App() {
       {game.phase !== "start" && (
         <>
           <header className="app-header">
-            <h1>A Presidência</h1>
+            <h1>O Governador</h1>
             {game.phase === "playing" && (
               <span className="turn-counter">
                 Trimestre {game.turn} de {game.totalTurns}

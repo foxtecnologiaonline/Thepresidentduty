@@ -81,7 +81,7 @@ export function MandateReport({
       </section>
 
       <section className="report-section">
-        <h3>Como o país mudou</h3>
+        <h3>Como o estado mudou</h3>
         <ComparisonList<IndicatorKey>
           order={INDICATOR_ORDER}
           meta={INDICATOR_META}
