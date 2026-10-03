@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0b1220" />
+    <meta
+      name="description"
+      content="O Prefeito: simulador de decisões municipais e seus impactos no orçamento, popularidade, segurança e mais."
+    />
+    <title>O Prefeito</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script>
+      // Aplica o tema salvo antes do primeiro paint — sem isso, a página sempre nasce no
+      // tema escuro padrão e só troca para claro depois que o React monta e o useEffect de
+      // useTheme roda, causando um flash visível do tema errado para quem usa o tema claro.
+      try {
+        if (localStorage.getItem("prefeito:theme") === "light") {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      } catch {
+        // Armazenamento indisponível — segue com o tema padrão.
+      }
+    </script>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
