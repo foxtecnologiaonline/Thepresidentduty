@@ -1,6 +1,6 @@
 import { Component, lazy, Suspense, type ReactNode } from "react";
 import { ShareButton } from "../../components/ShareButton";
-import { TOTAL_REIGNS, grantedFlagsThisReign } from "../game/engine";
+import { TOTAL_REIGNS, grantedFlagsThisReign, isDynastyFinished } from "../game/engine";
 import { buildShareText } from "../game/share";
 import type { EndResult, Factions, GameState, Indicators } from "../types";
 
@@ -56,7 +56,7 @@ export function EndScreen({
   onViewChronicle,
   onNewDynasty,
 }: Props) {
-  const isLastReign = reignNumber >= TOTAL_REIGNS;
+  const isLastReign = isDynastyFinished(reignNumber);
   const grantedFlags = grantedFlagsThisReign({ history });
 
   return (

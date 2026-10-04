@@ -27,7 +27,15 @@ export const DIFFICULTY_LABELS: Record<Difficulty, string> = {
   dificil: "Difícil",
 };
 
-function shuffle<T>(items: T[]): T[] {
+/**
+ * As quatro funções abaixo (shuffle, eventIntensity, orderByEscalatingIntensity,
+ * avoidConsecutiveCategories) são genéricas sobre a forma mínima de um "evento" —
+ * `category` + `choices[].effects` — não sobre o IndicatorKey/EventCategory específicos
+ * de A Presidência. Ficam exportadas daqui e reaproveitadas por outras instâncias do
+ * motor (ex.: A Dinastia) em vez de duplicadas, exatamente o ponto da Fórmula 9: uma
+ * segunda camada de jogo não deveria custar código novo de reordenação de baralho.
+ */
+export function shuffle<T>(items: T[]): T[] {
   const array = [...items];
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -36,12 +44,24 @@ function shuffle<T>(items: T[]): T[] {
   return array;
 }
 
+interface IntensityEvent {
+  choices: { effects: Partial<Record<string, number>> }[];
+}
+
+function choiceIntensity(effects: Partial<Record<string, number>>): number {
+  let sum = 0;
+  for (const value of Object.values(effects)) {
+    sum += Math.abs(value ?? 0);
+  }
+  return sum;
+}
+
 /** Soma das magnitudes de efeito de um evento — proxy simples de "o quanto essa crise pesa". */
-function eventIntensity(event: GameEvent): number {
-  const total = event.choices.reduce(
-    (sum, choice) => sum + Object.values(choice.effects).reduce((s, v) => s + Math.abs(v ?? 0), 0),
-    0
-  );
+export function eventIntensity(event: IntensityEvent): number {
+  let total = 0;
+  for (const choice of event.choices) {
+    total += choiceIntensity(choice.effects);
+  }
   return total / event.choices.length;
 }
 
@@ -49,9 +69,9 @@ function eventIntensity(event: GameEvent): number {
 // tornaria o mandato previsível e mudaria a curva de dificuldade já validada), mas que
 // ainda inclina o baralho para crises mais pesadas acontecerem mais perto do fim —
 // a sequência resultante aplica exatamente os mesmos efeitos totais, só muda a ordem.
-const INTENSITY_JITTER = 7;
+export const INTENSITY_JITTER = 7;
 
-function orderByEscalatingIntensity(events: GameEvent[]): GameEvent[] {
+export function orderByEscalatingIntensity<T extends IntensityEvent>(events: T[]): T[] {
   return events
     .map((event) => ({ event, sortKey: eventIntensity(event) + Math.random() * INTENSITY_JITTER }))
     .sort((a, b) => a.sortKey - b.sortKey)
@@ -60,7 +80,7 @@ function orderByEscalatingIntensity(events: GameEvent[]): GameEvent[] {
 
 /** Evita (sem garantir) duas crises seguidas da mesma categoria temática, trocando a
     segunda ocorrência de lugar com o primeiro evento mais à frente que já resolva o choque. */
-function avoidConsecutiveCategories(events: GameEvent[]): GameEvent[] {
+export function avoidConsecutiveCategories<T extends { category: unknown }>(events: T[]): T[] {
   const result = [...events];
   for (let i = 1; i < result.length; i++) {
     if (result[i].category !== result[i - 1].category) continue;

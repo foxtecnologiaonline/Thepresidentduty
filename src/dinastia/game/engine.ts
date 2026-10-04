@@ -1,4 +1,11 @@
-import { applyEffects, mergeEffects, scaleEffects } from "../../game/engine";
+import {
+  applyEffects,
+  avoidConsecutiveCategories,
+  mergeEffects,
+  orderByEscalatingIntensity,
+  scaleEffects,
+  shuffle,
+} from "../../game/engine";
 import { EVENTS } from "../data/events";
 import {
   CRITICAL_INDICATORS,
@@ -47,47 +54,6 @@ export const DIFFICULTY_LABELS: Record<Difficulty, string> = {
   normal: "Normal",
   dificil: "Difícil",
 };
-
-function shuffle<T>(items: T[]): T[] {
-  const array = [...items];
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
-  return array;
-}
-
-function eventIntensity(event: GameEvent): number {
-  const total = event.choices.reduce(
-    (sum, choice) => sum + Object.values(choice.effects).reduce((s, v) => s + Math.abs(v ?? 0), 0),
-    0
-  );
-  return total / event.choices.length;
-}
-
-const INTENSITY_JITTER = 7;
-
-function orderByEscalatingIntensity(events: GameEvent[]): GameEvent[] {
-  return events
-    .map((event) => ({ event, sortKey: eventIntensity(event) + Math.random() * INTENSITY_JITTER }))
-    .sort((a, b) => a.sortKey - b.sortKey)
-    .map((entry) => entry.event);
-}
-
-function avoidConsecutiveCategories(events: GameEvent[]): GameEvent[] {
-  const result = [...events];
-  for (let i = 1; i < result.length; i++) {
-    if (result[i].category !== result[i - 1].category) continue;
-    for (let j = i + 1; j < result.length; j++) {
-      const nextCategory = result[i + 1]?.category;
-      if (result[j].category !== result[i - 1].category && result[j].category !== nextCategory) {
-        [result[i], result[j]] = [result[j], result[i]];
-        break;
-      }
-    }
-  }
-  return result;
-}
 
 /** Só entram no baralho os eventos cujas marcas narrativas de ancestrais batem com esta dinastia. */
 function eligibleEvents(legacyFlags: string[]): GameEvent[] {
@@ -156,7 +122,7 @@ export function computeAverage(indicators: Indicators): number {
 
 function successionFootnote(indicators: Indicators): string {
   return indicators.herdeiros <= FRAGILE_SUCCESSION_THRESHOLD
-    ? " Para piorar, a linhagem real está perigosamente fragilizada: o próximo herdeiro assume um trono ainda mais instável."
+    ? " Para piorar, a linhagem real está perigosamente fragilizada: os barões vão testar o próximo herdeiro assim que ele assumir o trono."
     : "";
 }
 
@@ -321,12 +287,19 @@ export function buildReignSummary(state: GameState): ReignSummary {
 const DYNASTY_CARRYOVER = 0.2;
 const INITIAL_PRESTIGIO = createInitialIndicators().prestigio;
 
+// Faixa "pequena" da Fórmula 2: a penalidade precisa ser sentida, mas nunca travar
+// sozinha o reinado seguinte. Dá peso real ao aviso de sucessão fragilizada (Fórmula 8 —
+// nunca deixar o jogador surpreso) em vez de ser só uma frase de efeito sem consequência.
+const FRAGILE_SUCCESSION_PENALTY = -5;
+
 export function buildNextLegacy(state: GameState): DynastyLegacy {
   const summary = buildReignSummary(state);
   const mergedFlags = [...new Set([...state.legacyFlags, ...summary.grantedFlags])];
+  const wasFragileSuccession = state.indicators.herdeiros <= FRAGILE_SUCCESSION_THRESHOLD;
   return {
     indicatorBonus: {
       prestigio: Math.round((state.indicators.prestigio - INITIAL_PRESTIGIO) * DYNASTY_CARRYOVER),
+      ...(wasFragileSuccession ? { nobreza: FRAGILE_SUCCESSION_PENALTY } : {}),
     },
     reignNumber: state.reignNumber + 1,
     legacyFlags: mergedFlags,
@@ -334,8 +307,10 @@ export function buildNextLegacy(state: GameState): DynastyLegacy {
   };
 }
 
-export function isDynastyFinished(state: GameState): boolean {
-  return state.reignNumber >= TOTAL_REIGNS;
+/** O 5º (e último) reinado já foi alcançado — ponto único usado pela tela de fim de
+    reinado e pelas conquistas de dinastia inteira, para as duas nunca divergirem. */
+export function isDynastyFinished(reignNumber: number): boolean {
+  return reignNumber >= TOTAL_REIGNS;
 }
 
 export interface DynastyTierResult {

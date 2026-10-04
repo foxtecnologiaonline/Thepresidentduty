@@ -1,6 +1,6 @@
 import { CATEGORY_META } from "../data/categories";
 import { INDICATOR_META } from "../data/indicators";
-import { scaleEffects } from "../../game/engine";
+import { mergeEffects, scaleEffects } from "../../game/engine";
 import type { EventChoice, GameEvent, RoyalDecree } from "../types";
 
 interface Props {
@@ -86,7 +86,12 @@ export function EventCard({
           {event.choices.map((choice) => (
             <button key={choice.id} type="button" className="choice-button" onClick={() => onChoose(choice)}>
               <span className="choice-label">{choice.label}</span>
-              <EffectsPreview effects={scaleEffects(choice.effects, multiplier)} />
+              {/* Mescla com o decreto selecionado antes de arredondar, igual ao que applyChoice
+                  de fato aplica — senão a prévia pode divergir em ±1 do efeito real exibido
+                  depois no ResolutionPanel. */}
+              <EffectsPreview
+                effects={scaleEffects(mergeEffects(choice.effects, selectedDecree?.effects), multiplier)}
+              />
             </button>
           ))}
         </div>

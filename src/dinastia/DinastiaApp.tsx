@@ -32,6 +32,7 @@ import {
   clearInProgressGame,
   hasSeenOnboarding,
   loadBestReignResult,
+  loadChronicleHistory,
   loadInProgressGame,
   loadReignHistory,
   loadUnlockedAchievements,
@@ -40,6 +41,7 @@ import {
   saveInProgressGame,
   unlockAchievements,
   type BestReignResult,
+  type DynastyChronicleEntry,
   type ReignHistoryEntry,
 } from "./game/storage";
 import type { Difficulty, EventChoice, GameEvent, GameState, ReignSummary, RoyalDecree } from "./types";
@@ -62,6 +64,7 @@ function DinastiaApp({ onExitToMenu }: Props) {
   const [selectedDecree, setSelectedDecree] = useState<RoyalDecree | null>(null);
   const [bestResult, setBestResult] = useState<BestReignResult | null>(() => loadBestReignResult());
   const [reignHistory, setReignHistory] = useState<ReignHistoryEntry[]>(() => loadReignHistory());
+  const [chronicleHistory, setChronicleHistory] = useState<DynastyChronicleEntry[]>(() => loadChronicleHistory());
   const [earnedAchievementIds, setEarnedAchievementIds] = useState<Set<string>>(new Set());
   const [newAchievementIds, setNewAchievementIds] = useState<Set<string>>(new Set());
   const [showOnboarding, setShowOnboarding] = useState(false);
@@ -166,13 +169,15 @@ function DinastiaApp({ onExitToMenu }: Props) {
 
       if (next.reignNumber >= TOTAL_REIGNS) {
         const tier = computeDynastyTier(chronicleSoFar);
-        addChronicleHistoryEntry({
-          reigns: chronicleSoFar,
-          tierLabel: tier.title,
-          overallAverage: tier.overallAverage,
-          difficulty: next.difficulty,
-          completedAt: Date.now(),
-        });
+        setChronicleHistory(
+          addChronicleHistoryEntry({
+            reigns: chronicleSoFar,
+            tierLabel: tier.title,
+            overallAverage: tier.overallAverage,
+            difficulty: next.difficulty,
+            completedAt: Date.now(),
+          })
+        );
       }
     }
   }
@@ -223,7 +228,12 @@ function DinastiaApp({ onExitToMenu }: Props) {
       {showOnboarding && <OnboardingModal onDismiss={handleDismissOnboarding} />}
 
       {game.phase === "start" && (
-        <StartScreen onStart={startFresh} bestResult={bestResult} reignHistory={reignHistory} />
+        <StartScreen
+          onStart={startFresh}
+          bestResult={bestResult}
+          reignHistory={reignHistory}
+          chronicleHistory={chronicleHistory}
+        />
       )}
 
       {game.phase !== "start" && (

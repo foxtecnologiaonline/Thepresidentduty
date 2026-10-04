@@ -32,6 +32,9 @@ export const EVENTS: GameEvent[] = [
     id: "rebeliao-dos-baroes",
     title: "Rebelião dos Barões",
     category: "nobreza",
+    // Uma vez que o pacto de autonomia já foi concedido (ver "cobranca-do-pacto"),
+    // uma nova rebelião pedindo a mesma coisa não faz mais sentido nesta dinastia.
+    forbidsLegacyFlag: "pacto-baroes",
     description:
       "Um grupo de barões se arma à beira da revolta, exigindo mais autonomia sobre suas terras e menos tributos à coroa.",
     choices: [
@@ -115,6 +118,9 @@ export const EVENTS: GameEvent[] = [
     id: "excomunhao-ameacada",
     title: "Ameaça de Excomunhão",
     category: "religiao",
+    // A Igreja já foi humilhada por um ancestral (ver "memoria-da-igreja") — não há
+    // uma segunda ameaça de excomunhão original para fazer nesta linhagem.
+    forbidsLegacyFlag: "igreja-humilhada",
     description: "O bispo ameaça excomungar a coroa por conta de impostos cobrados sobre terras da Igreja.",
     choices: [
       {
@@ -140,6 +146,9 @@ export const EVENTS: GameEvent[] = [
     id: "proposta-de-alianca",
     title: "Proposta de Aliança",
     category: "diplomacia",
+    // A aliança já foi selada por um ancestral e segue valendo (ver "chamado-do-aliado")
+    // — não faz sentido o mesmo reino vizinho propor de novo algo que já existe.
+    forbidsLegacyFlag: "alianca-reino-vizinho",
     description: "O reino vizinho propõe uma aliança militar duradoura, selada com tratados e livre comércio.",
     choices: [
       {
@@ -268,7 +277,7 @@ export const EVENTS: GameEvent[] = [
         id: "responder-com-forca",
         label: "Responder com força militar",
         consequence: "A fronteira é defendida com honra, mas o confronto deixa feridas abertas entre os dois reinos.",
-        effects: { exercito: -5, prestigio: 6 },
+        effects: { exercito: -5, prestigio: 6, nobreza: 4 },
         factionEffects: { reinoVizinho: -9 },
         leaning: 2,
         triggersEventId: "proposta-de-paz",
@@ -277,7 +286,7 @@ export const EVENTS: GameEvent[] = [
         id: "negociar-fronteira",
         label: "Negociar a fronteira diplomaticamente",
         consequence: "O confronto é evitado, mas parte da corte vê a negociação como fraqueza.",
-        effects: { prestigio: -3 },
+        effects: { prestigio: -3, nobreza: -4 },
         factionEffects: { reinoVizinho: 5 },
         leaning: -2,
       },
@@ -504,6 +513,9 @@ export const EVENTS: GameEvent[] = [
     id: "herdeiro-bastardo",
     title: "O Herdeiro Bastardo",
     category: "corte",
+    // Uma vez que a linhagem já carrega sangue bastardo reconhecido (ver
+    // "rumores-de-bastardia"), descobrir um segundo caso perde a força narrativa.
+    forbidsLegacyFlag: "linhagem-bastarda",
     description: "Descobre-se que um dos herdeiros reconhecidos nasceu de uma relação fora do casamento real.",
     choices: [
       {

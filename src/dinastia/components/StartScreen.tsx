@@ -1,13 +1,15 @@
 import { useState } from "react";
 import { DIFFICULTY_LABELS } from "../game/engine";
-import type { BestReignResult, ReignHistoryEntry } from "../game/storage";
+import type { BestReignResult, DynastyChronicleEntry, ReignHistoryEntry } from "../game/storage";
 import type { Difficulty } from "../types";
+import { ChronicleHistoryList } from "./ChronicleHistoryList";
 import { ReignHistoryList } from "./ReignHistoryList";
 
 interface Props {
   onStart: (difficulty: Difficulty) => void;
   bestResult: BestReignResult | null;
   reignHistory: ReignHistoryEntry[];
+  chronicleHistory: DynastyChronicleEntry[];
 }
 
 const DIFFICULTIES: Difficulty[] = ["facil", "normal", "dificil"];
@@ -18,7 +20,7 @@ const DIFFICULTY_HINTS: Record<Difficulty, string> = {
   dificil: "Decisões pesam mais — cada escolha tem consequências fortes.",
 };
 
-export function StartScreen({ onStart, bestResult, reignHistory }: Props) {
+export function StartScreen({ onStart, bestResult, reignHistory, chronicleHistory }: Props) {
   const [difficulty, setDifficulty] = useState<Difficulty>("normal");
 
   return (
@@ -57,6 +59,7 @@ export function StartScreen({ onStart, bestResult, reignHistory }: Props) {
         </p>
       )}
       <ReignHistoryList entries={reignHistory} />
+      <ChronicleHistoryList entries={chronicleHistory} />
       <button type="button" className="primary-button" onClick={() => onStart(difficulty)}>
         Assumir o Trono
       </button>

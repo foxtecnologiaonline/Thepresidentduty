@@ -91,10 +91,10 @@ export const FRAGILE_SUCCESSION_THRESHOLD = 25;
 
 export function createInitialIndicators(): Indicators {
   return {
-    tesouro: 42,
+    tesouro: 46,
     exercito: 55,
-    fe: 46,
-    nobreza: 42,
+    fe: 50,
+    nobreza: 46,
     colheita: 55,
     prestigio: 50,
     herdeiros: 50,

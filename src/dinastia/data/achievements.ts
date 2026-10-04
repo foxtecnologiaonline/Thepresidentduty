@@ -1,7 +1,7 @@
 import { computeLeanProfile, describeLean } from "../game/leaning";
 import { CRITICAL_INDICATORS, CRITICAL_WARNING_THRESHOLD } from "./indicators";
 import { FACTION_ORDER } from "./factions";
-import { TOTAL_REIGNS } from "../game/engine";
+import { TOTAL_REIGNS, isDynastyFinished } from "../game/engine";
 import type { GameState } from "../types";
 
 export interface Achievement {
@@ -19,7 +19,7 @@ function wasEverInDanger(state: GameState): boolean {
 
 /** A crônica só fecha a dinastia inteira quando o 5º reinado é concluído. */
 function isDynastyComplete(state: GameState): boolean {
-  return state.reignNumber >= TOTAL_REIGNS && state.chronicle.length >= TOTAL_REIGNS;
+  return isDynastyFinished(state.reignNumber) && state.chronicle.length >= TOTAL_REIGNS;
 }
 
 export const ACHIEVEMENTS: Achievement[] = [
