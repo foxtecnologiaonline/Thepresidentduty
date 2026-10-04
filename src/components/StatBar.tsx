@@ -28,6 +28,11 @@ export function StatBar({ icon, label, description, value, delta, critical }: Pr
           {icon}
         </span>
         <span>{label}</span>
+        {critical && (
+          <span className="critical-warning-badge" aria-hidden="true">
+            ⚠
+          </span>
+        )}
         <span className="indicator-value">
           {displayedValue}
           {typeof delta === "number" && delta !== 0 && (

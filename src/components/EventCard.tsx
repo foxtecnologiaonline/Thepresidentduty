@@ -1,12 +1,13 @@
 import { CATEGORY_META } from "../data/categories";
 import { INDICATOR_META } from "../data/indicators";
-import { scaleEffects } from "../game/engine";
+import { scaleEffects, scaledMinTurn } from "../game/engine";
 import type { EventChoice, GameEvent, ExecutiveAction } from "../types";
 
 interface Props {
   event: GameEvent;
   turnLabel: string;
   turn: number;
+  totalTurns: number;
   actions: ExecutiveAction[];
   selectedAction: ExecutiveAction | null;
   /** Multiplicador da dificuldade atual — a prévia precisa refletir o que será de fato aplicado. */
@@ -29,16 +30,55 @@ function EffectsPreview({ effects }: { effects: EventChoice["effects"] }) {
   );
 }
 
+/** Diretivas ainda bloqueadas, agrupadas pelo turno em que destravam — evita que
+    cada uma vire um card cheio sem nenhuma ação possível, só poluindo a grade. */
+function LockedActionsHint({
+  actions,
+  turn,
+  totalTurns,
+}: {
+  actions: ExecutiveAction[];
+  turn: number;
+  totalTurns: number;
+}) {
+  const byUnlockTurn = new Map<number, ExecutiveAction[]>();
+  for (const action of actions) {
+    const unlockTurn = scaledMinTurn(action, totalTurns);
+    if (!unlockTurn || turn >= unlockTurn) continue;
+    const group = byUnlockTurn.get(unlockTurn) ?? [];
+    group.push(action);
+    byUnlockTurn.set(unlockTurn, group);
+  }
+  const groups = [...byUnlockTurn.entries()].sort(([a], [b]) => a - b);
+  if (groups.length === 0) return null;
+
+  return (
+    <div className="actions-locked-hint">
+      {groups.map(([minTurn, group]) => (
+        <span key={minTurn} title={group.map((a) => a.label).join(" · ")}>
+          🔒 {group.length} diretiva{group.length > 1 ? "s" : ""} disponíve
+          {group.length > 1 ? "is" : "l"} a partir do Ano {Math.ceil(minTurn / 4)}
+        </span>
+      ))}
+    </div>
+  );
+}
+
 export function EventCard({
   event,
   turnLabel,
   turn,
+  totalTurns,
   actions,
   selectedAction,
   multiplier,
   onSelectAction,
   onChoose,
 }: Props) {
+  const availableActions = actions.filter((action) => {
+    const unlockTurn = scaledMinTurn(action, totalTurns);
+    return !unlockTurn || turn >= unlockTurn;
+  });
   return (
     <div className="event-card-wrap">
       <div className="actions-panel">
@@ -47,32 +87,20 @@ export function EventCard({
           <span className="actions-hint">opcional · no máximo uma</span>
         </div>
         <div className="actions-list">
-          {actions.map((action) => {
-            const isLocked = !!action.minTurn && turn < action.minTurn;
-            return (
-              <button
-                key={action.id}
-                type="button"
-                disabled={isLocked}
-                className={`action-chip${selectedAction?.id === action.id ? " selected" : ""}${isLocked ? " locked" : ""}`}
-                onClick={() => onSelectAction(action)}
-                title={isLocked ? `Disponível a partir do Ano ${Math.ceil((action.minTurn ?? 1) / 4)}` : action.description}
-              >
-                <span className="choice-label">
-                  {isLocked && "🔒 "}
-                  {action.label}
-                </span>
-                {isLocked ? (
-                  <span className="actions-hint">
-                    Disponível a partir do Ano {Math.ceil((action.minTurn ?? 1) / 4)}
-                  </span>
-                ) : (
-                  <EffectsPreview effects={scaleEffects(action.effects, multiplier)} />
-                )}
-              </button>
-            );
-          })}
+          {availableActions.map((action) => (
+            <button
+              key={action.id}
+              type="button"
+              className={`action-chip${selectedAction?.id === action.id ? " selected" : ""}`}
+              onClick={() => onSelectAction(action)}
+              title={action.description}
+            >
+              <span className="choice-label">{action.label}</span>
+              <EffectsPreview effects={scaleEffects(action.effects, multiplier)} />
+            </button>
+          ))}
         </div>
+        <LockedActionsHint actions={actions} turn={turn} totalTurns={totalTurns} />
       </div>
 
       <div className="event-card" style={{ borderTopColor: CATEGORY_META[event.category].color }}>
