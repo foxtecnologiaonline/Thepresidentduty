@@ -7,7 +7,7 @@ export interface BestResult {
   victory: boolean;
 }
 
-const STORAGE_KEY = "presidencia:best-result";
+const STORAGE_KEY = "oceo:best-result";
 
 function isBestResult(value: unknown): value is BestResult {
   if (!value || typeof value !== "object") return false;
@@ -50,7 +50,7 @@ export function saveBestResultIfBetter(result: BestResult): BestResult {
   return result;
 }
 
-const ACHIEVEMENTS_KEY = "presidencia:achievements";
+const ACHIEVEMENTS_KEY = "oceo:achievements";
 
 export function loadUnlockedAchievements(): Set<string> {
   try {
@@ -77,7 +77,7 @@ export function unlockAchievements(ids: string[]): Set<string> {
 
 export type Theme = "dark" | "light";
 
-const THEME_KEY = "presidencia:theme";
+const THEME_KEY = "oceo:theme";
 
 export function loadTheme(): Theme {
   try {
@@ -96,7 +96,7 @@ export function saveTheme(theme: Theme): void {
   }
 }
 
-const ONBOARDING_KEY = "presidencia:onboarding-seen";
+const ONBOARDING_KEY = "oceo:onboarding-seen";
 
 export function hasSeenOnboarding(): boolean {
   try {
@@ -123,7 +123,7 @@ export interface MandateHistoryEntry {
   playedAt: number;
 }
 
-const MANDATE_HISTORY_KEY = "presidencia:mandate-history";
+const MANDATE_HISTORY_KEY = "oceo:mandate-history";
 const MANDATE_HISTORY_LIMIT = 5;
 
 function isMandateHistoryEntry(value: unknown): value is MandateHistoryEntry {
@@ -150,7 +150,7 @@ export function loadMandateHistory(): MandateHistoryEntry[] {
   }
 }
 
-/** Adiciona um mandato ao topo do histórico (mais recente primeiro), mantendo só os últimos 5. */
+/** Adiciona uma gestão ao topo do histórico (mais recente primeiro), mantendo só as últimas 5. */
 export function addMandateHistoryEntry(entry: MandateHistoryEntry): MandateHistoryEntry[] {
   const next = [entry, ...loadMandateHistory()].slice(0, MANDATE_HISTORY_LIMIT);
   try {
@@ -161,12 +161,12 @@ export function addMandateHistoryEntry(entry: MandateHistoryEntry): MandateHisto
   return next;
 }
 
-const IN_PROGRESS_KEY = "presidencia:in-progress";
+const IN_PROGRESS_KEY = "oceo:in-progress";
 
 /**
  * Checagem leve de forma, não exaustiva: o bastante para recusar um save de uma versão
- * incompatível do jogo (chaves de indicadores/setores diferentes, formato de fase inválido)
- * em vez de travar tentando retomar um GameState que não bate com o código atual.
+ * incompatível do jogo (chaves de indicadores/partes interessadas diferentes, formato de
+ * fase inválido) em vez de travar tentando retomar um GameState que não bate com o código atual.
  */
 function isLikelyGameState(value: unknown): value is GameState {
   if (!value || typeof value !== "object") return false;
@@ -177,7 +177,7 @@ function isLikelyGameState(value: unknown): value is GameState {
     candidate.indicators !== null &&
     typeof candidate.sectors === "object" &&
     candidate.sectors !== null &&
-    typeof candidate.dynastyTerm === "number" &&
+    typeof candidate.tenureTerm === "number" &&
     Array.isArray(candidate.deck) &&
     Array.isArray(candidate.history)
   );

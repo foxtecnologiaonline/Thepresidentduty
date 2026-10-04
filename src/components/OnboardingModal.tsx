@@ -9,18 +9,19 @@ export function OnboardingModal({ onDismiss }: Props) {
         <h2>Antes de assumir o cargo</h2>
         <ul className="onboarding-list">
           <li>
-            <strong>Indicadores</strong> — Economia, Popularidade, Segurança e Governabilidade são críticos: se
-            qualquer um deles zerar, o mandato acaba ali. Saúde, Educação, Meio Ambiente e Relações
-            Internacionais moldam seu legado, mas não derrubam o governo sozinhos.
+            <strong>Indicadores</strong> — Financeiro, Reputação da Marca, Confiança do Conselho e Moral dos
+            Funcionários são críticos: se qualquer um deles zerar, a gestão acaba ali. Inovação, Satisfação
+            do Cliente, Sustentabilidade e Relações Regulatórias moldam seu legado, mas não derrubam a
+            empresa sozinhos.
           </li>
           <li>
-            <strong>Setores da Sociedade</strong> — Políticos, Militares, População, Acadêmicos, Movimentos
-            Sociais e Empresariado reagem às suas decisões à parte dos indicadores. Não têm limiar crítico,
-            mas moldam o relatório final e algumas conquistas.
+            <strong>Stakeholders</strong> — Investidores, Imprensa, Funcionários, Clientes, Reguladores e a
+            Comunidade de Desenvolvedores reagem às suas decisões à parte dos indicadores. Não têm limiar
+            crítico, mas moldam o relatório final e algumas conquistas.
           </li>
           <li>
-            <strong>Diretivas</strong> — a cada trimestre você também pode emitir uma diretiva própria
-            (opcional, no máximo uma), além de responder ao evento sorteado.
+            <strong>Diretivas Executivas</strong> — a cada trimestre você também pode emitir uma diretiva
+            própria (opcional, no máximo uma), além de responder ao evento sorteado.
           </li>
         </ul>
         <button type="button" className="primary-button" onClick={onDismiss}>

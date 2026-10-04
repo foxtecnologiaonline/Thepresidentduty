@@ -27,7 +27,7 @@ export function StatsTabs({ sectors, sectorDeltas, indicators, indicatorDeltas }
           className={tab === "sectors" ? "active" : ""}
           onClick={() => setTab("sectors")}
         >
-          Setores
+          Stakeholders
         </button>
         <button
           type="button"

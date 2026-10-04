@@ -7,9 +7,9 @@
     <meta name="theme-color" content="#0b1220" />
     <meta
       name="description"
-      content="A Presidência: simulador de decisões presidenciais e seus impactos na economia, popularidade, segurança e mais."
+      content="O CEO: Orange — simulador de decisões de um CEO de tecnologia e seus impactos no financeiro, na reputação da marca, no conselho e mais."
     />
-    <title>A Presidência</title>
+    <title>O CEO: Orange</title>
   </head>
   <body>
     <div id="root"></div>
@@ -18,7 +18,7 @@
       // tema escuro padrão e só troca para claro depois que o React monta e o useEffect de
       // useTheme roda, causando um flash visível do tema errado para quem usa o tema claro.
       try {
-        if (localStorage.getItem("presidencia:theme") === "light") {
+        if (localStorage.getItem("oceo:theme") === "light") {
           document.documentElement.setAttribute("data-theme", "light");
         }
       } catch {

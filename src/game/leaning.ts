@@ -11,9 +11,9 @@ export interface LeanProfile {
   average: number;
   firstHalfAverage: number;
   secondHalfAverage: number;
-  trend: "direita" | "esquerda" | "estavel";
-  mostLeft: LeanHighlight;
-  mostRight: LeanHighlight;
+  trend: "operador" | "visionario" | "estavel";
+  mostVisionario: LeanHighlight;
+  mostOperador: LeanHighlight;
 }
 
 type HistoryEntry = GameState["history"][number];
@@ -27,7 +27,7 @@ function average(values: number[]): number {
   return values.reduce((sum, value) => sum + value, 0) / values.length;
 }
 
-/** Diferença mínima entre as metades do mandato para considerar que houve uma guinada real. */
+/** Diferença mínima entre as metades da gestão para considerar que houve uma mudança real de estilo. */
 const TREND_THRESHOLD = 0.4;
 
 export function computeLeanProfile(history: HistoryEntry[]): LeanProfile | null {
@@ -40,14 +40,14 @@ export function computeLeanProfile(history: HistoryEntry[]): LeanProfile | null 
   const diff = secondHalfAverage - firstHalfAverage;
 
   let trend: LeanProfile["trend"] = "estavel";
-  if (diff > TREND_THRESHOLD) trend = "direita";
-  else if (diff < -TREND_THRESHOLD) trend = "esquerda";
+  if (diff > TREND_THRESHOLD) trend = "operador";
+  else if (diff < -TREND_THRESHOLD) trend = "visionario";
 
-  let mostLeftIndex = 0;
-  let mostRightIndex = 0;
+  let mostVisionarioIndex = 0;
+  let mostOperadorIndex = 0;
   values.forEach((value, index) => {
-    if (value < values[mostLeftIndex]) mostLeftIndex = index;
-    if (value > values[mostRightIndex]) mostRightIndex = index;
+    if (value < values[mostVisionarioIndex]) mostVisionarioIndex = index;
+    if (value > values[mostOperadorIndex]) mostOperadorIndex = index;
   });
 
   const toHighlight = (index: number): LeanHighlight => {
@@ -65,21 +65,21 @@ export function computeLeanProfile(history: HistoryEntry[]): LeanProfile | null 
     firstHalfAverage,
     secondHalfAverage,
     trend,
-    mostLeft: toHighlight(mostLeftIndex),
-    mostRight: toHighlight(mostRightIndex),
+    mostVisionario: toHighlight(mostVisionarioIndex),
+    mostOperador: toHighlight(mostOperadorIndex),
   };
 }
 
-// Uma escolha isolada varia de -2 a +2; sem usar diretivas, a MÉDIA de um mandato inteiro
+// Uma escolha isolada varia de -2 a +2; sem usar diretivas, a MÉDIA de uma gestão inteira
 // nunca sai desse intervalo. Os limiares ficam dentro de -2..2 (não de -4..4) para que
-// "Esquerda" e "Direita" sejam alcançáveis por quem consistentemente escolhe os extremos,
+// "Visionário" e "Operador" sejam alcançáveis por quem consistentemente escolhe os extremos,
 // e não faixas que só uma combinação perfeita de escolha+diretiva extremas atingiria.
 const LEAN_BUCKETS: { max: number; label: string }[] = [
-  { max: -1.5, label: "Esquerda" },
-  { max: -0.5, label: "Centro-esquerda" },
-  { max: 0.5, label: "Centro" },
-  { max: 1.5, label: "Centro-direita" },
-  { max: Infinity, label: "Direita" },
+  { max: -1.5, label: "Visionário" },
+  { max: -0.5, label: "Centro-visionário" },
+  { max: 0.5, label: "Equilibrado" },
+  { max: 1.5, label: "Centro-operador" },
+  { max: Infinity, label: "Operador" },
 ];
 
 export function describeLean(score: number): string {

@@ -41,11 +41,11 @@ interface Props {
   history: GameState["history"];
   indicatorSnapshots: Indicators[];
   totalTurns: number;
-  dynastyTerm: number;
+  tenureTerm: number;
   earnedAchievementIds: Set<string>;
   newAchievementIds: Set<string>;
-  onContinueDynasty: () => void;
-  onNewDynasty: () => void;
+  onContinueTenure: () => void;
+  onNewTenure: () => void;
 }
 
 export function EndScreen({
@@ -55,18 +55,18 @@ export function EndScreen({
   history,
   indicatorSnapshots,
   totalTurns,
-  dynastyTerm,
+  tenureTerm,
   earnedAchievementIds,
   newAchievementIds,
-  onContinueDynasty,
-  onNewDynasty,
+  onContinueTenure,
+  onNewTenure,
 }: Props) {
   return (
     <div className={`screen end-screen ${result.victory ? "victory" : "defeat"}`}>
       <h1>{result.title}</h1>
       <p className="tagline">{result.narrative}</p>
       <p className="turn-reached">
-        Mandato encerrado no trimestre {history.length} de {totalTurns}.
+        Gestão encerrada no trimestre {history.length} de {totalTurns}.
       </p>
 
       <ReportErrorBoundary>
@@ -82,16 +82,16 @@ export function EndScreen({
         </Suspense>
       </ReportErrorBoundary>
 
-      <p className="dynasty-hint">
-        Mandato nº {dynastyTerm} da sua dinastia. Ao continuar, seu sucessor herda um pouco da sua popularidade
-        final.
+      <p className="tenure-hint">
+        Gestão nº {tenureTerm} no comando da Orange. Ao continuar, seu sucessor herda um pouco da sua
+        reputação final.
       </p>
       <div className="end-screen-actions">
-        <button type="button" className="primary-button" onClick={onContinueDynasty}>
+        <button type="button" className="primary-button" onClick={onContinueTenure}>
           Jogar Novamente
         </button>
-        <button type="button" className="secondary-button" onClick={onNewDynasty}>
-          Começar nova dinastia
+        <button type="button" className="secondary-button" onClick={onNewTenure}>
+          Começar um novo ciclo
         </button>
         <ShareButton text={buildShareText(result, indicators, history)} />
       </div>

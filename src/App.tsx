@@ -19,7 +19,7 @@ import {
   formatTurnLabel,
   mergeEffects,
   scaleEffects,
-  type DynastyLegacy,
+  type TenureLegacy,
 } from "./game/engine";
 import {
   addMandateHistoryEntry,
@@ -39,27 +39,27 @@ import {
 import { useNarrowViewport } from "./hooks/useNarrowViewport";
 import { useTheme } from "./hooks/useTheme";
 import { createInitialIndicators } from "./data/indicators";
-import type { Difficulty, EventChoice, GameEvent, PresidentialAction, GameState } from "./types";
+import type { Difficulty, EventChoice, GameEvent, ExecutiveAction, GameState } from "./types";
 
 interface Resolution {
   event: GameEvent;
   choice: EventChoice;
-  action: PresidentialAction | null;
+  action: ExecutiveAction | null;
 }
 
-/** Fração da popularidade final que o sucessor herda ao continuar a dinastia — modesta de
-    propósito, para dar peso à continuidade sem deixar um mandato ruim travar os seguintes. */
-const DYNASTY_CARRYOVER = 0.2;
+/** Fração da reputação final que o sucessor herda ao continuar o ciclo de CEO — modesta de
+    propósito, para dar peso à continuidade sem deixar uma gestão ruim travar as seguintes. */
+const TENURE_CARRYOVER = 0.2;
 // Derivado do estado inicial em vez de hardcoded, para não dessincronizar se o valor
-// inicial de popularidade em data/indicators.ts mudar.
-const INITIAL_POPULARIDADE = createInitialIndicators().popularidade;
+// inicial de reputação em data/indicators.ts mudar.
+const INITIAL_REPUTACAO = createInitialIndicators().reputacao;
 
 const NARROW_TABS_BREAKPOINT = 380;
 
 function App() {
   const [game, setGame] = useState<GameState>(() => loadInProgressGame() ?? createStartState());
   const [resolution, setResolution] = useState<Resolution | null>(null);
-  const [selectedAction, setSelectedAction] = useState<PresidentialAction | null>(null);
+  const [selectedAction, setSelectedAction] = useState<ExecutiveAction | null>(null);
   const [bestResult, setBestResult] = useState<BestResult | null>(() => loadBestResult());
   const [mandateHistory, setMandateHistory] = useState<MandateHistoryEntry[]>(() => loadMandateHistory());
   const [earnedAchievementIds, setEarnedAchievementIds] = useState<Set<string>>(new Set());
@@ -100,12 +100,12 @@ function App() {
     setShowOnboarding(false);
   }
 
-  function handleContinueDynasty() {
-    const legacy: DynastyLegacy = {
+  function handleContinueTenure() {
+    const legacy: TenureLegacy = {
       indicatorBonus: {
-        popularidade: Math.round((game.indicators.popularidade - INITIAL_POPULARIDADE) * DYNASTY_CARRYOVER),
+        reputacao: Math.round((game.indicators.reputacao - INITIAL_REPUTACAO) * TENURE_CARRYOVER),
       },
-      dynastyTerm: game.dynastyTerm + 1,
+      tenureTerm: game.tenureTerm + 1,
     };
     setGame(createNewGame(game.difficulty, legacy));
     setResolution(null);
@@ -115,13 +115,13 @@ function App() {
     isProcessingChoice.current = false;
   }
 
-  function handleNewDynasty() {
+  function handleNewTenure() {
     setGame(createStartState());
     setResolution(null);
     setSelectedAction(null);
   }
 
-  function handleSelectAction(action: PresidentialAction) {
+  function handleSelectAction(action: ExecutiveAction) {
     setSelectedAction((current) => (current?.id === action.id ? null : action));
   }
 
@@ -194,7 +194,7 @@ function App() {
       {game.phase !== "start" && (
         <>
           <header className="app-header">
-            <h1>A Presidência</h1>
+            <h1>🍊 O CEO: Orange</h1>
             {game.phase === "playing" && (
               <span className="turn-counter">
                 Trimestre {game.turn} de {game.totalTurns}
@@ -247,11 +247,11 @@ function App() {
                 history={game.history}
                 indicatorSnapshots={game.indicatorSnapshots}
                 totalTurns={game.totalTurns}
-                dynastyTerm={game.dynastyTerm}
+                tenureTerm={game.tenureTerm}
                 earnedAchievementIds={earnedAchievementIds}
                 newAchievementIds={newAchievementIds}
-                onContinueDynasty={handleContinueDynasty}
-                onNewDynasty={handleNewDynasty}
+                onContinueTenure={handleContinueTenure}
+                onNewTenure={handleNewTenure}
               />
             ) : null}
           </main>

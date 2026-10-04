@@ -23,14 +23,15 @@ export function StartScreen({ onStart, bestResult, mandateHistory }: Props) {
 
   return (
     <div className="screen start-screen">
-      <h1>A Presidência</h1>
+      <h1>🍊 O CEO: Orange</h1>
       <p className="tagline">
-        Você acaba de ser eleito. Um mandato de 4 anos está em suas mãos: cada decisão
-        molda a Economia, a Popularidade, a Segurança e mais cinco frentes do seu governo.
+        Você acaba de assumir como CEO da Orange. Uma gestão de 4 anos está em suas mãos:
+        cada decisão molda o Financeiro, a Reputação da Marca, o Conselho e mais cinco
+        frentes da empresa.
       </p>
       <p className="tagline">
-        Sobreviva aos 16 trimestres do mandato sem perder o controle da situação — e
-        deixe um legado à altura da história.
+        Sobreviva aos 16 trimestres da gestão sem perder o controle da situação — e
+        deixe um legado à altura dos maiores nomes da tecnologia.
       </p>
 
       <div className="difficulty-picker">
@@ -52,13 +53,13 @@ export function StartScreen({ onStart, bestResult, mandateHistory }: Props) {
 
       {bestResult && (
         <p className="best-result">
-          Seu melhor mandato até agora: <strong>{bestResult.title}</strong> (média{" "}
+          Sua melhor gestão até agora: <strong>{bestResult.title}</strong> (média{" "}
           {Math.round(bestResult.average)}, {bestResult.turnReached} trimestres)
         </p>
       )}
       <MandateHistoryList entries={mandateHistory} />
       <button type="button" className="primary-button" onClick={() => onStart(difficulty)}>
-        Assumir a Presidência
+        Assumir como CEO
       </button>
     </div>
   );

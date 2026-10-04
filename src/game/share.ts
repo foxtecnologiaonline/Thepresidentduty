@@ -9,12 +9,12 @@ export function buildShareText(
 ): string {
   const initial = createInitialIndicators();
   const lines: string[] = [
-    `🏛️ A Presidência — ${result.title} (média ${Math.round(result.average)})`,
+    `🍊 O CEO: Orange — ${result.title} (média ${Math.round(result.average)})`,
   ];
 
   const profile = computeLeanProfile(history);
   if (profile) {
-    lines.push(`Perfil ideológico: ${describeLean(profile.average)}`);
+    lines.push(`Estilo de liderança: ${describeLean(profile.average)}`);
   }
 
   lines.push("");

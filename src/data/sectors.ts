@@ -1,60 +1,60 @@
 import type { SectorKey, SectorMeta, Sectors } from "../types";
 
 export const SECTOR_META: Record<SectorKey, SectorMeta> = {
-  politicos: {
-    key: "politicos",
-    label: "Políticos",
-    icon: "🗳️",
-    description: "Apoio de partidos e lideranças políticas aliadas no Congresso.",
+  investidores: {
+    key: "investidores",
+    label: "Investidores",
+    icon: "📈",
+    description: "Confiança de acionistas e analistas de Wall Street no futuro da Orange.",
   },
-  militares: {
-    key: "militares",
-    label: "Militares",
-    icon: "🎖️",
-    description: "Relação com as Forças Armadas e as forças de segurança.",
+  imprensa: {
+    key: "imprensa",
+    label: "Imprensa & Mídia Tech",
+    icon: "📰",
+    description: "Cobertura da imprensa especializada e de negócios sobre sua gestão.",
   },
-  populacao: {
-    key: "populacao",
-    label: "População",
+  funcionarios: {
+    key: "funcionarios",
+    label: "Funcionários",
     icon: "👥",
-    description: "Sentimento das classes populares e dos cidadãos comuns no dia a dia.",
+    description: "Sentimento do time no dia a dia, além da moral medida nos indicadores internos.",
   },
-  academicos: {
-    key: "academicos",
-    label: "Acadêmicos",
-    icon: "📚",
-    description: "Apoio de universidades, pesquisadores e da comunidade científica.",
+  clientes: {
+    key: "clientes",
+    label: "Clientes & Fãs",
+    icon: "🛍️",
+    description: "Lealdade da base de consumidores e da comunidade de fãs da marca.",
   },
-  movimentosSociais: {
-    key: "movimentosSociais",
-    label: "Movimentos Sociais",
-    icon: "✊",
-    description: "Relação com sindicatos, ONGs e organizações da sociedade civil.",
+  reguladores: {
+    key: "reguladores",
+    label: "Reguladores",
+    icon: "⚖️",
+    description: "Relação com órgãos antitruste, agências de proteção de dados e governos.",
   },
-  empresariado: {
-    key: "empresariado",
-    label: "Empresariado",
-    icon: "🏢",
-    description: "Confiança de empresários e investidores no ambiente de negócios.",
+  desenvolvedores: {
+    key: "desenvolvedores",
+    label: "Comunidade de Desenvolvedores",
+    icon: "👩‍💻",
+    description: "Confiança dos desenvolvedores que constroem sobre a plataforma e a loja de apps da Orange.",
   },
 };
 
 export const SECTOR_ORDER: SectorKey[] = [
-  "politicos",
-  "militares",
-  "populacao",
-  "academicos",
-  "movimentosSociais",
-  "empresariado",
+  "investidores",
+  "imprensa",
+  "funcionarios",
+  "clientes",
+  "reguladores",
+  "desenvolvedores",
 ];
 
 export function createInitialSectors(): Sectors {
   return {
-    politicos: 50,
-    militares: 50,
-    populacao: 55,
-    academicos: 55,
-    movimentosSociais: 45,
-    empresariado: 55,
+    investidores: 50,
+    imprensa: 50,
+    funcionarios: 55,
+    clientes: 55,
+    reguladores: 45,
+    desenvolvedores: 55,
   };
 }

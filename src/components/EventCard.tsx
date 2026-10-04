@@ -1,17 +1,17 @@
 import { CATEGORY_META } from "../data/categories";
 import { INDICATOR_META } from "../data/indicators";
 import { scaleEffects } from "../game/engine";
-import type { EventChoice, GameEvent, PresidentialAction } from "../types";
+import type { EventChoice, GameEvent, ExecutiveAction } from "../types";
 
 interface Props {
   event: GameEvent;
   turnLabel: string;
   turn: number;
-  actions: PresidentialAction[];
-  selectedAction: PresidentialAction | null;
+  actions: ExecutiveAction[];
+  selectedAction: ExecutiveAction | null;
   /** Multiplicador da dificuldade atual — a prévia precisa refletir o que será de fato aplicado. */
   multiplier: number;
-  onSelectAction: (action: PresidentialAction) => void;
+  onSelectAction: (action: ExecutiveAction) => void;
   onChoose: (choice: EventChoice) => void;
 }
 
@@ -43,7 +43,7 @@ export function EventCard({
     <div className="event-card-wrap">
       <div className="actions-panel">
         <div className="actions-heading">
-          <span>Diretiva do trimestre</span>
+          <span>Diretiva executiva do trimestre</span>
           <span className="actions-hint">opcional · no máximo uma</span>
         </div>
         <div className="actions-list">

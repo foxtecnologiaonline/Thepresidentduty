@@ -1,12 +1,12 @@
 import { INDICATOR_META } from "../data/indicators";
 import { SECTOR_META } from "../data/sectors";
 import { mergeEffects, scaleEffects } from "../game/engine";
-import type { EventChoice, GameEvent, PresidentialAction, SectorKey } from "../types";
+import type { EventChoice, GameEvent, ExecutiveAction, SectorKey } from "../types";
 
 interface Props {
   event: GameEvent;
   choice: EventChoice;
-  action: PresidentialAction | null;
+  action: ExecutiveAction | null;
   /** Multiplicador da dificuldade atual — o relato precisa refletir o que de fato foi aplicado. */
   multiplier: number;
   onContinue: () => void;
@@ -26,12 +26,12 @@ function EffectsList({ effects }: { effects: EventChoice["effects"] }) {
   );
 }
 
-function SectorEffectsList({ effects }: { effects: Partial<Record<SectorKey, number>> }) {
+function StakeholderEffectsList({ effects }: { effects: Partial<Record<SectorKey, number>> }) {
   const entries = Object.entries(effects) as [SectorKey, number][];
   if (entries.length === 0) return null;
   return (
     <div className="sector-repercussion">
-      <span className="event-turn">Repercussão nos setores</span>
+      <span className="event-turn">Repercussão nos stakeholders</span>
       <div className="effects-preview large">
         {entries.map(([key, value]) => (
           <span key={key} className={value > 0 ? "positive" : "negative"}>
@@ -55,14 +55,14 @@ export function ResolutionPanel({ event, choice, action, multiplier, onContinue 
 
       {action && (
         <div className="action-summary">
-          <div className="event-turn">Diretiva emitida</div>
+          <div className="event-turn">Diretiva executiva emitida</div>
           <p className="choice-label">{action.label}</p>
           <p className="event-description">{action.description}</p>
           <EffectsList effects={scaleEffects(action.effects, multiplier)} />
         </div>
       )}
 
-      <SectorEffectsList effects={sectorEffects} />
+      <StakeholderEffectsList effects={sectorEffects} />
 
       {choice.triggersEventId && (
         <p className="chain-hint">⚡ Essa decisão pode gerar consequências num trimestre futuro.</p>

@@ -1,111 +1,111 @@
 import type { IndicatorKey, IndicatorMeta, Indicators } from "../types";
 
 export const INDICATOR_META: Record<IndicatorKey, IndicatorMeta> = {
-  economia: {
-    key: "economia",
-    label: "Economia",
+  financeiro: {
+    key: "financeiro",
+    label: "Financeiro",
     icon: "💰",
     critical: true,
-    description: "Saúde das contas públicas, emprego e inflação. Zerar decreta colapso econômico.",
+    description: "Caixa, receita e saúde das contas da Orange. Zerar decreta recuperação judicial.",
     chartColor: "#3987e5",
     loseMessage:
-      "A economia entrou em colapso total. Sem controle sobre inflação e desemprego, seu governo perdeu qualquer sustentação e você foi forçado a renunciar.",
+      "O caixa da Orange secou. Sem conseguir honrar a folha de pagamento nem os fornecedores, a empresa entra em recuperação judicial e o Conselho destitui você imediatamente.",
   },
-  popularidade: {
-    key: "popularidade",
-    label: "Popularidade",
-    icon: "😊",
+  reputacao: {
+    key: "reputacao",
+    label: "Reputação da Marca",
+    icon: "🍊",
     critical: true,
-    description: "Aprovação do seu governo pela população. Zerar leva a manifestações e impeachment.",
+    description: "Confiança do público e da imprensa na marca Orange. Zerar provoca boicote generalizado.",
     chartColor: "#d95926",
     loseMessage:
-      "Sua popularidade despencou a zero. Sob pressão de manifestações massivas em todo o país, o Congresso abriu e aprovou seu impeachment.",
+      "A marca Orange foi destruída. Consumidores boicotam em massa, a imprensa não larga o escândalo, e o Conselho decide que só uma troca de CEO pode salvar o que resta da confiança do público.",
   },
-  seguranca: {
-    key: "seguranca",
-    label: "Segurança",
-    icon: "🛡️",
+  conselho: {
+    key: "conselho",
+    label: "Confiança do Conselho",
+    icon: "🧑‍💼",
     critical: true,
-    description: "Ordem pública e controle da criminalidade. Zerar mergulha o país no caos.",
+    description: "Apoio do Conselho de Administração à sua gestão. Zerar aprova sua destituição imediata.",
     chartColor: "#199e70",
     loseMessage:
-      "O país mergulhou no caos total. Sem controle sobre a ordem pública, as Forças Armadas tomaram o poder à força.",
+      "Você perdeu toda a confiança do Conselho de Administração. Numa reunião de emergência, os membros votam, por unanimidade, sua destituição imediata do cargo de CEO.",
   },
-  saude: {
-    key: "saude",
-    label: "Saúde",
-    icon: "🏥",
+  moralFuncionarios: {
+    key: "moralFuncionarios",
+    label: "Moral dos Funcionários",
+    icon: "👨‍💻",
+    critical: true,
+    description: "Clima interno e engajamento do time. Zerar provoca êxodo em massa e colapso operacional.",
+    chartColor: "#e66767",
+    loseMessage:
+      "A cultura interna da Orange implodiu. Um êxodo em massa de engenheiros-chave e uma greve geral paralisam o desenvolvimento de produtos — o Conselho não vê outra saída além de trocar o comando.",
+  },
+  inovacao: {
+    key: "inovacao",
+    label: "Inovação",
+    icon: "💡",
     critical: false,
-    description: "Qualidade e capacidade da rede pública de saúde.",
+    description: "Força do pipeline de produtos e da pesquisa de longo prazo.",
     chartColor: "#c98500",
     loseMessage: "",
   },
-  educacao: {
-    key: "educacao",
-    label: "Educação",
-    icon: "🎓",
+  satisfacaoCliente: {
+    key: "satisfacaoCliente",
+    label: "Satisfação do Cliente",
+    icon: "😊",
     critical: false,
-    description: "Qualidade do ensino público e formação da população.",
+    description: "Como clientes e fãs avaliam a experiência com os produtos Orange.",
     chartColor: "#d55181",
     loseMessage: "",
   },
-  meioAmbiente: {
-    key: "meioAmbiente",
-    label: "Meio Ambiente",
+  sustentabilidade: {
+    key: "sustentabilidade",
+    label: "Sustentabilidade",
     icon: "🌱",
     critical: false,
-    description: "Preservação ambiental e sustentabilidade das políticas do governo.",
+    description: "Impacto ambiental da cadeia produtiva e compromissos de ESG da empresa.",
     chartColor: "#008300",
     loseMessage: "",
   },
-  relacoesInternacionais: {
-    key: "relacoesInternacionais",
-    label: "Relações Internacionais",
-    icon: "🌐",
+  relacoesRegulatorias: {
+    key: "relacoesRegulatorias",
+    label: "Relações Regulatórias",
+    icon: "🏛️",
     critical: false,
-    description: "Prestígio e alianças do país no cenário internacional.",
+    description: "Relação com reguladores, governos e cortes antitruste ao redor do mundo.",
     chartColor: "#9085e9",
     loseMessage: "",
-  },
-  governabilidade: {
-    key: "governabilidade",
-    label: "Governabilidade",
-    icon: "🏛️",
-    critical: true,
-    description: "Sua base de apoio no Congresso. Zerar aprova um impeachment por falta de aliados.",
-    chartColor: "#e66767",
-    loseMessage:
-      "Você perdeu toda a base aliada no Congresso. Isolado e sem apoio parlamentar, seu impeachment foi aprovado por ampla maioria.",
   },
 };
 
 export const INDICATOR_ORDER: IndicatorKey[] = [
-  "economia",
-  "popularidade",
-  "seguranca",
-  "saude",
-  "educacao",
-  "meioAmbiente",
-  "relacoesInternacionais",
-  "governabilidade",
+  "financeiro",
+  "reputacao",
+  "conselho",
+  "moralFuncionarios",
+  "inovacao",
+  "satisfacaoCliente",
+  "sustentabilidade",
+  "relacoesRegulatorias",
 ];
 
 export const CRITICAL_INDICATORS: IndicatorKey[] = INDICATOR_ORDER.filter(
   (key) => INDICATOR_META[key].critical
 );
 
-/** Abaixo deste valor, um indicador crítico entra em alerta visual (perto de derrubar o mandato). */
+/** Abaixo deste valor, um indicador crítico entra em alerta visual (perto de derrubar a gestão). */
 export const CRITICAL_WARNING_THRESHOLD = 15;
 
 export function createInitialIndicators(): Indicators {
   return {
-    economia: 55,
-    popularidade: 60,
-    seguranca: 55,
-    saude: 50,
-    educacao: 50,
-    meioAmbiente: 50,
-    relacoesInternacionais: 55,
-    governabilidade: 55,
+    financeiro: 55,
+    reputacao: 60,
+    conselho: 55,
+    moralFuncionarios: 55,
+    inovacao: 50,
+    satisfacaoCliente: 50,
+    sustentabilidade: 50,
+    relacoesRegulatorias: 55,
   };
 }

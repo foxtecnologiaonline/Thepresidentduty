@@ -18,75 +18,75 @@ function wasEverInDanger(state: GameState): boolean {
 
 export const ACHIEVEMENTS: Achievement[] = [
   {
-    id: "estadista-historico",
-    label: "Estadista Histórico",
-    description: "Concluiu o mandato com o legado máximo.",
-    check: (state) => state.endResult?.title === "Estadista Histórico",
+    id: "ceo-lendario",
+    label: "CEO Lendário",
+    description: "Concluiu a gestão com o legado máximo.",
+    check: (state) => state.endResult?.title === "CEO Lendário",
   },
   {
-    id: "sem-diretivas",
+    id: "maos-limpas",
     label: "Mãos Limpas",
-    description: "Completou o mandato sem emitir uma única diretiva própria.",
+    description: "Completou a gestão sem emitir uma única diretiva executiva própria.",
     check: (state) =>
       !!state.endResult?.victory && state.history.length > 0 && state.history.every((h) => h.action === null),
   },
   {
     id: "onipresente",
     label: "Onipresente",
-    description: "Emitiu uma diretiva em pelo menos 12 dos trimestres do mandato.",
+    description: "Emitiu uma diretiva em pelo menos 12 dos trimestres da gestão.",
     check: (state) => state.history.filter((h) => h.action !== null).length >= 12,
   },
   {
-    id: "mandato-tranquilo",
-    label: "Mandato Tranquilo",
-    description: "Terminou o mandato sem nenhum indicador crítico chegar perto de zerar.",
+    id: "gestao-tranquila",
+    label: "Gestão Tranquila",
+    description: "Terminou a gestão sem nenhum indicador crítico chegar perto de zerar.",
     check: (state) => !!state.endResult?.victory && !wasEverInDanger(state),
   },
   {
-    id: "fenix-politica",
-    label: "Fênix Política",
-    description: "Chegou perto do colapso em algum indicador crítico e ainda assim completou o mandato.",
+    id: "fenix-corporativa",
+    label: "Fênix Corporativa",
+    description: "Chegou perto do colapso em algum indicador crítico e ainda assim completou a gestão.",
     check: (state) => !!state.endResult?.victory && wasEverInDanger(state),
   },
   {
-    id: "centrista-convicto",
-    label: "Centrista Convicto",
-    description: "Encerrou o mandato com o perfil ideológico rotulado como Centro.",
+    id: "equilibrado-convicto",
+    label: "Equilibrado Convicto",
+    description: "Encerrou a gestão com o estilo de liderança rotulado como Equilibrado.",
     check: (state) => {
       const profile = computeLeanProfile(state.history);
-      return !!profile && describeLean(profile.average) === "Centro";
+      return !!profile && describeLean(profile.average) === "Equilibrado";
     },
   },
   {
-    id: "ideologicamente-firme",
-    label: "Ideologicamente Firme",
-    description: "Manteve um perfil ideológico consistentemente extremo (Esquerda ou Direita).",
+    id: "visao-inabalavel",
+    label: "Visão Inabalável",
+    description: "Manteve um estilo de liderança consistentemente extremo (Visionário ou Operador).",
     check: (state) => {
       const profile = computeLeanProfile(state.history);
       if (!profile) return false;
       const label = describeLean(profile.average);
-      return label === "Esquerda" || label === "Direita";
+      return label === "Visionário" || label === "Operador";
     },
   },
   {
-    id: "guinada-historica",
-    label: "Guinada Histórica",
-    description: "Sua linha ideológica mudou de direção entre a primeira e a segunda metade do mandato.",
+    id: "reviravolta-estrategica",
+    label: "Reviravolta Estratégica",
+    description: "Seu estilo de liderança mudou de direção entre a primeira e a segunda metade da gestão.",
     check: (state) => {
       const profile = computeLeanProfile(state.history);
       return !!profile && profile.trend !== "estavel";
     },
   },
   {
-    id: "unidade-nacional",
-    label: "Unidade Nacional",
-    description: "Encerrou o mandato com apoio de pelo menos 60 em todos os setores da sociedade.",
+    id: "confianca-total",
+    label: "Confiança Total",
+    description: "Encerrou a gestão com apoio de pelo menos 60 em todas as partes interessadas.",
     check: (state) => !!state.endResult?.victory && SECTOR_ORDER.every((key) => state.sectors[key] >= 60),
   },
   {
-    id: "pais-dividido",
-    label: "País Dividido",
-    description: "Terminou o mandato com um setor em forte rejeição e outro em forte apoio ao mesmo tempo.",
+    id: "orange-dividida",
+    label: "Orange Dividida",
+    description: "Terminou a gestão com uma parte interessada em forte rejeição e outra em forte apoio ao mesmo tempo.",
     check: (state) => {
       const values = SECTOR_ORDER.map((key) => state.sectors[key]);
       return Math.min(...values) <= 20 && Math.max(...values) >= 80;

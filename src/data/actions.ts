@@ -1,71 +1,71 @@
-import type { PresidentialAction } from "../types";
+import type { ExecutiveAction } from "../types";
 
 /**
- * Diretivas que o presidente pode emitir por iniciativa própria a cada trimestre,
+ * Diretivas que o CEO pode emitir por iniciativa própria a cada trimestre,
  * independente do evento sorteado. No máximo uma por turno — os efeitos são
  * deliberadamente menores que os de um evento (o grosso do jogo continua sendo
  * reagir às crises), mas cada uma tem uma contrapartida real, então usar sempre
  * a mesma diretiva tem um custo cumulativo.
  */
-export const ACTIONS: PresidentialAction[] = [
+export const ACTIONS: ExecutiveAction[] = [
   {
-    id: "campanha-comunicacao",
-    label: "Campanha de Comunicação",
-    description: "Investe em publicidade institucional para melhorar a imagem do governo.",
-    effects: { popularidade: 5, economia: -3 },
-    sectorEffects: { populacao: 4 },
+    id: "campanha-marketing",
+    label: "Campanha de Marketing Institucional",
+    description: "Investe em publicidade para reforçar a imagem da marca Orange.",
+    effects: { reputacao: 5, financeiro: -3 },
+    sectorEffects: { clientes: 4 },
     leaning: 0,
   },
   {
-    id: "reforco-policiamento",
-    label: "Reforço do Policiamento",
-    description: "Destina verba extra para reforçar o policiamento nas ruas.",
-    effects: { seguranca: 5, economia: -3 },
-    sectorEffects: { militares: 4, movimentosSociais: -4 },
+    id: "reforco-ciberseguranca",
+    label: "Reforço de Cibersegurança",
+    description: "Destina verba extra para blindar sistemas e dados de clientes contra ataques.",
+    effects: { relacoesRegulatorias: 4, financeiro: -3 },
+    sectorEffects: { clientes: 3, reguladores: 3 },
+    leaning: 0,
+  },
+  {
+    id: "corte-custos",
+    label: "Corte de Custos Operacionais",
+    description: "Reduz despesas para equilibrar o caixa da empresa.",
+    effects: { financeiro: 5, moralFuncionarios: -3 },
+    sectorEffects: { investidores: 5, funcionarios: -4 },
     leaning: 2,
   },
   {
-    id: "corte-gastos",
-    label: "Corte de Gastos Públicos",
-    description: "Reduz despesas do governo para equilibrar as contas.",
-    effects: { economia: 5, popularidade: -3 },
-    sectorEffects: { empresariado: 5, populacao: -4 },
-    leaning: 2,
-  },
-  {
-    id: "investimento-social",
-    label: "Investimento Social",
-    description: "Amplia recursos para a rede pública de saúde e educação.",
-    effects: { saude: 3, educacao: 3, economia: -4 },
-    sectorEffects: { populacao: 5, movimentosSociais: 3 },
+    id: "investimento-pd",
+    label: "Investimento em P&D e Talentos",
+    description: "Amplia recursos para pesquisa de produtos e retenção de engenheiros-chave.",
+    effects: { inovacao: 3, moralFuncionarios: 3, financeiro: -3 },
+    sectorEffects: { funcionarios: 5, desenvolvedores: 3 },
     leaning: -2,
   },
   {
-    id: "diplomacia-presidencial",
-    label: "Diplomacia Presidencial",
+    id: "turne-lancamento",
+    label: "Turnê Global de Lançamento",
     description:
-      "Dedica a agenda do trimestre a viagens e negociações internacionais. Exige um governo já consolidado.",
-    effects: { relacoesInternacionais: 5, governabilidade: -3 },
-    sectorEffects: { empresariado: 3, politicos: -3 },
+      "Dedica a agenda do trimestre a apresentações e negociações internacionais. Exige uma gestão já consolidada.",
+    effects: { relacoesRegulatorias: 5, conselho: -3 },
+    sectorEffects: { investidores: 3, reguladores: -3 },
     leaning: 0,
     minTurn: 5,
   },
   {
-    id: "articulacao-politica",
-    label: "Articulação Política",
+    id: "negociacao-conselho",
+    label: "Negociação Direta com o Conselho",
     description:
-      "Negocia nos bastidores com líderes do Congresso para ampliar sua base aliada. Exige capital político acumulado.",
-    effects: { governabilidade: 5, popularidade: -3 },
-    sectorEffects: { politicos: 6 },
+      "Negocia nos bastidores com membros do Conselho para ampliar seu apoio interno. Exige capital de liderança acumulado.",
+    effects: { conselho: 5, reputacao: -3 },
+    sectorEffects: { investidores: 6 },
     leaning: 0,
     minTurn: 5,
   },
   {
-    id: "agenda-ambiental",
-    label: "Agenda Ambiental",
-    description: "Lança medidas de proteção ambiental e fiscalização do desmatamento.",
-    effects: { meioAmbiente: 5, economia: -3 },
-    sectorEffects: { movimentosSociais: 5, empresariado: -4 },
+    id: "agenda-sustentabilidade",
+    label: "Agenda de Sustentabilidade Corporativa",
+    description: "Lança metas públicas de redução de impacto ambiental na cadeia produtiva.",
+    effects: { sustentabilidade: 5, financeiro: -3 },
+    sectorEffects: { clientes: 5, investidores: -4 },
     leaning: -1,
   },
 ];

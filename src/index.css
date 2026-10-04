@@ -5,10 +5,10 @@
   --text: #e6e9f2;
   --text-muted: #9aa4bb;
   --border: #263149;
-  --gold: #f2c14e;
-  --accent-ink: #1a1200;
+  --accent: #ff7a1a;
+  --accent-ink: #1f0e00;
   --ok: #3ecf8e;
-  --warning: #f2c14e;
+  --warning: #ff7a1a;
   --danger: #e5484d;
 
   font: 16px/1.5 system-ui, "Segoe UI", Roboto, sans-serif;
@@ -30,10 +30,10 @@
   --text: #241d0f;
   --text-muted: #6d6248;
   --border: #ddd2b3;
-  --gold: #a3671b;
-  --accent-ink: #fffaf0;
+  --accent: #c2410c;
+  --accent-ink: #fff8f0;
   --ok: #1f7a4d;
-  --warning: #a3671b;
+  --warning: #c2410c;
   --danger: #b3282f;
   color-scheme: light;
 }

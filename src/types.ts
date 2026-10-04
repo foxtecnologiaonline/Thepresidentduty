@@ -1,12 +1,12 @@
 export type IndicatorKey =
-  | "economia"
-  | "popularidade"
-  | "seguranca"
-  | "saude"
-  | "educacao"
-  | "meioAmbiente"
-  | "relacoesInternacionais"
-  | "governabilidade";
+  | "financeiro"
+  | "reputacao"
+  | "conselho"
+  | "moralFuncionarios"
+  | "inovacao"
+  | "satisfacaoCliente"
+  | "sustentabilidade"
+  | "relacoesRegulatorias";
 
 export type Indicators = Record<IndicatorKey, number>;
 
@@ -14,7 +14,7 @@ export interface IndicatorMeta {
   key: IndicatorKey;
   label: string;
   icon: string;
-  /** Se true, este indicador chegar a 0 encerra o mandato imediatamente. */
+  /** Se true, este indicador chegar a 0 encerra a gestão imediatamente. */
   critical: boolean;
   loseMessage: string;
   /** Explicação curta do que o indicador representa, usada em tooltip. */
@@ -24,18 +24,18 @@ export interface IndicatorMeta {
 }
 
 /**
- * Setores da sociedade: camada separada dos indicadores de governo, acompanhando a
- * aprovação de grupos específicos. Não tem limiar crítico nem afeta vitória/derrota
- * (que continua baseada só nos indicadores) — é um retrato à parte de quem o governo
- * está agradando ou afastando, visível no dashboard e no relatório final.
+ * Partes interessadas da Orange: camada separada dos indicadores internos da empresa,
+ * acompanhando a aprovação de grupos específicos. Não tem limiar crítico nem afeta
+ * vitória/derrota (que continua baseada só nos indicadores) — é um retrato à parte de
+ * quem a sua gestão está agradando ou afastando, visível no dashboard e no relatório final.
  */
 export type SectorKey =
-  | "politicos"
-  | "militares"
-  | "populacao"
-  | "academicos"
-  | "movimentosSociais"
-  | "empresariado";
+  | "investidores"
+  | "imprensa"
+  | "funcionarios"
+  | "clientes"
+  | "reguladores"
+  | "desenvolvedores";
 
 export type Sectors = Record<SectorKey, number>;
 
@@ -43,24 +43,25 @@ export interface SectorMeta {
   key: SectorKey;
   label: string;
   icon: string;
-  /** Explicação curta do que o setor representa, usada em tooltip. */
+  /** Explicação curta do que a parte interessada representa, usada em tooltip. */
   description: string;
 }
 
 /**
- * Posição da escolha/diretiva no espectro político, numa escala de -2 (esquerda) a
- * +2 (direita); 0 é uma decisão técnica/de sobrevivência política sem carga ideológica.
+ * Posição da escolha/diretiva no eixo de estilo de liderança, numa escala de -2
+ * (Visionário: controle, sigilo, obsessão por produto) a +2 (Operador: dados, mercado,
+ * delegação); 0 é uma decisão técnica/de sobrevivência corporativa sem carga de estilo.
  */
 export type Leaning = -2 | -1 | 0 | 1 | 2;
 
 /** Tema predominante do evento — usado na tag visual do card e para variar o baralho. */
 export type EventCategory =
-  | "economia"
+  | "financeiro"
   | "seguranca"
-  | "saude"
-  | "educacao"
-  | "ambiental"
-  | "internacional"
+  | "produtos"
+  | "pessoas"
+  | "sustentabilidade"
+  | "mercado"
   | "institucional"
   | "social";
 
@@ -76,7 +77,7 @@ export interface EventChoice {
   label: string;
   consequence: string;
   effects: Partial<Record<IndicatorKey, number>>;
-  /** Como essa escolha repercute entre os setores da sociedade; ausente = nenhum efeito notável. */
+  /** Como essa escolha repercute entre as partes interessadas; ausente = nenhum efeito notável. */
   sectorEffects?: Partial<Record<SectorKey, number>>;
   leaning: Leaning;
   /**
@@ -97,15 +98,15 @@ export interface GameEvent {
 }
 
 /**
- * Ação de governo que o jogador pode emitir por conta própria a cada trimestre,
+ * Diretiva executiva que o CEO pode emitir por conta própria a cada trimestre,
  * independente do evento sorteado — no máximo uma por turno.
  */
-export interface PresidentialAction {
+export interface ExecutiveAction {
   id: string;
   label: string;
   description: string;
   effects: Partial<Record<IndicatorKey, number>>;
-  /** Como essa diretiva repercute entre os setores da sociedade; ausente = nenhum efeito notável. */
+  /** Como essa diretiva repercute entre as partes interessadas; ausente = nenhum efeito notável. */
   sectorEffects?: Partial<Record<SectorKey, number>>;
   leaning: Leaning;
   /** Turno mínimo em que a diretiva fica disponível; ausente = disponível desde o início. */
@@ -132,12 +133,12 @@ export interface GameState {
   totalTurns: number;
   deck: GameEvent[];
   currentEvent: GameEvent | null;
-  history: { event: GameEvent; choice: EventChoice; action: PresidentialAction | null }[];
+  history: { event: GameEvent; choice: EventChoice; action: ExecutiveAction | null }[];
   /** Retrato dos indicadores ao final de cada turno (índice 0 = estado inicial). */
   indicatorSnapshots: Indicators[];
-  /** Retrato dos setores ao final de cada turno (índice 0 = estado inicial). */
+  /** Retrato das partes interessadas ao final de cada turno (índice 0 = estado inicial). */
   sectorSnapshots: Sectors[];
   endResult: EndResult | null;
-  /** Quantos mandatos consecutivos dessa dinastia já foram jogados (1 = o primeiro). */
-  dynastyTerm: number;
+  /** Quantas gestões consecutivas desse ciclo como CEO já foram jogadas (1 = a primeira). */
+  tenureTerm: number;
 }

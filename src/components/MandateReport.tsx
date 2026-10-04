@@ -15,14 +15,14 @@ interface Props {
   newAchievementIds: Set<string>;
 }
 
-function trendMessage(trend: "direita" | "esquerda" | "estavel"): string {
-  if (trend === "direita") {
-    return "Ao longo do mandato, suas decisões avançaram para a direita e recuaram da esquerda.";
+function trendMessage(trend: "operador" | "visionario" | "estavel"): string {
+  if (trend === "operador") {
+    return "Ao longo da gestão, suas decisões avançaram para o estilo Operador e recuaram do Visionário.";
   }
-  if (trend === "esquerda") {
-    return "Ao longo do mandato, suas decisões avançaram para a esquerda e recuaram da direita.";
+  if (trend === "visionario") {
+    return "Ao longo da gestão, suas decisões avançaram para o estilo Visionário e recuaram do Operador.";
   }
-  return "Sua linha ideológica se manteve estável do início ao fim do mandato.";
+  return "Seu estilo de liderança se manteve estável do início ao fim da gestão.";
 }
 
 interface ComparisonListProps<K extends string> {
@@ -81,7 +81,7 @@ export function MandateReport({
       </section>
 
       <section className="report-section">
-        <h3>Como o país mudou</h3>
+        <h3>Como a Orange mudou</h3>
         <ComparisonList<IndicatorKey>
           order={INDICATOR_ORDER}
           meta={INDICATOR_META}
@@ -92,40 +92,40 @@ export function MandateReport({
       </section>
 
       <section className="report-section">
-        <h3>Como os setores reagiram</h3>
+        <h3>Como os stakeholders reagiram</h3>
         <ComparisonList<SectorKey> order={SECTOR_ORDER} meta={SECTOR_META} initial={initialSectors} current={sectors} />
       </section>
 
       {profile && (
         <section className="report-section">
-          <h3>Perfil ideológico do mandato</h3>
+          <h3>Perfil de liderança da gestão</h3>
           <div className="lean-spectrum">
             <div className="lean-track">
               <div className="lean-marker" style={{ left: `${leanToPercent(profile.average)}%` }} />
             </div>
             <div className="lean-labels">
-              <span>Esquerda</span>
-              <span>Centro</span>
-              <span>Direita</span>
+              <span>Visionário</span>
+              <span>Equilibrado</span>
+              <span>Operador</span>
             </div>
           </div>
           <p className="lean-summary">
-            No geral, seu governo pendeu para <strong>{describeLean(profile.average)}</strong>.
+            No geral, sua gestão pendeu para <strong>{describeLean(profile.average)}</strong>.
           </p>
           <p className="lean-trend">{trendMessage(profile.trend)}</p>
           <div className="lean-highlights">
             <div className="lean-highlight">
-              <span className="lean-highlight-tag left">Decisão mais à esquerda</span>
+              <span className="lean-highlight-tag left">Decisão mais Visionária</span>
               <p>
-                {profile.mostLeft.choiceLabel}
-                {profile.mostLeft.actionLabel ? ` + ${profile.mostLeft.actionLabel}` : ""}
+                {profile.mostVisionario.choiceLabel}
+                {profile.mostVisionario.actionLabel ? ` + ${profile.mostVisionario.actionLabel}` : ""}
               </p>
             </div>
             <div className="lean-highlight">
-              <span className="lean-highlight-tag right">Decisão mais à direita</span>
+              <span className="lean-highlight-tag right">Decisão mais Operadora</span>
               <p>
-                {profile.mostRight.choiceLabel}
-                {profile.mostRight.actionLabel ? ` + ${profile.mostRight.actionLabel}` : ""}
+                {profile.mostOperador.choiceLabel}
+                {profile.mostOperador.actionLabel ? ` + ${profile.mostOperador.actionLabel}` : ""}
               </p>
             </div>
           </div>

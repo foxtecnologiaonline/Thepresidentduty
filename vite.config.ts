@@ -9,9 +9,9 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       manifest: {
-        name: 'A Presidência',
-        short_name: 'Presidência',
-        description: 'Simulador presidencial de decisões e indicadores de governo.',
+        name: 'O CEO: Orange',
+        short_name: 'O CEO',
+        description: 'Simulador de decisões de um CEO de tecnologia e seus impactos na empresa.',
         theme_color: '#0b1220',
         background_color: '#0b1220',
         display: 'standalone',

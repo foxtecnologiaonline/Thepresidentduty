@@ -1,18 +1,18 @@
 import { EVENTS } from "../data/events";
 import { CRITICAL_INDICATORS, INDICATOR_META, INDICATOR_ORDER, createInitialIndicators } from "../data/indicators";
 import { createInitialSectors } from "../data/sectors";
-import type { Difficulty, EndResult, EventChoice, GameEvent, GameState, Indicators, PresidentialAction } from "../types";
+import type { Difficulty, EndResult, EventChoice, ExecutiveAction, GameEvent, GameState, Indicators } from "../types";
 
-/** Legado que um mandato concluído transmite ao próximo da mesma dinastia (Nova Partida+). */
-export interface DynastyLegacy {
-  /** Delta aplicado aos indicadores iniciais do novo mandato (já pronto para somar, sem precisar reclampar antes). */
+/** Legado que uma gestão concluída transmite à próxima do mesmo ciclo de CEO (Nova Gestão+). */
+export interface TenureLegacy {
+  /** Delta aplicado aos indicadores iniciais da nova gestão (já pronto para somar, sem precisar reclampar antes). */
   indicatorBonus: Partial<Record<keyof Indicators, number>>;
-  dynastyTerm: number;
+  tenureTerm: number;
 }
 
 export const TOTAL_TURNS = 16;
 
-const QUARTER_MONTHS = ["Jan–Mar", "Abr–Jun", "Jul–Set", "Out–Dez"];
+const QUARTER_LABELS = ["T1", "T2", "T3", "T4"];
 
 /** Multiplica a magnitude de todos os efeitos (escolha + diretiva); dificuldade não muda as regras, só o quanto cada decisão pesa. */
 export const DIFFICULTY_MULTIPLIERS: Record<Difficulty, number> = {
@@ -46,7 +46,7 @@ function eventIntensity(event: GameEvent): number {
 }
 
 // Jitter grande o bastante para não virar uma ordenação estritamente crescente (o que
-// tornaria o mandato previsível e mudaria a curva de dificuldade já validada), mas que
+// tornaria a gestão previsível e mudaria a curva de dificuldade já validada), mas que
 // ainda inclina o baralho para crises mais pesadas acontecerem mais perto do fim —
 // a sequência resultante aplica exatamente os mesmos efeitos totais, só muda a ordem.
 const INTENSITY_JITTER = 7;
@@ -96,11 +96,11 @@ export function createStartState(): GameState {
     indicatorSnapshots: [initialIndicators],
     sectorSnapshots: [initialSectors],
     endResult: null,
-    dynastyTerm: 1,
+    tenureTerm: 1,
   };
 }
 
-export function createNewGame(difficulty: Difficulty = "normal", legacy?: DynastyLegacy): GameState {
+export function createNewGame(difficulty: Difficulty = "normal", legacy?: TenureLegacy): GameState {
   const deck = buildDeck();
   const baseIndicators = createInitialIndicators();
   const initialIndicators = legacy ? applyEffects(baseIndicators, legacy.indicatorBonus) : baseIndicators;
@@ -118,7 +118,7 @@ export function createNewGame(difficulty: Difficulty = "normal", legacy?: Dynast
     indicatorSnapshots: [initialIndicators],
     sectorSnapshots: [initialSectors],
     endResult: null,
-    dynastyTerm: legacy?.dynastyTerm ?? 1,
+    tenureTerm: legacy?.tenureTerm ?? 1,
   };
 }
 
@@ -126,7 +126,7 @@ function clamp(value: number): number {
   return Math.max(0, Math.min(100, value));
 }
 
-/** Aplica um conjunto de efeitos (indicadores OU setores — qualquer registro 0-100) a um estado atual. */
+/** Aplica um conjunto de efeitos (indicadores OU partes interessadas — qualquer registro 0-100) a um estado atual. */
 export function applyEffects<K extends string>(
   current: Record<K, number>,
   effects: Partial<Record<K, number>>
@@ -180,7 +180,7 @@ function checkCriticalFailure(indicators: Indicators): EndResult | null {
     if (indicators[key] <= 0) {
       return {
         victory: false,
-        title: "Mandato Encerrado",
+        title: "Gestão Encerrada",
         narrative: INDICATOR_META[key].loseMessage,
         average: computeAverage(indicators),
       };
@@ -195,35 +195,35 @@ function computeLegado(indicators: Indicators): EndResult {
   if (average >= 75) {
     return {
       victory: true,
-      title: "Estadista Histórico",
+      title: "CEO Lendário",
       narrative:
-        "Você concluiu o mandato deixando um legado admirado por todo o país. Seu nome entra para a história como referência de bom governo.",
+        "Você encerra a gestão deixando um legado admirado por todo o mercado. Seu nome entra para a história da Orange como referência de liderança excepcional.",
       average,
     };
   }
   if (average >= 60) {
     return {
       victory: true,
-      title: "Bom Governo",
+      title: "Boa Gestão",
       narrative:
-        "Seu mandato foi bem-sucedido. Nem tudo saiu perfeito, mas o país termina seu governo em situação melhor do que começou.",
+        "Sua gestão foi bem-sucedida. Nem tudo saiu perfeito, mas a Orange termina seu mandato em situação melhor do que começou.",
       average,
     };
   }
   if (average >= 45) {
     return {
       victory: true,
-      title: "Mandato Mediano",
+      title: "Gestão Mediana",
       narrative:
-        "Você concluiu o mandato, mas sem grandes marcas. O país segue enfrentando desafios semelhantes aos do início do seu governo.",
+        "Você concluiu a gestão, mas sem grandes marcas. A Orange segue enfrentando desafios semelhantes aos do início do seu mandato.",
       average,
     };
   }
   return {
     victory: true,
-    title: "Governo Fraco",
+    title: "Gestão Fraca",
     narrative:
-      "Você sobreviveu até o fim do mandato, mas deixa o país em situação frágil, com sérios desafios para o próximo governo.",
+      "Você sobreviveu até o fim do mandato, mas deixa a Orange em situação frágil, com sérios desafios para o próximo CEO.",
     average,
   };
 }
@@ -231,7 +231,7 @@ function computeLegado(indicators: Indicators): EndResult {
 export function applyChoice(
   state: GameState,
   choice: EventChoice,
-  action: PresidentialAction | null = null
+  action: ExecutiveAction | null = null
 ): GameState {
   if (!state.currentEvent || state.phase !== "playing") {
     return state;
@@ -312,5 +312,5 @@ function applyEventTrigger(deck: GameEvent[], triggersEventId: string | undefine
 export function formatTurnLabel(turn: number): string {
   const year = Math.ceil(turn / 4);
   const quarter = ((turn - 1) % 4) + 1;
-  return `${QUARTER_MONTHS[quarter - 1]} · Ano ${year}`;
+  return `${QUARTER_LABELS[quarter - 1]} · Ano Fiscal ${year}`;
 }
