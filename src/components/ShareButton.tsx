@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 
 interface Props {
   text: string;
+  shareTitle?: string;
 }
 
 type Status = "idle" | "copied" | "shared" | "error";
@@ -13,7 +14,7 @@ const STATUS_LABEL: Record<Status, string> = {
   error: "Não foi possível copiar",
 };
 
-export function ShareButton({ text }: Props) {
+export function ShareButton({ text, shareTitle = "A Presidência" }: Props) {
   const [status, setStatus] = useState<Status>("idle");
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -31,7 +32,7 @@ export function ShareButton({ text }: Props) {
   async function handleShare() {
     if (navigator.share) {
       try {
-        await navigator.share({ text, title: "A Presidência" });
+        await navigator.share({ text, title: shareTitle });
         setStatus("shared");
         scheduleReset();
         return;

@@ -9,9 +9,9 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       manifest: {
-        name: 'A Presidência',
-        short_name: 'Presidência',
-        description: 'Simulador presidencial de decisões e indicadores de governo.',
+        name: 'A Presidência & A Dinastia',
+        short_name: 'Jogos por Turnos',
+        description: 'Simuladores de decisão por turnos: governe um país ou uma dinastia medieval.',
         theme_color: '#0b1220',
         background_color: '#0b1220',
         display: 'standalone',

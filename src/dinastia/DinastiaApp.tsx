@@ -1,58 +1,54 @@
 import { useEffect, useRef, useState } from "react";
-import "./App.css";
-import { Dashboard } from "./components/Dashboard";
+import { ThemeToggle } from "../components/ThemeToggle";
+import { useNarrowViewport } from "../hooks/useNarrowViewport";
+import { useTheme } from "../hooks/useTheme";
+import { ACHIEVEMENTS } from "./data/achievements";
+import { DECREES } from "./data/decrees";
+import { ChronicleScreen } from "./components/ChronicleScreen";
 import { EndScreen } from "./components/EndScreen";
 import { EventCard } from "./components/EventCard";
+import { FactionsPanel } from "./components/FactionsPanel";
+import { Dashboard } from "./components/Dashboard";
 import { OnboardingModal } from "./components/OnboardingModal";
 import { ResolutionPanel } from "./components/ResolutionPanel";
-import { SectorsPanel } from "./components/SectorsPanel";
 import { StartScreen } from "./components/StartScreen";
 import { StatsTabs } from "./components/StatsTabs";
-import { ThemeToggle } from "./components/ThemeToggle";
-import { ACHIEVEMENTS } from "./data/achievements";
-import { ACTIONS } from "./data/actions";
 import {
-  applyChoice,
-  createNewGame,
-  createStartState,
   DIFFICULTY_MULTIPLIERS,
+  TOTAL_REIGNS,
+  applyChoice,
+  buildNextLegacy,
+  buildReignSummary,
+  computeDynastyTier,
+  createNewReign,
+  createStartState,
   formatTurnLabel,
-  mergeEffects,
-  scaleEffects,
   type DynastyLegacy,
 } from "./game/engine";
+import { mergeEffects, scaleEffects } from "../game/engine";
 import {
-  addMandateHistoryEntry,
+  addChronicleHistoryEntry,
+  addReignHistoryEntry,
   clearInProgressGame,
   hasSeenOnboarding,
-  loadBestResult,
+  loadBestReignResult,
   loadInProgressGame,
-  loadMandateHistory,
+  loadReignHistory,
   loadUnlockedAchievements,
   markOnboardingSeen,
-  saveBestResultIfBetter,
+  saveBestReignResultIfBetter,
   saveInProgressGame,
   unlockAchievements,
-  type BestResult,
-  type MandateHistoryEntry,
+  type BestReignResult,
+  type ReignHistoryEntry,
 } from "./game/storage";
-import { useNarrowViewport } from "./hooks/useNarrowViewport";
-import { useTheme } from "./hooks/useTheme";
-import { createInitialIndicators } from "./data/indicators";
-import type { Difficulty, EventChoice, GameEvent, PresidentialAction, GameState } from "./types";
+import type { Difficulty, EventChoice, GameEvent, GameState, ReignSummary, RoyalDecree } from "./types";
 
 interface Resolution {
   event: GameEvent;
   choice: EventChoice;
-  action: PresidentialAction | null;
+  decree: RoyalDecree | null;
 }
-
-/** Fração da popularidade final que o sucessor herda ao continuar a dinastia — modesta de
-    propósito, para dar peso à continuidade sem deixar um mandato ruim travar os seguintes. */
-const DYNASTY_CARRYOVER = 0.2;
-// Derivado do estado inicial em vez de hardcoded, para não dessincronizar se o valor
-// inicial de popularidade em data/indicators.ts mudar.
-const INITIAL_POPULARIDADE = createInitialIndicators().popularidade;
 
 const NARROW_TABS_BREAKPOINT = 380;
 
@@ -60,25 +56,21 @@ interface Props {
   onExitToMenu?: () => void;
 }
 
-function App({ onExitToMenu }: Props = {}) {
+function DinastiaApp({ onExitToMenu }: Props) {
   const [game, setGame] = useState<GameState>(() => loadInProgressGame() ?? createStartState());
   const [resolution, setResolution] = useState<Resolution | null>(null);
-  const [selectedAction, setSelectedAction] = useState<PresidentialAction | null>(null);
-  const [bestResult, setBestResult] = useState<BestResult | null>(() => loadBestResult());
-  const [mandateHistory, setMandateHistory] = useState<MandateHistoryEntry[]>(() => loadMandateHistory());
+  const [selectedDecree, setSelectedDecree] = useState<RoyalDecree | null>(null);
+  const [bestResult, setBestResult] = useState<BestReignResult | null>(() => loadBestReignResult());
+  const [reignHistory, setReignHistory] = useState<ReignHistoryEntry[]>(() => loadReignHistory());
   const [earnedAchievementIds, setEarnedAchievementIds] = useState<Set<string>>(new Set());
   const [newAchievementIds, setNewAchievementIds] = useState<Set<string>>(new Set());
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [chronicleToShow, setChronicleToShow] = useState<ReignSummary[] | null>(null);
   const [theme, toggleTheme] = useTheme();
   const isNarrowViewport = useNarrowViewport(NARROW_TABS_BREAKPOINT);
-  // Trava síncrona contra duplo clique/duplo disparo do evento antes do próximo render:
-  // estado do React só reflete a mudança após o commit, então um clique duplicado no
-  // mesmo instante ainda veria o mesmo `game`/`resolution` "antigos". Um ref é mutado
-  // na hora e é compartilhado entre as chamadas, então bloqueia de fato a segunda.
+  // Trava síncrona contra duplo clique/duplo disparo do evento antes do próximo render.
   const isProcessingChoice = useRef(false);
 
-  // Salva o mandato em andamento a cada mudança para sobreviver a um reload acidental;
-  // some assim que o mandato termina (nada para retomar) ou volta à tela inicial.
   useEffect(() => {
     if (game.phase === "playing") {
       saveInProgressGame(game);
@@ -87,13 +79,17 @@ function App({ onExitToMenu }: Props = {}) {
     }
   }, [game]);
 
-  function startFresh(difficulty: Difficulty) {
-    setGame(createNewGame(difficulty));
+  function resetTransientState() {
     setResolution(null);
-    setSelectedAction(null);
+    setSelectedDecree(null);
     setEarnedAchievementIds(new Set());
     setNewAchievementIds(new Set());
     isProcessingChoice.current = false;
+  }
+
+  function startFresh(difficulty: Difficulty) {
+    setGame(createNewReign(difficulty));
+    resetTransientState();
     if (!hasSeenOnboarding()) {
       setShowOnboarding(true);
     }
@@ -104,42 +100,41 @@ function App({ onExitToMenu }: Props = {}) {
     setShowOnboarding(false);
   }
 
-  function handleContinueDynasty() {
-    const legacy: DynastyLegacy = {
-      indicatorBonus: {
-        popularidade: Math.round((game.indicators.popularidade - INITIAL_POPULARIDADE) * DYNASTY_CARRYOVER),
-      },
-      dynastyTerm: game.dynastyTerm + 1,
-    };
-    setGame(createNewGame(game.difficulty, legacy));
-    setResolution(null);
-    setSelectedAction(null);
-    setEarnedAchievementIds(new Set());
-    setNewAchievementIds(new Set());
-    isProcessingChoice.current = false;
+  function continueToNextReign(legacy: DynastyLegacy) {
+    setGame(createNewReign(game.difficulty, legacy));
+    resetTransientState();
+  }
+
+  function handleViewChronicle() {
+    if (chronicleToShow) return;
+    setChronicleToShow(buildNextLegacy(game).chronicle);
   }
 
   function handleNewDynasty() {
     setGame(createStartState());
+    setChronicleToShow(null);
     setResolution(null);
-    setSelectedAction(null);
+    setSelectedDecree(null);
   }
 
-  function handleSelectAction(action: PresidentialAction) {
-    setSelectedAction((current) => (current?.id === action.id ? null : action));
+  function handleSelectDecree(decree: RoyalDecree) {
+    setSelectedDecree((current) => (current?.id === decree.id ? null : decree));
   }
 
   function handleChoose(choice: EventChoice) {
     if (!game.currentEvent || isProcessingChoice.current) return;
     isProcessingChoice.current = true;
 
-    const next = applyChoice(game, choice, selectedAction);
-    setResolution({ event: game.currentEvent, choice, action: selectedAction });
+    const next = applyChoice(game, choice, selectedDecree);
+    setResolution({ event: game.currentEvent, choice, decree: selectedDecree });
     setGame(next);
 
     if (next.phase === "ended" && next.endResult) {
+      const summary = buildReignSummary(next);
+      const chronicleSoFar = [...next.chronicle, summary];
+
       setBestResult(
-        saveBestResultIfBetter({
+        saveBestReignResultIfBetter({
           title: next.endResult.title,
           average: next.endResult.average,
           turnReached: next.history.length,
@@ -147,41 +142,72 @@ function App({ onExitToMenu }: Props = {}) {
         })
       );
 
-      setMandateHistory(
-        addMandateHistoryEntry({
+      setReignHistory(
+        addReignHistoryEntry({
           title: next.endResult.title,
           average: next.endResult.average,
           turnReached: next.history.length,
           victory: next.endResult.victory,
           difficulty: next.difficulty,
+          reignNumber: next.reignNumber,
           playedAt: Date.now(),
         })
       );
 
-      const earnedNow = ACHIEVEMENTS.filter((a) => a.check(next)).map((a) => a.id);
+      // Conquistas de dinastia inteira (Fórmula 6) só podem ser avaliadas com a crônica já
+      // incluindo este reinado — o campo `chronicle` do estado só traz os reinados ANTERIORES.
+      const stateForAchievements: GameState = { ...next, chronicle: chronicleSoFar };
+      const earnedNow = ACHIEVEMENTS.filter((a) => a.check(stateForAchievements)).map((a) => a.id);
       const previouslyUnlocked = loadUnlockedAchievements();
       unlockAchievements(earnedNow);
       const isNew = new Set(earnedNow.filter((id) => !previouslyUnlocked.has(id)));
       setEarnedAchievementIds(new Set(earnedNow));
       setNewAchievementIds(isNew);
+
+      if (next.reignNumber >= TOTAL_REIGNS) {
+        const tier = computeDynastyTier(chronicleSoFar);
+        addChronicleHistoryEntry({
+          reigns: chronicleSoFar,
+          tierLabel: tier.title,
+          overallAverage: tier.overallAverage,
+          difficulty: next.difficulty,
+          completedAt: Date.now(),
+        });
+      }
     }
   }
 
   function handleContinue() {
     setResolution(null);
-    setSelectedAction(null);
+    setSelectedDecree(null);
     isProcessingChoice.current = false;
   }
 
   const multiplier = DIFFICULTY_MULTIPLIERS[game.difficulty];
 
   const dashboardDeltas = resolution
-    ? scaleEffects(mergeEffects(resolution.choice.effects, resolution.action?.effects), multiplier)
+    ? scaleEffects(mergeEffects(resolution.choice.effects, resolution.decree?.effects), multiplier)
     : undefined;
 
-  const sectorDeltas = resolution
-    ? scaleEffects(mergeEffects(resolution.choice.sectorEffects ?? {}, resolution.action?.sectorEffects), multiplier)
+  const factionDeltas = resolution
+    ? scaleEffects(mergeEffects(resolution.choice.factionEffects ?? {}, resolution.decree?.factionEffects), multiplier)
     : undefined;
+
+  if (chronicleToShow) {
+    return (
+      <div className="app-shell">
+        <div className="top-bar">
+          {onExitToMenu && (
+            <button type="button" className="secondary-button" onClick={onExitToMenu}>
+              ← Outros jogos
+            </button>
+          )}
+          <ThemeToggle theme={theme} onToggle={toggleTheme} />
+        </div>
+        <ChronicleScreen chronicle={chronicleToShow} onNewDynasty={handleNewDynasty} />
+      </div>
+    );
+  }
 
   return (
     <div className="app-shell">
@@ -197,30 +223,30 @@ function App({ onExitToMenu }: Props = {}) {
       {showOnboarding && <OnboardingModal onDismiss={handleDismissOnboarding} />}
 
       {game.phase === "start" && (
-        <StartScreen onStart={startFresh} bestResult={bestResult} mandateHistory={mandateHistory} />
+        <StartScreen onStart={startFresh} bestResult={bestResult} reignHistory={reignHistory} />
       )}
 
       {game.phase !== "start" && (
         <>
           <header className="app-header">
-            <h1>A Presidência</h1>
+            <h1>A Dinastia</h1>
             {game.phase === "playing" && (
               <span className="turn-counter">
-                Trimestre {game.turn} de {game.totalTurns}
+                Reinado {game.reignNumber}/{TOTAL_REIGNS} · Ano {game.turn} de {game.totalTurns}
               </span>
             )}
           </header>
 
           {isNarrowViewport ? (
             <StatsTabs
-              sectors={game.sectors}
-              sectorDeltas={sectorDeltas}
+              factions={game.factions}
+              factionDeltas={factionDeltas}
               indicators={game.indicators}
               indicatorDeltas={dashboardDeltas}
             />
           ) : (
             <>
-              <SectorsPanel sectors={game.sectors} lastDeltas={sectorDeltas} />
+              <FactionsPanel factions={game.factions} lastDeltas={factionDeltas} />
               <div className="indicators-panel">
                 <span className="panel-heading">Indicadores</span>
                 <Dashboard indicators={game.indicators} lastDeltas={dashboardDeltas} />
@@ -233,7 +259,7 @@ function App({ onExitToMenu }: Props = {}) {
               <ResolutionPanel
                 event={resolution.event}
                 choice={resolution.choice}
-                action={resolution.action}
+                decree={resolution.decree}
                 multiplier={multiplier}
                 onContinue={handleContinue}
               />
@@ -242,24 +268,25 @@ function App({ onExitToMenu }: Props = {}) {
                 event={game.currentEvent}
                 turnLabel={formatTurnLabel(game.turn)}
                 turn={game.turn}
-                actions={ACTIONS}
-                selectedAction={selectedAction}
+                decrees={DECREES}
+                selectedDecree={selectedDecree}
                 multiplier={multiplier}
-                onSelectAction={handleSelectAction}
+                onSelectDecree={handleSelectDecree}
                 onChoose={handleChoose}
               />
             ) : game.phase === "ended" && game.endResult ? (
               <EndScreen
                 result={game.endResult}
                 indicators={game.indicators}
-                sectors={game.sectors}
+                factions={game.factions}
                 history={game.history}
                 indicatorSnapshots={game.indicatorSnapshots}
                 totalTurns={game.totalTurns}
-                dynastyTerm={game.dynastyTerm}
+                reignNumber={game.reignNumber}
                 earnedAchievementIds={earnedAchievementIds}
                 newAchievementIds={newAchievementIds}
-                onContinueDynasty={handleContinueDynasty}
+                onContinueDynasty={() => continueToNextReign(buildNextLegacy(game))}
+                onViewChronicle={handleViewChronicle}
                 onNewDynasty={handleNewDynasty}
               />
             ) : null}
@@ -270,4 +297,4 @@ function App({ onExitToMenu }: Props = {}) {
   );
 }
 
-export default App;
+export default DinastiaApp;
