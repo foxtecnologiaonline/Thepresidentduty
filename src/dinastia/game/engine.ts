@@ -18,6 +18,7 @@ import { createInitialFactions } from "../data/factions";
 import type {
   Difficulty,
   EndResult,
+  EventCategory,
   EventChoice,
   GameEvent,
   GameState,
@@ -64,10 +65,56 @@ function eligibleEvents(legacyFlags: string[]): GameEvent[] {
   });
 }
 
-export function buildDeck(legacyFlags: string[] = []): GameEvent[] {
-  const drawn = shuffle(eligibleEvents(legacyFlags)).slice(0, TOTAL_TURNS);
+/**
+ * Categorias que cada reinado da dinastia puxa com mais força — dá a cada um dos 5 um
+ * "clima" temático sutil (o reinado de instalação não é o mesmo da crise sucessória
+ * final) sem mexer em nenhuma magnitude de efeito: só em QUAIS eventos têm mais chance
+ * de ser sorteados. Reinados fora de 1–5 (não deveria acontecer, mas por segurança)
+ * caem no sorteio neutro de `buildDeck`.
+ */
+export const REIGN_CATEGORY_EMPHASIS: Partial<Record<number, EventCategory[]>> = {
+  1: ["corte", "colheita"],
+  2: ["fiscal", "diplomacia"],
+  3: ["nobreza", "militar"],
+  4: ["religiao", "povo"],
+  5: ["nobreza", "corte"],
+};
+
+/** Peso do sorteio A-ES (Efraimidis–Spirakis): eventos emphasized saem ~2x mais fácil,
+    mas nenhum evento fica inacessível — ainda é possível puxar qualquer outra categoria. */
+const EMPHASIS_WEIGHT = 2;
+
+/**
+ * Amostragem aleatória sem reposição e ponderada por peso (algoritmo A-ES): cada item
+ * recebe uma chave `random() ** (1/peso)` e os `k` maiores vencem. Pesos maiores
+ * puxam o item pra frente com mais frequência sem nunca excluir os demais — é uma
+ * versão com viés do mesmo `shuffle(...).slice(0, k)` que o motor já usava.
+ */
+function weightedSampleWithoutReplacement<T>(items: T[], weightOf: (item: T) => number, k: number): T[] {
+  return items
+    .map((item) => ({ item, key: Math.random() ** (1 / weightOf(item)) }))
+    .sort((a, b) => b.key - a.key)
+    .slice(0, k)
+    .map((entry) => entry.item);
+}
+
+export function buildDeck(legacyFlags: string[] = [], reignNumber = 1): GameEvent[] {
+  const pool = eligibleEvents(legacyFlags);
+  const emphasis = REIGN_CATEGORY_EMPHASIS[reignNumber];
+  const drawn = emphasis
+    ? weightedSampleWithoutReplacement(pool, (event) => (emphasis.includes(event.category) ? EMPHASIS_WEIGHT : 1), TOTAL_TURNS)
+    : shuffle(pool).slice(0, TOTAL_TURNS);
   return avoidConsecutiveCategories(orderByEscalatingIntensity(drawn));
 }
+
+/** Uma linha de clima narrativo mostrada ao jogador no primeiro ano de cada reinado. */
+export const REIGN_INTRO_NARRATIVE: Partial<Record<number, string>> = {
+  1: "Um novo reinado começa. A corte observa como o herdeiro vai lidar com as rotinas do trono.",
+  2: "O reino já conhece este governante. Comércio e diplomacia cobram atenção.",
+  3: "Barões e generais testam os limites da autoridade real neste reinado.",
+  4: "Fé e povo pressionam a coroa de formas que o ouro sozinho não resolve.",
+  5: "O último reinado desta linhagem começa — tudo o que os antepassados construíram converge aqui.",
+};
 
 export function createStartState(): GameState {
   const initialIndicators = createInitialIndicators();
@@ -93,7 +140,8 @@ export function createStartState(): GameState {
 
 export function createNewReign(difficulty: Difficulty = "normal", legacy?: DynastyLegacy): GameState {
   const legacyFlags = legacy?.legacyFlags ?? [];
-  const deck = buildDeck(legacyFlags);
+  const reignNumber = legacy?.reignNumber ?? 1;
+  const deck = buildDeck(legacyFlags, reignNumber);
   const baseIndicators = createInitialIndicators();
   const initialIndicators = legacy ? applyEffects(baseIndicators, legacy.indicatorBonus) : baseIndicators;
   const initialFactions = createInitialFactions();
@@ -110,7 +158,7 @@ export function createNewReign(difficulty: Difficulty = "normal", legacy?: Dynas
     indicatorSnapshots: [initialIndicators],
     factionSnapshots: [initialFactions],
     endResult: null,
-    reignNumber: legacy?.reignNumber ?? 1,
+    reignNumber,
     legacyFlags,
     chronicle: legacy?.chronicle ?? [],
   };

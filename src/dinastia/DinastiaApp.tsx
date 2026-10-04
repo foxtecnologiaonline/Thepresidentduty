@@ -15,6 +15,7 @@ import { StartScreen } from "./components/StartScreen";
 import { StatsTabs } from "./components/StatsTabs";
 import {
   DIFFICULTY_MULTIPLIERS,
+  REIGN_INTRO_NARRATIVE,
   TOTAL_REIGNS,
   applyChoice,
   buildNextLegacy,
@@ -200,7 +201,7 @@ function DinastiaApp({ onExitToMenu }: Props) {
 
   if (chronicleToShow) {
     return (
-      <div className="app-shell">
+      <div className="app-shell" data-game="dinastia">
         <div className="top-bar">
           {onExitToMenu && (
             <button type="button" className="secondary-button" onClick={onExitToMenu}>
@@ -215,7 +216,7 @@ function DinastiaApp({ onExitToMenu }: Props) {
   }
 
   return (
-    <div className="app-shell">
+    <div className="app-shell" data-game="dinastia">
       <div className="top-bar">
         {onExitToMenu && (
           <button type="button" className="secondary-button" onClick={onExitToMenu}>
@@ -246,6 +247,10 @@ function DinastiaApp({ onExitToMenu }: Props) {
               </span>
             )}
           </header>
+
+          {game.phase === "playing" && game.turn === 1 && !resolution && REIGN_INTRO_NARRATIVE[game.reignNumber] && (
+            <p className="dynasty-hint">{REIGN_INTRO_NARRATIVE[game.reignNumber]}</p>
+          )}
 
           {isNarrowViewport ? (
             <StatsTabs
@@ -293,6 +298,7 @@ function DinastiaApp({ onExitToMenu }: Props) {
                 indicatorSnapshots={game.indicatorSnapshots}
                 totalTurns={game.totalTurns}
                 reignNumber={game.reignNumber}
+                chronicle={game.chronicle}
                 earnedAchievementIds={earnedAchievementIds}
                 newAchievementIds={newAchievementIds}
                 onContinueDynasty={() => continueToNextReign(buildNextLegacy(game))}

@@ -198,10 +198,15 @@ const ALL_FLAGS = [
   "fome-grande",
 ];
 
-function simulateWithFlags(difficulty: Difficulty, strategy: Strategy, legacyFlags: string[]): RunResult {
+function simulateWithFlags(
+  difficulty: Difficulty,
+  strategy: Strategy,
+  legacyFlags: string[],
+  reignNumber = 1
+): RunResult {
   let state = createNewReign(difficulty, {
     indicatorBonus: {},
-    reignNumber: 1,
+    reignNumber,
     legacyFlags,
     chronicle: [],
   });
@@ -232,6 +237,35 @@ for (let i = 0; i < SAMPLE; i++) {
 console.log(
   `Amostragem com todas as marcas de legado: baralho tem ${fullFlagsPool.length} eventos elegíveis; melhor caso normal — falha ${((failFull / SAMPLE) * 100).toFixed(1)}%, média final ${(sumFull / SAMPLE).toFixed(1)} (compare com ${(55.2).toFixed(1)} sem marcas — divergência grande indicaria que os eventos de legado desequilibram o jogo).\n`
 );
+
+// Checagem por reinado: a ênfase temática (REIGN_CATEGORY_EMPHASIS) muda QUAIS eventos
+// são sorteados por reinado — confirma que isso não torna nenhum dos 5 reinados injusto
+// no melhor caso, em vez de assumir que a amostragem ponderada é neutra o bastante.
+console.log("Amostragem por reinado (melhor caso, normal, sem marcas de legado):");
+let anyReignUnsafe = false;
+for (let reignNumber = 1; reignNumber <= 5; reignNumber++) {
+  let sum = 0;
+  let fails = 0;
+  for (let i = 0; i < SAMPLE; i++) {
+    const r = simulateWithFlags("normal", "melhor", [], reignNumber);
+    sum += r.finalAverage;
+    if (r.failed) fails++;
+  }
+  const failRate = fails / SAMPLE;
+  const avg = sum / SAMPLE;
+  console.log(`  Reinado ${reignNumber} — falha ${(failRate * 100).toFixed(1)}%, média final ${avg.toFixed(1)}`);
+  if (failRate > 0.02 || avg < 45 || avg > 80) {
+    anyReignUnsafe = true;
+  }
+}
+if (anyReignUnsafe) {
+  console.log(
+    "  ❌ A ênfase temática de algum reinado tornou o melhor caso instável — revisar REIGN_CATEGORY_EMPHASIS ou EMPHASIS_WEIGHT.\n"
+  );
+  allPass = false;
+} else {
+  console.log("");
+}
 
 if (allPass) {
   console.log("✅ Gate de equilíbrio (Fórmula 7) passou em todas as métricas-alvo para a dificuldade normal.");

@@ -2,7 +2,8 @@ import { Component, lazy, Suspense, type ReactNode } from "react";
 import { ShareButton } from "../../components/ShareButton";
 import { TOTAL_REIGNS, grantedFlagsThisReign, isDynastyFinished } from "../game/engine";
 import { buildShareText } from "../game/share";
-import type { EndResult, Factions, GameState, Indicators } from "../types";
+import type { EndResult, Factions, GameState, Indicators, ReignSummary } from "../types";
+import { DynastyTree } from "./DynastyTree";
 
 // O relatório (gráfico + timeline + conquistas) só é necessário quando o reinado termina,
 // então fica num chunk separado em vez de pesar no carregamento inicial do jogo.
@@ -35,6 +36,8 @@ interface Props {
   indicatorSnapshots: Indicators[];
   totalTurns: number;
   reignNumber: number;
+  /** Reinados anteriores já concluídos desta dinastia (sem contar o que acabou agora). */
+  chronicle: ReignSummary[];
   earnedAchievementIds: Set<string>;
   newAchievementIds: Set<string>;
   onContinueDynasty: () => void;
@@ -50,6 +53,7 @@ export function EndScreen({
   indicatorSnapshots,
   totalTurns,
   reignNumber,
+  chronicle,
   earnedAchievementIds,
   newAchievementIds,
   onContinueDynasty,
@@ -58,6 +62,14 @@ export function EndScreen({
 }: Props) {
   const isLastReign = isDynastyFinished(reignNumber);
   const grantedFlags = grantedFlagsThisReign({ history });
+  const thisReignSummary: ReignSummary = {
+    reignNumber,
+    title: result.title,
+    average: result.average,
+    victory: result.victory,
+    turnsReached: history.length,
+    grantedFlags,
+  };
 
   return (
     <div className={`screen end-screen ${result.victory ? "victory" : "defeat"}`}>
@@ -66,6 +78,8 @@ export function EndScreen({
       <p className="turn-reached">
         Reinado {reignNumber} de {TOTAL_REIGNS} encerrado no ano {history.length} de {totalTurns}.
       </p>
+
+      <DynastyTree completedReigns={[...chronicle, thisReignSummary]} totalReigns={TOTAL_REIGNS} />
 
       {grantedFlags.length > 0 && (
         <p className="dynasty-hint">

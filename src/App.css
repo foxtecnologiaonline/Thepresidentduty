@@ -6,6 +6,10 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
+  /* Normalmente idêntico ao fundo do <body> (sem efeito visual aqui) — existe para que um
+     jogo com tema próprio (ver "Tema de A Dinastia" no fim do arquivo) consiga pintar seu
+     próprio fundo por cima, em vez de o tema global aparecer nas bordas/padding. */
+  background: var(--bg);
 }
 
 .app-header {
@@ -95,6 +99,20 @@
   display: flex;
   align-items: center;
   gap: 4px;
+}
+
+/* Reforça aviso/perigo com um símbolo, não só a cor da barra (ver StatBar.tsx). */
+.status-glyph {
+  font-size: 10px;
+  line-height: 1;
+}
+
+.status-glyph.warning {
+  color: var(--warning);
+}
+
+.status-glyph.danger {
+  color: var(--danger);
 }
 
 .indicator-delta {
@@ -213,7 +231,7 @@
 
 .action-chip.selected {
   border-color: var(--gold);
-  background: rgba(242, 193, 78, 0.12);
+  background: color-mix(in srgb, var(--gold) 12%, transparent);
 }
 
 .action-chip .choice-label {
@@ -700,6 +718,66 @@
   border-color: var(--border);
 }
 
+/* Painel de decreto recolhido — toggle quando nada foi escolhido, chip quando já tem
+   decreto selecionado — substitui a grade inteira até o jogador pedir pra ver. */
+
+.decree-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  background: var(--surface-2);
+  border: 1px dashed var(--border);
+  border-radius: 10px;
+  padding: 9px 12px;
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+}
+
+.decree-toggle:hover {
+  border-color: var(--gold);
+}
+
+.decree-selected-chip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  background: color-mix(in srgb, var(--gold) 10%, var(--surface-2));
+  border: 1px solid var(--gold);
+  border-radius: 10px;
+  padding: 9px 12px;
+  color: var(--text);
+  cursor: pointer;
+  text-align: left;
+}
+
+.decree-selected-label {
+  font-size: 13px;
+  font-weight: 600;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.decree-selected-chip .effects-preview {
+  font-size: 11px;
+  gap: 5px;
+}
+
+.decree-change-hint {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
 /* Trajectory chart */
 
 .trajectory-chart {
@@ -1129,4 +1207,127 @@
   color: var(--text-muted);
   font-size: 12.5px;
   font-style: italic;
+}
+
+/* Linha do tempo da dinastia (DynastyTree) */
+
+.dynasty-tree {
+  display: flex;
+  align-items: flex-start;
+  overflow-x: auto;
+  padding: 4px 2px 8px;
+}
+
+.dynasty-node-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 0 0 auto;
+  width: 68px;
+  gap: 4px;
+}
+
+.dynasty-node {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  border: 2px solid var(--border);
+  background: var(--surface-2);
+  flex: 0 0 auto;
+}
+
+.dynasty-node.victory {
+  border-color: var(--gold);
+}
+
+.dynasty-node.collapse {
+  border-color: var(--danger);
+  opacity: 0.85;
+}
+
+.dynasty-node.pending {
+  border-style: dashed;
+  opacity: 0.45;
+}
+
+.dynasty-node-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-align: center;
+  font-weight: 600;
+}
+
+.dynasty-node-flags {
+  font-size: 11px;
+  line-height: 1;
+}
+
+.dynasty-connector {
+  flex: 1 1 auto;
+  min-width: 10px;
+  height: 2px;
+  background: var(--border);
+  margin-top: 19px;
+}
+
+.dynasty-connector.done {
+  background: var(--gold);
+}
+
+/* ============================================================
+   Tema de A Dinastia — paleta de bronze/pergaminho sobre o mesmo
+   conjunto de variáveis do tema global, redefinida só dentro de
+   [data-game="dinastia"]. Troca a identidade visual sem duplicar
+   nenhuma regra de layout: tudo que já usa var(--gold), var(--bg)
+   etc. reflui automaticamente para a nova paleta.
+   ============================================================ */
+
+.app-shell[data-game="dinastia"] {
+  --bg: #140f0a;
+  --bg-elevated: #241a10;
+  --surface-2: #2c2013;
+  --text: #ece0cd;
+  --text-muted: #b5a488;
+  --border: #3e2f1c;
+  --gold: #c98a3e;
+  --accent-ink: #1a1200;
+  --ok: #4caf7d;
+  --warning: #d4a017;
+  --danger: #c23b2d;
+}
+
+:root[data-theme="light"] .app-shell[data-game="dinastia"] {
+  --bg: #ece0c4;
+  --bg-elevated: #faf3e1;
+  --surface-2: #f2e6c9;
+  --text: #2b2013;
+  --text-muted: #6b5a3e;
+  --border: #d2bd8c;
+  --gold: #8a5a1f;
+  --accent-ink: #fff8ea;
+  --ok: #2f7a4d;
+  --warning: #8a6410;
+  --danger: #93281f;
+}
+
+.app-shell[data-game="dinastia"] h1,
+.app-shell[data-game="dinastia"] h2 {
+  font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  letter-spacing: 0.01em;
+}
+
+.app-shell[data-game="dinastia"] .event-card,
+.app-shell[data-game="dinastia"] .report-section,
+.app-shell[data-game="dinastia"] .onboarding-modal {
+  box-shadow:
+    0 2px 10px rgba(0, 0, 0, 0.35),
+    inset 0 0 0 1px rgba(201, 138, 62, 0.22);
+}
+
+.app-shell[data-game="dinastia"] .achievement-badge.earned {
+  box-shadow: inset 0 0 0 1px rgba(201, 138, 62, 0.35);
 }

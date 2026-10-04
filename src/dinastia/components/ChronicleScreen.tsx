@@ -1,5 +1,6 @@
-import { computeDynastyTier } from "../game/engine";
+import { computeDynastyTier, TOTAL_REIGNS } from "../game/engine";
 import type { ReignSummary } from "../types";
+import { DynastyTree } from "./DynastyTree";
 
 interface Props {
   chronicle: ReignSummary[];
@@ -24,6 +25,8 @@ export function ChronicleScreen({ chronicle, onNewDynasty }: Props) {
       <h1>{tier.title}</h1>
       <p className="tagline">{tier.narrative}</p>
       <p className="turn-reached">Média geral da linhagem: {Math.round(tier.overallAverage)}</p>
+
+      <DynastyTree completedReigns={chronicle} totalReigns={TOTAL_REIGNS} />
 
       <section className="report-section">
         <h3>Os 5 reinados desta dinastia</h3>
