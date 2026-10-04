@@ -11,6 +11,10 @@ interface Props {
   selectedAction: GovernorAction | null;
   /** Multiplicador da dificuldade atual — a prévia precisa refletir o que será de fato aplicado. */
   multiplier: number;
+  /** Quantos trimestres já tiveram uma diretiva emitida — feedback para as conquistas
+      "Mãos Limpas" (zero) e "Onipresente" (12+), sem entregar o nome delas no meio do jogo. */
+  actionsUsedCount: number;
+  totalTurns: number;
   onSelectAction: (action: GovernorAction) => void;
   onChoose: (choice: EventChoice) => void;
 }
@@ -36,6 +40,8 @@ export function EventCard({
   actions,
   selectedAction,
   multiplier,
+  actionsUsedCount,
+  totalTurns,
   onSelectAction,
   onChoose,
 }: Props) {
@@ -44,7 +50,9 @@ export function EventCard({
       <div className="actions-panel">
         <div className="actions-heading">
           <span>Diretiva do trimestre</span>
-          <span className="actions-hint">opcional · no máximo uma</span>
+          <span className="actions-hint">
+            opcional · no máximo uma · {actionsUsedCount}/{totalTurns} emitidas até aqui
+          </span>
         </div>
         <div className="actions-list">
           {actions.map((action) => {

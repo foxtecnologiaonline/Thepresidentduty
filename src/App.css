@@ -69,7 +69,7 @@
 
 .indicator-label {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 6px;
   font-size: 12px;
   color: var(--text-muted);
@@ -77,11 +77,16 @@
   min-width: 0;
 }
 
+/* Nomes do domínio estadual (ex. "Relações Institucionais", "Movimentos Sociais")
+   são longos demais para uma linha só nos cards de 2 colunas do mobile — quebrar em
+   até 2 linhas em vez de cortar com reticências mantém o rótulo inteiro legível. */
 .indicator-label > span:not(.indicator-icon):not(.indicator-value) {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
   min-width: 0;
+  line-height: 1.25;
+  word-break: break-word;
 }
 
 .indicator-icon {
@@ -95,6 +100,11 @@
   display: flex;
   align-items: center;
   gap: 4px;
+}
+
+.critical-alert-icon {
+  font-size: 12px;
+  line-height: 1;
 }
 
 .indicator-delta {

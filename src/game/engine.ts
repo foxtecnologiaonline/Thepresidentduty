@@ -12,6 +12,14 @@ export interface DynastyLegacy {
 
 export const TOTAL_TURNS = 16;
 
+/**
+ * Pelo Art. 14 §5º da Constituição, um governador só pode se reeleger uma única vez em
+ * sequência — a partir do 3º mandato seguido da mesma dinastia, quem assume a candidatura
+ * já não é mais o titular, e sim um(a) sucessor(a) da mesma base política (ver
+ * `handleContinueDynasty` em App.tsx e o aviso correspondente em EndScreen).
+ */
+export const CONSECUTIVE_REELECTION_LIMIT = 2;
+
 const QUARTER_MONTHS = ["Jan–Mar", "Abr–Jun", "Jul–Set", "Out–Dez"];
 
 /** Multiplica a magnitude de todos os efeitos (escolha + diretiva); dificuldade não muda as regras, só o quanto cada decisão pesa. */

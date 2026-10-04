@@ -20,6 +20,7 @@ interface Props {
 /** Barra de progresso genérica usada tanto pelos indicadores de governo quanto pelos setores da sociedade. */
 export function StatBar({ icon, label, description, value, delta, critical }: Props) {
   const displayedValue = useCountUp(Math.round(value));
+  const isInDanger = critical && statusClass(value) === "danger";
 
   return (
     <div className={`indicator ${statusClass(value)}${critical ? " critical-warning" : ""}`} title={description}>
@@ -29,6 +30,11 @@ export function StatBar({ icon, label, description, value, delta, critical }: Pr
         </span>
         <span>{label}</span>
         <span className="indicator-value">
+          {isInDanger && (
+            <span className="critical-alert-icon" role="img" aria-label="Indicador crítico perto de zerar">
+              ⚠️
+            </span>
+          )}
           {displayedValue}
           {typeof delta === "number" && delta !== 0 && (
             <span className={`indicator-delta ${delta > 0 ? "positive" : "negative"}`}>

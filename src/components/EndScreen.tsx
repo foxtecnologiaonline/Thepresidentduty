@@ -1,6 +1,7 @@
 import { Component, lazy, Suspense, type ReactNode } from "react";
 import { ShareButton } from "./ShareButton";
 import { buildShareText } from "../game/share";
+import { CONSECUTIVE_REELECTION_LIMIT } from "../game/engine";
 import type { EndResult, GameState, Indicators, Sectors } from "../types";
 
 // O relatório (gráfico + timeline + conquistas) só é necessário quando o
@@ -61,6 +62,10 @@ export function EndScreen({
   onContinueDynasty,
   onNewDynasty,
 }: Props) {
+  // Art. 14 §5º da CF: só é permitida uma reeleição consecutiva. A partir daí, continuar
+  // a dinastia significa eleger um(a) sucessor(a) da mesma base política, não o titular.
+  const isSuccession = dynastyTerm >= CONSECUTIVE_REELECTION_LIMIT;
+
   return (
     <div className={`screen end-screen ${result.victory ? "victory" : "defeat"}`}>
       <h1>{result.title}</h1>
@@ -83,12 +88,16 @@ export function EndScreen({
       </ReportErrorBoundary>
 
       <p className="dynasty-hint">
-        Mandato nº {dynastyTerm} da sua dinastia. Ao continuar, seu sucessor herda um pouco da sua popularidade
-        final.
+        {isSuccession
+          ? `Mandato nº ${dynastyTerm} da sua dinastia. Pela Constituição, você não pode concorrer a um \
+terceiro mandato seguido — ao continuar, um(a) aliado(a) de confiança assume a candidatura. Ele(a) herda \
+uma fração menor do seu legado e começa com menos força na Assembleia por não ser o titular.`
+          : `Mandato nº ${dynastyTerm} da sua dinastia. Ao continuar, você concorre à reeleição e herda um \
+pouco da sua popularidade final.`}
       </p>
       <div className="end-screen-actions">
         <button type="button" className="primary-button" onClick={onContinueDynasty}>
-          Jogar Novamente
+          {isSuccession ? "Eleger Sucessor(a) e Continuar" : "Concorrer à Reeleição"}
         </button>
         <button type="button" className="secondary-button" onClick={onNewDynasty}>
           Começar nova dinastia

@@ -13,6 +13,7 @@ import { ACHIEVEMENTS } from "./data/achievements";
 import { ACTIONS } from "./data/actions";
 import {
   applyChoice,
+  CONSECUTIVE_REELECTION_LIMIT,
   createNewGame,
   createStartState,
   DIFFICULTY_MULTIPLIERS,
@@ -50,6 +51,11 @@ interface Resolution {
 /** Fração da popularidade final que o sucessor herda ao continuar a dinastia — modesta de
     propósito, para dar peso à continuidade sem deixar um mandato ruim travar os seguintes. */
 const DYNASTY_CARRYOVER = 0.2;
+/** Quando a Constituição já não permite reeleição (ver CONSECUTIVE_REELECTION_LIMIT), quem
+    assume não é o titular — herda só metade da popularidade e começa com menos força na
+    Assembleia por não ser quem o eleitorado conhece. */
+const SUCCESSOR_CARRYOVER_FACTOR = 0.5;
+const SUCCESSOR_GOVERNABILIDADE_PENALTY = -8;
 // Derivado do estado inicial em vez de hardcoded, para não dessincronizar se o valor
 // inicial de popularidade em data/indicators.ts mudar.
 const INITIAL_POPULARIDADE = createInitialIndicators().popularidade;
@@ -101,9 +107,12 @@ function App() {
   }
 
   function handleContinueDynasty() {
+    const isSuccession = game.dynastyTerm >= CONSECUTIVE_REELECTION_LIMIT;
+    const carryoverFactor = DYNASTY_CARRYOVER * (isSuccession ? SUCCESSOR_CARRYOVER_FACTOR : 1);
     const legacy: DynastyLegacy = {
       indicatorBonus: {
-        popularidade: Math.round((game.indicators.popularidade - INITIAL_POPULARIDADE) * DYNASTY_CARRYOVER),
+        popularidade: Math.round((game.indicators.popularidade - INITIAL_POPULARIDADE) * carryoverFactor),
+        ...(isSuccession ? { governabilidade: SUCCESSOR_GOVERNABILIDADE_PENALTY } : {}),
       },
       dynastyTerm: game.dynastyTerm + 1,
     };
@@ -236,6 +245,8 @@ function App() {
                 actions={ACTIONS}
                 selectedAction={selectedAction}
                 multiplier={multiplier}
+                actionsUsedCount={game.history.filter((h) => h.action !== null).length}
+                totalTurns={game.totalTurns}
                 onSelectAction={handleSelectAction}
                 onChoose={handleChoose}
               />

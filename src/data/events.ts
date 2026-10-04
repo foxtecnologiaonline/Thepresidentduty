@@ -554,4 +554,466 @@ export const EVENTS: GameEvent[] = [
       },
     ],
   },
+
+  // --- Segunda leva: dobra o baralho e garante pelo menos 4 eventos por categoria,
+  // para que nenhuma frente de governo fique de fora de boa parte das partidas. ---
+
+  {
+    id: "greve-professores",
+    title: "Greve dos Professores da Rede Estadual",
+    category: "educacao",
+    description:
+      "O sindicato dos professores da rede estadual entra em greve por salários melhores, suspendendo as aulas em milhares de escolas.",
+    choices: [
+      {
+        id: "negociar-reajuste",
+        label: "Conceder reajuste salarial aos professores",
+        consequence:
+          "A greve termina e a categoria volta às salas de aula, mas o orçamento sofre um impacto relevante.",
+        effects: { educacao: 8, economia: -6 },
+        sectorEffects: { movimentosSociais: 6, academicos: 5 },
+        leaning: -1,
+      },
+      {
+        id: "substitutos",
+        label: "Contratar professores temporários para não parar as aulas",
+        consequence:
+          "As aulas continuam, mas a categoria se sente desrespeitada e a qualidade do ensino cai.",
+        effects: { educacao: -5, popularidade: -4 },
+        sectorEffects: { academicos: -8, movimentosSociais: -6 },
+        leaning: 2,
+      },
+    ],
+  },
+  {
+    id: "merenda-escolar",
+    title: "Crise na Merenda Escolar",
+    category: "educacao",
+    description:
+      "Um relatório aponta irregularidades na compra de merenda da rede estadual, bem no momento em que o orçamento do programa está no limite.",
+    choices: [
+      {
+        id: "reforcar-fiscalizacao",
+        label: "Reforçar a fiscalização e reforçar a verba do programa",
+        consequence:
+          "A merenda melhora e o episódio vira um ponto positivo de transparência, mas custa caro aos cofres do estado.",
+        effects: { educacao: 6, economia: -4, popularidade: 3 },
+        sectorEffects: { populacao: 5, academicos: 3 },
+        leaning: -1,
+      },
+      {
+        id: "terceirizar",
+        label: "Terceirizar o fornecimento para uma grande empresa",
+        consequence:
+          "A solução é barata e rápida, mas gera desconfiança sobre a qualidade da comida servida aos alunos.",
+        effects: { economia: 3, educacao: -4 },
+        sectorEffects: { empresariado: 6, movimentosSociais: -5 },
+        leaning: 2,
+      },
+    ],
+  },
+  {
+    id: "escolas-civico-militares",
+    title: "Expansão de Escolas Cívico-Militares",
+    category: "educacao",
+    description:
+      "Um projeto propõe converter escolas estaduais em modelo cívico-militar, com participação da Polícia Militar na gestão disciplinar. As famílias se dividem.",
+    choices: [
+      {
+        id: "expandir",
+        label: "Expandir o modelo para toda a rede estadual",
+        consequence:
+          "A disciplina melhora em parte da rede, mas educadores veem o modelo como militarização do ensino.",
+        effects: { educacao: 4, seguranca: 3, popularidade: -2 },
+        sectorEffects: { militares: 7, academicos: -6, movimentosSociais: -5 },
+        leaning: 2,
+      },
+      {
+        id: "manter-modelo-tradicional",
+        label: "Manter o modelo tradicional de gestão escolar",
+        consequence:
+          "A comunidade escolar aprova a continuidade, ainda que sem grandes mudanças visíveis.",
+        effects: { educacao: 2, popularidade: 2 },
+        sectorEffects: { academicos: 4, militares: -3 },
+        leaning: -1,
+      },
+    ],
+  },
+  {
+    id: "ocupacao-urbana",
+    title: "Ocupação Urbana em Área de Risco",
+    category: "social",
+    description:
+      "Milhares de famílias sem moradia ocupam um terreno público em área de risco geológico na capital. A Justiça determina reintegração de posse.",
+    choices: [
+      {
+        id: "reintegrar",
+        label: "Cumprir a reintegração de posse com apoio policial",
+        consequence:
+          "A ordem judicial é cumprida, mas as imagens da remoção forçada chocam parte da opinião pública.",
+        effects: { seguranca: 3, popularidade: -9 },
+        sectorEffects: { militares: 4, movimentosSociais: -10, populacao: -5 },
+        leaning: 2,
+      },
+      {
+        id: "negociar-moradia",
+        label: "Suspender a reintegração e negociar um programa habitacional",
+        consequence:
+          "As famílias são atendidas e sua imagem social melhora, mas o episódio custa caro ao orçamento.",
+        effects: { popularidade: 7, economia: -5 },
+        sectorEffects: { movimentosSociais: 9, populacao: 6, empresariado: -4 },
+        leaning: -2,
+      },
+    ],
+  },
+  {
+    id: "crise-fome",
+    title: "Crise de Segurança Alimentar",
+    category: "social",
+    description:
+      "Filas por doações de alimentos se multiplicam nas grandes cidades do estado, expondo o agravamento da fome e pressionando o governo por uma resposta.",
+    choices: [
+      {
+        id: "programa-emergencial",
+        label: "Criar um programa emergencial de distribuição de alimentos",
+        consequence:
+          "Milhares de famílias são atendidas e sua popularidade sobe, mas o programa pesa no orçamento.",
+        effects: { popularidade: 7, economia: -5 },
+        sectorEffects: { populacao: 8, movimentosSociais: 5 },
+        leaning: -2,
+      },
+      {
+        id: "repassar-municipios",
+        label: "Repassar a responsabilidade aos municípios",
+        consequence:
+          "O estado preserva seu caixa, mas a fome segue crescendo e a população cobra uma resposta sua.",
+        effects: { economia: 1, popularidade: -6 },
+        sectorEffects: { populacao: -6, politicos: -3 },
+        leaning: 1,
+      },
+    ],
+  },
+  {
+    id: "violencia-policial-caso",
+    title: "Caso de Violência Policial Repercute no País",
+    category: "social",
+    description:
+      "Um vídeo de abordagem policial violenta contra um morador viraliza e gera indignação nacional, reacendendo o debate sobre segurança pública no estado.",
+    choices: [
+      {
+        id: "investigar-afastar",
+        label: "Afastar os policiais envolvidos e abrir investigação rigorosa",
+        consequence:
+          "A resposta firme é bem recebida pela sociedade civil, mas gera ressentimento dentro da corporação.",
+        effects: { popularidade: 5, seguranca: -3 },
+        sectorEffects: { movimentosSociais: 9, militares: -8, academicos: 4 },
+        leaning: -1,
+      },
+      {
+        id: "apoiar-corporacao",
+        label: "Defender publicamente a atuação da corporação",
+        consequence:
+          "A Polícia Militar se sente respaldada, mas a repercussão negativa do caso atinge sua imagem.",
+        effects: { seguranca: 2, popularidade: -8 },
+        sectorEffects: { militares: 7, movimentosSociais: -10, populacao: -4 },
+        leaning: 2,
+      },
+    ],
+  },
+  {
+    id: "falta-medicamentos",
+    title: "Desabastecimento de Medicamentos",
+    category: "saude",
+    description:
+      "Hospitais e postos de saúde da rede estadual relatam falta de medicamentos básicos após atraso num processo de compra.",
+    choices: [
+      {
+        id: "compra-emergencial",
+        label: "Fazer uma compra emergencial a preço mais alto",
+        consequence:
+          "O desabastecimento é resolvido rapidamente, mas a compra sem licitação plena custa caro ao estado.",
+        effects: { saude: 8, economia: -6 },
+        sectorEffects: { populacao: 6, empresariado: 2 },
+        leaning: -1,
+      },
+      {
+        id: "racionar-estoque",
+        label: "Racionar o estoque disponível entre as unidades",
+        consequence:
+          "O orçamento é preservado, mas pacientes de várias regiões ficam sem acesso a remédios essenciais.",
+        effects: { saude: -5, economia: 1 },
+        sectorEffects: { populacao: -6, academicos: -3 },
+        leaning: 1,
+      },
+    ],
+  },
+  {
+    id: "surto-dengue",
+    title: "Surto de Dengue",
+    category: "saude",
+    description:
+      "A chegada do verão combinada com chuvas intensas dispara os casos de dengue no estado, lotando as emergências da rede estadual.",
+    choices: [
+      {
+        id: "mutirao-combate",
+        label: "Lançar um mutirão estadual de combate ao mosquito e ampliar leitos",
+        consequence:
+          "Os casos recuam e a resposta rápida é bem avaliada, mas o mutirão emergencial tem custo alto.",
+        effects: { saude: 9, economia: -5, popularidade: 4 },
+        sectorEffects: { populacao: 6, academicos: 3 },
+        leaning: -1,
+      },
+      {
+        id: "campanha-basica",
+        label: "Fazer apenas uma campanha informativa básica",
+        consequence:
+          "O gasto é mínimo, mas os casos continuam subindo e a rede de saúde fica sobrecarregada.",
+        effects: { saude: -5, economia: 1 },
+        sectorEffects: { populacao: -5 },
+        leaning: 1,
+      },
+    ],
+  },
+  {
+    id: "divida-uniao",
+    title: "Renegociação da Dívida com a União",
+    category: "economia",
+    description:
+      "O estado pode renegociar sua dívida com o Governo Federal, aceitando contrapartidas de ajuste fiscal em troca de alívio imediato no caixa.",
+    choices: [
+      {
+        id: "aceitar-ajuste",
+        label: "Aceitar as contrapartidas e aliviar o caixa agora",
+        consequence:
+          "As contas do estado respiram, mas as contrapartidas exigidas pela União incomodam sua base aliada.",
+        effects: { economia: 9, relacoesInstitucionais: 4, popularidade: -4 },
+        sectorEffects: { empresariado: 5, politicos: -3 },
+        leaning: 1,
+      },
+      {
+        id: "recusar-contrapartidas",
+        label: "Recusar e manter autonomia sobre o orçamento",
+        consequence:
+          "Você preserva a autonomia do estado, mas o caixa segue apertado e a relação com Brasília esfria.",
+        effects: { economia: -4, relacoesInstitucionais: -5, popularidade: 3 },
+        sectorEffects: { politicos: 4, movimentosSociais: 3 },
+        leaning: -1,
+      },
+    ],
+  },
+  {
+    id: "crise-turismo",
+    title: "Crise no Setor de Turismo",
+    category: "economia",
+    description:
+      "Uma crise reduz drasticamente o turismo no estado, afetando hotéis, restaurantes e o comércio das cidades turísticas.",
+    choices: [
+      {
+        id: "desonerar-setor",
+        label: "Conceder desoneração fiscal temporária ao setor de turismo",
+        consequence:
+          "O setor se recupera mais rápido e empregos são preservados, mas o estado abre mão de receita.",
+        effects: { economia: -3, popularidade: 5 },
+        sectorEffects: { empresariado: 8, populacao: 4 },
+        leaning: 1,
+      },
+      {
+        id: "sem-intervencao",
+        label: "Deixar o mercado se ajustar sozinho",
+        consequence:
+          "O caixa do estado não é afetado, mas comerciantes e trabalhadores do setor se sentem abandonados.",
+        effects: { economia: 3, popularidade: -5 },
+        sectorEffects: { empresariado: -7, populacao: -3 },
+        leaning: 0,
+      },
+    ],
+  },
+  {
+    id: "faccoes-criminosas",
+    title: "Avanço de Facções Criminosas",
+    category: "seguranca",
+    description:
+      "Facções criminosas disputam o controle de bairros periféricos, elevando os índices de violência e o medo da população.",
+    choices: [
+      {
+        id: "operacao-grande-escala",
+        label: "Lançar uma grande operação policial nas áreas dominadas pelo crime",
+        consequence:
+          "A ofensiva reduz a presença das facções, mas o confronto tem custo alto e gera baixas entre moradores.",
+        effects: { seguranca: 9, economia: -5, popularidade: -3 },
+        sectorEffects: { militares: 6, movimentosSociais: -7, populacao: -3 },
+        leaning: 2,
+      },
+      {
+        id: "programas-sociais",
+        label: "Investir em programas sociais nas comunidades afetadas",
+        consequence:
+          "A estratégia reduz o apelo do crime a médio prazo e melhora sua imagem, mas os resultados demoram a aparecer.",
+        effects: { seguranca: 3, economia: -4, popularidade: 5 },
+        sectorEffects: { movimentosSociais: 8, populacao: 6 },
+        leaning: -2,
+      },
+    ],
+  },
+  {
+    id: "crise-carceraria",
+    title: "Crise no Sistema Penitenciário Estadual",
+    category: "seguranca",
+    description:
+      "A superlotação nos presídios estaduais provoca uma rebelião com reféns, expondo o colapso do sistema prisional.",
+    choices: [
+      {
+        id: "negociar-rendicao",
+        label: "Negociar a rendição pacífica dos detentos",
+        consequence:
+          "A crise termina sem mortes e sua postura é elogiada, mas os problemas estruturais do sistema continuam.",
+        effects: { seguranca: 2, popularidade: 4 },
+        sectorEffects: { movimentosSociais: 4, militares: -2 },
+        leaning: -1,
+      },
+      {
+        id: "intervencao-tatica",
+        label: "Autorizar uma intervenção tática imediata",
+        consequence:
+          "A rebelião é controlada rapidamente, mas o uso da força gera críticas de órgãos de direitos humanos.",
+        effects: { seguranca: 5, popularidade: -7 },
+        sectorEffects: { militares: 6, movimentosSociais: -8 },
+        leaning: 2,
+      },
+    ],
+  },
+  {
+    id: "rompimento-barragem",
+    title: "Risco de Rompimento de Barragem de Mineração",
+    category: "ambiental",
+    description:
+      "Uma barragem de rejeitos de mineração apresenta rachaduras críticas, ameaçando comunidades inteiras rio abaixo.",
+    choices: [
+      {
+        id: "evacuar-suspender",
+        label: "Evacuar a área e suspender as atividades da mineradora",
+        consequence:
+          "Vidas são preservadas e sua postura preventiva é elogiada, mas a suspensão custa empregos e arrecadação.",
+        effects: { meioAmbiente: 8, economia: -7, popularidade: 6 },
+        sectorEffects: { movimentosSociais: 9, empresariado: -9, populacao: 5 },
+        leaning: -2,
+      },
+      {
+        id: "monitorar-manter",
+        label: "Apenas intensificar o monitoramento e manter a operação",
+        consequence:
+          "A economia local é preservada por ora, mas o risco permanece e sua gestão é vista como negligente.",
+        effects: { economia: 3, meioAmbiente: -6, popularidade: -5 },
+        sectorEffects: { empresariado: 6, movimentosSociais: -9 },
+        leaning: 2,
+      },
+    ],
+  },
+  {
+    id: "guerra-fiscal",
+    title: "Guerra Fiscal com Estado Vizinho",
+    category: "federativa",
+    description:
+      "Um estado vizinho oferece incentivos fiscais agressivos para atrair empresas hoje instaladas no seu estado, ameaçando empregos locais.",
+    choices: [
+      {
+        id: "igualar-incentivos",
+        label: "Igualar os incentivos fiscais para reter as empresas",
+        consequence:
+          "As empresas permanecem e os empregos são mantidos, mas o estado abre mão de receita e irrita vizinhos.",
+        effects: { economia: -4, relacoesInstitucionais: -5 },
+        sectorEffects: { empresariado: 7, politicos: -3 },
+        leaning: 1,
+      },
+      {
+        id: "acionar-confaz",
+        label: "Acionar o CONFAZ para contestar os incentivos",
+        consequence:
+          "Você evita entrar numa disputa de renúncia fiscal, mas o desfecho jurídico é incerto e lento.",
+        effects: { relacoesInstitucionais: 3, economia: -1 },
+        sectorEffects: { politicos: 3 },
+        leaning: -1,
+      },
+    ],
+  },
+  {
+    id: "royalties-mineracao",
+    title: "Disputa por Royalties de Mineração",
+    category: "federativa",
+    description:
+      "Estados vizinhos disputam na Justiça uma redistribuição mais ampla dos royalties de mineração e petróleo, hoje concentrados no seu estado.",
+    choices: [
+      {
+        id: "defender-concentracao",
+        label: "Defender judicialmente a manutenção dos recursos no seu estado",
+        consequence:
+          "O caixa do estado é preservado, mas a disputa desgasta a relação com os estados vizinhos.",
+        effects: { economia: 5, relacoesInstitucionais: -6 },
+        sectorEffects: { empresariado: 4, politicos: 3 },
+        leaning: 1,
+      },
+      {
+        id: "aceitar-partilha",
+        label: "Aceitar uma partilha mais ampla com os estados vizinhos",
+        consequence:
+          "Você ganha prestígio federativo e evita um embate longo, mas abre mão de parte da receita.",
+        effects: { economia: -5, relacoesInstitucionais: 7 },
+        sectorEffects: { politicos: -2 },
+        leaning: -1,
+      },
+    ],
+  },
+  {
+    id: "fake-news-crise",
+    title: "Crise de Desinformação",
+    category: "institucional",
+    description:
+      "Uma onda de notícias falsas sobre uma ação do seu governo viraliza nas redes sociais, gerando confusão e desgaste de imagem.",
+    choices: [
+      {
+        id: "campanha-esclarecimento",
+        label: "Lançar uma campanha oficial de esclarecimento",
+        consequence:
+          "Parte da confusão é desfeita, mas a campanha tem um custo e nem todos são convencidos.",
+        effects: { popularidade: 4, economia: -2 },
+        sectorEffects: { academicos: 3, populacao: 3 },
+        leaning: 0,
+      },
+      {
+        id: "ignorar",
+        label: "Ignorar e deixar o episódio perder força sozinho",
+        consequence: "Você não gasta recursos, mas a desinformação circula livremente e corrói sua imagem.",
+        effects: { popularidade: -6 },
+        sectorEffects: { movimentosSociais: -3 },
+        leaning: 0,
+      },
+    ],
+  },
+  {
+    id: "atrito-judiciario",
+    title: "Atrito com o Tribunal de Justiça",
+    category: "institucional",
+    description:
+      "O Tribunal de Justiça do estado suspende um decreto do seu governo por considerá-lo inconstitucional, gerando um embate entre os poderes.",
+    choices: [
+      {
+        id: "acatar-decisao",
+        label: "Acatar a decisão e recuar publicamente",
+        consequence:
+          "Você evita uma crise institucional maior, mas o recuo é lido como um sinal de fraqueza política.",
+        effects: { governabilidade: -3, popularidade: 3 },
+        sectorEffects: { academicos: 4, politicos: -2 },
+        leaning: 0,
+      },
+      {
+        id: "contestar-decisao",
+        label: "Contestar a decisão em instâncias superiores",
+        consequence:
+          "Sua base aliada vê firmeza no gesto, mas o embate com o Judiciário desgasta sua imagem institucional.",
+        effects: { governabilidade: 3, popularidade: -4 },
+        sectorEffects: { politicos: 4, academicos: -5 },
+        leaning: 0,
+      },
+    ],
+  },
 ];
