@@ -8,6 +8,16 @@
   gap: 20px;
 }
 
+/* Foco visível consistente para todo elemento interativo — sem isso, quem navega só
+   pelo teclado não vê qual escolha, diretiva ou aba está selecionada. */
+button:focus-visible,
+[role="tab"]:focus-visible,
+summary:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
 .app-header {
   display: flex;
   align-items: baseline;
@@ -77,11 +87,60 @@
   min-width: 0;
 }
 
-.indicator-label > span:not(.indicator-icon):not(.indicator-value) {
+.indicator-label > span:not(.indicator-icon):not(.indicator-value):not(.info-toggle) {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   min-width: 0;
+}
+
+.info-toggle {
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+.info-toggle-button {
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 10px;
+  font-style: italic;
+  font-family: Georgia, "Times New Roman", serif;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.info-toggle-button:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.info-popover {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 20;
+  width: max-content;
+  max-width: 220px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.4;
+  color: var(--text);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  text-align: left;
+  white-space: normal;
 }
 
 .indicator-icon {
@@ -628,6 +687,12 @@
   }
 }
 
+/* Aviso mais cedo que o pulso vermelho (CRITICAL_ATTENTION_THRESHOLD): anel estático
+   amarelo, sem animação — sinaliza risco antes da fase de pânico. */
+.indicator.critical-attention {
+  box-shadow: 0 0 0 2px var(--warning);
+}
+
 /* Quem pediu menos movimento ao sistema ainda vê o alerta (anel estático
    vermelho), só sem o pulso contínuo — justo no momento de mais tensão do
    jogo não é hora de ignorar essa preferência. */
@@ -801,6 +866,10 @@
   }
 }
 
+.achievement-wrap {
+  position: relative;
+}
+
 .achievement-badge {
   position: relative;
   display: flex;
@@ -808,12 +877,21 @@
   align-items: center;
   text-align: center;
   gap: 4px;
+  width: 100%;
   background: var(--surface-2);
   border: 1px solid var(--border);
   border-radius: 10px;
   padding: 10px 8px;
   font-size: 11.5px;
   font-weight: 600;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.achievement-popover {
+  top: calc(100% + 4px);
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .achievement-badge.locked {

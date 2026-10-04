@@ -204,6 +204,56 @@ export const EVENTS: GameEvent[] = [
     ],
   },
   {
+    id: "vazamento-de-esgoto-em-via-principal",
+    title: "Vazamento de Esgoto em Via Principal",
+    category: "saneamento",
+    description:
+      "Um rompimento na rede de esgoto contamina uma via importante da cidade, provocando mau cheiro e risco à saúde pública.",
+    choices: [
+      {
+        id: "reparo-emergencial",
+        label: "Acionar reparo emergencial 24 horas",
+        consequence: "O problema é resolvido rápido e a população elogia a agilidade, mas a operação em regime extra custa caro.",
+        effects: { saneamento: 8, aprovacao: 4, caixaMunicipal: -6 },
+        sectorEffects: { moradoresPeriferia: 5 },
+        leaning: 0,
+      },
+      {
+        id: "fila-normal",
+        label: "Colocar na fila normal de manutenção",
+        consequence: "O orçamento é poupado, mas o vazamento persiste por semanas e irrita os moradores da região.",
+        effects: { saneamento: -5, caixaMunicipal: 2, aprovacao: -5 },
+        sectorEffects: { moradoresPeriferia: -6 },
+        leaning: 0,
+      },
+    ],
+  },
+  {
+    id: "plano-de-combate-a-enchentes",
+    title: "Plano de Combate a Enchentes",
+    category: "saneamento",
+    description:
+      "Técnicos da prefeitura propõem um plano plurianual de drenagem para reduzir enchentes recorrentes, mas o projeto depende de um crédito extra aprovado pela Câmara.",
+    choices: [
+      {
+        id: "aprovar-credito",
+        label: "Levar o crédito extra para aprovação na Câmara",
+        consequence: "Aprovado, o plano começa a reduzir o risco de enchentes, mas consome capital político junto a vereadores que queriam a verba em outras emendas.",
+        effects: { saneamento: 7, caixaMunicipal: -5, camara: -4 },
+        sectorEffects: { moradoresPeriferia: 5 },
+        leaning: 0,
+      },
+      {
+        id: "adiar-plano",
+        label: "Adiar o plano e usar paliativos pontuais",
+        consequence: "Você preserva seu capital político na Câmara, mas a cidade seguirá vulnerável às próximas chuvas fortes.",
+        effects: { caixaMunicipal: 2, saneamento: -3 },
+        sectorEffects: { moradoresPeriferia: -4 },
+        leaning: 0,
+      },
+    ],
+  },
+  {
     id: "pressao-da-construcao-civil",
     title: "Pressão da Construção Civil",
     category: "urbanismo",
@@ -331,6 +381,56 @@ export const EVENTS: GameEvent[] = [
     ],
   },
   {
+    id: "show-gratuito-de-virada-de-ano",
+    title: "Show Gratuito de Virada de Ano",
+    category: "cultura",
+    description:
+      "A Secretaria de Cultura propõe um grande show gratuito de Réveillon na praça central, atração capaz de lotar a cidade de turistas.",
+    choices: [
+      {
+        id: "show-grande",
+        label: "Contratar uma atração de grande porte",
+        consequence: "O evento vira case de sucesso, atrai turistas e aquece o comércio, mas o cachê e o esquema de segurança custam caro.",
+        effects: { cultura: 9, caixaMunicipal: -7, aprovacao: 4 },
+        sectorEffects: { comerciantes: 6 },
+        leaning: 0,
+      },
+      {
+        id: "programacao-local",
+        label: "Priorizar artistas e bandas locais",
+        consequence: "O evento sai muito mais barato e valoriza a cena local, mas atrai bem menos público e repercussão do que uma atração grande.",
+        effects: { cultura: 3, caixaMunicipal: -1 },
+        sectorEffects: { comerciantes: -2 },
+        leaning: 0,
+      },
+    ],
+  },
+  {
+    id: "patrocinio-privado-para-o-museu",
+    title: "Patrocínio Privado para o Museu Municipal",
+    category: "cultura",
+    description:
+      "Uma grande rede de comércio local oferece patrocínio milionário para reformar o museu municipal, em troca de estampar sua marca no nome do espaço.",
+    choices: [
+      {
+        id: "aceitar-patrocinio",
+        label: "Aceitar o patrocínio e renomear o museu",
+        consequence: "O museu é reformado sem custo à prefeitura, mas a decisão é vista como favorecimento ao patrocinador e levanta questionamento do Ministério Público sobre o processo de escolha.",
+        effects: { cultura: 8, caixaMunicipal: 2, ministerioPublico: -4 },
+        sectorEffects: { comerciantes: 7 },
+        leaning: 0,
+      },
+      {
+        id: "recusar-patrocinio",
+        label: "Recusar e buscar verba pública para a reforma",
+        consequence: "A decisão é tecnicamente mais segura e evita qualquer suspeita, mas a reforma do museu fica mais lenta e cara para os cofres públicos.",
+        effects: { cultura: 3, caixaMunicipal: -5 },
+        sectorEffects: { comerciantes: -3 },
+        leaning: 0,
+      },
+    ],
+  },
+  {
     id: "pauta-impopular-na-camara",
     title: "Pauta Impopular na Câmara",
     category: "institucional",
@@ -376,6 +476,56 @@ export const EVENTS: GameEvent[] = [
         consequence: "O quadro técnico se fortalece, mas você perde apoio importante na Câmara.",
         effects: { aprovacao: 3, camara: -9 },
         sectorEffects: { vereadores: -8, servidores: 3 },
+        leaning: 0,
+      },
+    ],
+  },
+  {
+    id: "reforma-administrativa",
+    title: "Reforma Administrativa",
+    category: "institucional",
+    description:
+      "Para reduzir custos, você pode fundir secretarias e cortar cargos comissionados. Vereadores que indicaram boa parte desses cargos reagem mal.",
+    choices: [
+      {
+        id: "enxugar",
+        label: "Enxugar a máquina e fundir secretarias",
+        consequence: "O orçamento melhora e a imprensa elogia a gestão enxuta, mas vereadores que perderam indicações se afastam da base aliada.",
+        effects: { caixaMunicipal: 6, camara: -6 },
+        sectorEffects: { servidores: -4, imprensaLocal: 4 },
+        leaning: 0,
+      },
+      {
+        id: "manter-estrutura",
+        label: "Manter a estrutura para preservar acordos políticos",
+        consequence: "A base aliada na Câmara permanece estável, mas o inchaço da máquina pesa no orçamento.",
+        effects: { camara: 6, caixaMunicipal: -6 },
+        sectorEffects: { servidores: 4, imprensaLocal: -4 },
+        leaning: 0,
+      },
+    ],
+  },
+  {
+    id: "voto-de-confianca-na-camara",
+    title: "Voto de Confiança na Câmara",
+    category: "institucional",
+    description:
+      "Após meses de desgaste, um vereador aliado propõe uma sessão simbólica de voto de confiança ao prefeito — um teste público de força política.",
+    choices: [
+      {
+        id: "aceitar",
+        label: "Aceitar o teste e levar a votação ao plenário",
+        consequence: "A vitória na votação fortalece sua imagem de comando, mas expõe publicamente quem votou contra você, irritando parte da opinião pública.",
+        effects: { camara: 9, aprovacao: -3 },
+        sectorEffects: { vereadores: 5 },
+        leaning: 0,
+      },
+      {
+        id: "recusar",
+        label: "Recusar o teste para não arriscar um desgaste público",
+        consequence: "Você evita o risco de uma derrota pública, mas parece fraco perante a Câmara.",
+        effects: { camara: -5, aprovacao: 2 },
+        sectorEffects: { vereadores: -4 },
         leaning: 0,
       },
     ],

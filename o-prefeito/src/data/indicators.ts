@@ -95,6 +95,14 @@ export const CRITICAL_INDICATORS: IndicatorKey[] = INDICATOR_ORDER.filter(
 /** Abaixo deste valor, um indicador crítico entra em alerta visual (perto de derrubar o mandato). */
 export const CRITICAL_WARNING_THRESHOLD = 15;
 
+/**
+ * Abaixo deste valor (e acima do alerta vermelho), um indicador crítico entra em
+ * "atenção": um aviso mais cedo, sem o pulso contínuo, para dar tempo de reação antes da
+ * fase de pânico — com só Câmara e Ministério Público podendo derrubar o mandato, um
+ * único evento mal jogado pesa mais do que pesava com 4 indicadores críticos.
+ */
+export const CRITICAL_ATTENTION_THRESHOLD = 35;
+
 export function createInitialIndicators(): Indicators {
   return {
     caixaMunicipal: 55,

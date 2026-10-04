@@ -83,8 +83,8 @@ export function EndScreen({
       </ReportErrorBoundary>
 
       <p className="dynasty-hint">
-        Mandato nº {dynastyTerm} da sua dinastia. Ao continuar, seu sucessor herda um pouco da sua aprovação
-        final.
+        Mandato nº {dynastyTerm} da sua dinastia. Ao continuar, seu sucessor herda um pouco do seu apoio final
+        na Câmara.
       </p>
       <div className="end-screen-actions">
         <button type="button" className="primary-button" onClick={onContinueDynasty}>

@@ -47,12 +47,15 @@ interface Resolution {
   action: MayorAction | null;
 }
 
-/** Fração da aprovação final que o sucessor herda ao continuar a dinastia — modesta de
-    propósito, para dar peso à continuidade sem deixar um mandato ruim travar os seguintes. */
+/** Fração do apoio na Câmara final que o sucessor herda ao continuar a dinastia — modesta
+    de propósito, para dar peso à continuidade sem deixar um mandato ruim travar os
+    seguintes. Usa Câmara (não Aprovação) porque é um dos dois indicadores que de fato
+    decidem sobrevivência — herdar um indicador não-crítico não mudaria a dificuldade real
+    do próximo mandato. */
 const DYNASTY_CARRYOVER = 0.2;
 // Derivado do estado inicial em vez de hardcoded, para não dessincronizar se o valor
-// inicial de aprovação em data/indicators.ts mudar.
-const INITIAL_APROVACAO = createInitialIndicators().aprovacao;
+// inicial de Câmara em data/indicators.ts mudar.
+const INITIAL_CAMARA = createInitialIndicators().camara;
 
 const NARROW_TABS_BREAKPOINT = 380;
 
@@ -103,7 +106,7 @@ function App() {
   function handleContinueDynasty() {
     const legacy: DynastyLegacy = {
       indicatorBonus: {
-        aprovacao: Math.round((game.indicators.aprovacao - INITIAL_APROVACAO) * DYNASTY_CARRYOVER),
+        camara: Math.round((game.indicators.camara - INITIAL_CAMARA) * DYNASTY_CARRYOVER),
       },
       dynastyTerm: game.dynastyTerm + 1,
     };
