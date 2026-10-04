@@ -23,6 +23,12 @@ export function OnboardingModal({ onDismiss }: Props) {
             <strong>Diretivas Executivas</strong> — a cada trimestre você também pode emitir uma diretiva
             própria (opcional, no máximo uma), além de responder ao evento sorteado.
           </li>
+          <li>
+            <strong>Estilo de Liderança</strong> — cada escolha também pende para Visionário (controle,
+            sigilo, obsessão por produto) ou Operador (dados, mercado, delegação). A média de todas as suas
+            decisões define seu perfil no relatório final — isso não afeta vitória ou derrota, só como sua
+            gestão é lembrada.
+          </li>
         </ul>
         <button type="button" className="primary-button" onClick={onDismiss}>
           Entendi, começar!
