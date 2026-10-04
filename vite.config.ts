@@ -4,6 +4,9 @@ import { VitePWA } from 'vite-plugin-pwa'
 
 // https://vite.dev/config/
 export default defineConfig({
+  // Caminhos relativos no build: permite hospedar o jogo em qualquer subpasta
+  // (ex.: um Artifact ou GitHub Pages) sem quebrar os assets.
+  base: './',
   plugins: [
     react(),
     VitePWA({
