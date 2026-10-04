@@ -15,10 +15,12 @@ import {
   applyChoice,
   createNewGame,
   createStartState,
-  DIFFICULTY_MULTIPLIERS,
+  effectiveMultiplier,
   formatTurnLabel,
   mergeEffects,
   scaleEffects,
+  SESSION_LENGTH_TURNS,
+  type SessionLength,
   type TenureLegacy,
 } from "./game/engine";
 import {
@@ -83,8 +85,8 @@ function App() {
     }
   }, [game]);
 
-  function startFresh(difficulty: Difficulty) {
-    setGame(createNewGame(difficulty));
+  function startFresh(difficulty: Difficulty, sessionLength: SessionLength) {
+    setGame(createNewGame(difficulty, undefined, SESSION_LENGTH_TURNS[sessionLength]));
     setResolution(null);
     setSelectedAction(null);
     setEarnedAchievementIds(new Set());
@@ -107,7 +109,7 @@ function App() {
       },
       tenureTerm: game.tenureTerm + 1,
     };
-    setGame(createNewGame(game.difficulty, legacy));
+    setGame(createNewGame(game.difficulty, legacy, game.totalTurns));
     setResolution(null);
     setSelectedAction(null);
     setEarnedAchievementIds(new Set());
@@ -169,7 +171,7 @@ function App() {
     isProcessingChoice.current = false;
   }
 
-  const multiplier = DIFFICULTY_MULTIPLIERS[game.difficulty];
+  const multiplier = effectiveMultiplier(game.difficulty, game.totalTurns);
 
   const dashboardDeltas = resolution
     ? scaleEffects(mergeEffects(resolution.choice.effects, resolution.action?.effects), multiplier)
@@ -233,6 +235,7 @@ function App() {
                 event={game.currentEvent}
                 turnLabel={formatTurnLabel(game.turn)}
                 turn={game.turn}
+                totalTurns={game.totalTurns}
                 actions={ACTIONS}
                 selectedAction={selectedAction}
                 multiplier={multiplier}

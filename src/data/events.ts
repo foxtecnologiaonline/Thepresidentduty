@@ -554,4 +554,247 @@ export const EVENTS: GameEvent[] = [
       },
     ],
   },
+  {
+    id: "vazamento-dados-rh",
+    title: "Vazamento de Dados de Funcionários",
+    category: "seguranca",
+    description:
+      "Um erro de configuração expõe dados pessoais de milhares de funcionários da Orange por algumas horas antes de ser corrigido. RH e jurídico pedem uma decisão rápida sobre como comunicar o incidente.",
+    choices: [
+      {
+        id: "notificar-equipe",
+        label: "Notificar toda a equipe e oferecer monitoramento de crédito",
+        consequence:
+          "A transparência tranquiliza boa parte do time, mas o programa de monitoramento tem um custo real.",
+        effects: { moralFuncionarios: 4, financeiro: -5 },
+        sectorEffects: { funcionarios: 5, reguladores: 3 },
+        leaning: -1,
+      },
+      {
+        id: "conter-internamente",
+        label: "Conter o incidente internamente, sem comunicado amplo",
+        consequence:
+          "Você evita o alarde e economiza recursos, mas o boato se espalha pelos corredores e a confiança interna racha.",
+        effects: { financeiro: 2, moralFuncionarios: -6 },
+        sectorEffects: { funcionarios: -7, imprensa: -3 },
+        leaning: 1,
+      },
+    ],
+  },
+  {
+    id: "parceria-rival-menor",
+    title: "Startup Rival Oferece Tecnologia Exclusiva",
+    category: "mercado",
+    description:
+      "Uma startup pequena desenvolveu uma tecnologia que poderia acelerar o próximo produto da Orange. Ela está disposta a vender, mas um concorrente maior também está interessado.",
+    choices: [
+      {
+        id: "adquirir-startup",
+        label: "Adquirir a startup para internalizar a tecnologia",
+        consequence:
+          "A aquisição acelera o roadmap de produto, mas consome caixa num momento delicado.",
+        effects: { inovacao: 7, financeiro: -8 },
+        sectorEffects: { desenvolvedores: 4, investidores: -3 },
+        leaning: -1,
+      },
+      {
+        id: "deixar-passar",
+        label: "Deixar a oportunidade passar para preservar o caixa",
+        consequence:
+          "O orçamento fica intacto, mas a tecnologia acaba nas mãos de um concorrente.",
+        effects: { financeiro: 2, inovacao: -4 },
+        sectorEffects: { investidores: 2, desenvolvedores: -3 },
+        leaning: 1,
+      },
+    ],
+  },
+  {
+    id: "campanha-publicitaria-controversa",
+    title: "Campanha Publicitária Ousada",
+    category: "social",
+    description:
+      "A agência de marketing propõe uma campanha de humor ácido que pode viralizar — ou sair pela culatra. O Conselho pede uma decisão antes do prazo de veiculação.",
+    choices: [
+      {
+        id: "aprovar-campanha-ousada",
+        label: "Aprovar a campanha ousada",
+        consequence:
+          "A campanha viraliza e rejuvenesce a marca, mas parte do Conselho vê o tom como arriscado demais para a Orange.",
+        effects: { reputacao: 7, conselho: -4 },
+        sectorEffects: { clientes: 5, imprensa: -3 },
+        leaning: 2,
+      },
+      {
+        id: "campanha-segura",
+        label: "Optar por uma campanha institucional mais segura",
+        consequence: "O Conselho aprova a cautela, mas a campanha passa quase despercebida.",
+        effects: { conselho: 3, reputacao: -3 },
+        sectorEffects: { imprensa: 2, clientes: -2 },
+        leaning: -1,
+      },
+    ],
+  },
+  {
+    id: "falha-auditoria-financeira",
+    title: "Falha na Auditoria Financeira Interna",
+    category: "institucional",
+    description:
+      "Uma auditoria de rotina encontra falhas de controle (não fraude) no fechamento do último trimestre. A forma como isso é tratado pode definir a credibilidade dos próximos relatórios.",
+    choices: [
+      {
+        id: "divulgar-correcao",
+        label: "Divulgar a correção publicamente e reforçar os controles",
+        consequence:
+          "A transparência fortalece a credibilidade da empresa junto a reguladores, mas o processo de correção tem custo imediato.",
+        effects: { relacoesRegulatorias: 5, financeiro: -5 },
+        sectorEffects: { reguladores: 5, investidores: -4 },
+        leaning: 0,
+      },
+      {
+        id: "corrigir-discretamente",
+        label: "Corrigir discretamente no próximo relatório",
+        consequence:
+          "Você evita o desgaste público agora, mas a falta de transparência pesa na relação com reguladores.",
+        effects: { financeiro: 2, relacoesRegulatorias: -7 },
+        sectorEffects: { reguladores: -6 },
+        leaning: 0,
+        triggersEventId: "investigacao-senado",
+      },
+    ],
+  },
+  {
+    id: "crise-saude-executivo",
+    title: "Crise de Saúde de um Executivo-Chave",
+    category: "pessoas",
+    description:
+      "Seu CTO precisa se afastar repentinamente por motivos de saúde, bem no meio de um lançamento importante. A sucessão precisa ser decidida rápido.",
+    choices: [
+      {
+        id: "promover-sucessor-interno",
+        label: "Promover um sucessor interno rapidamente",
+        consequence:
+          "A equipe vê a promoção como reconhecimento de talento interno, mas o Conselho questiona a falta de um processo formal de sucessão.",
+        effects: { moralFuncionarios: 5, conselho: -3 },
+        sectorEffects: { funcionarios: 4 },
+        leaning: -1,
+      },
+      {
+        id: "contratar-executivo-externo",
+        label: "Contratar um executivo de fora às pressas",
+        consequence:
+          "A contratação traz uma perspectiva nova, mas o time sente que foi preterido num momento crítico.",
+        effects: { inovacao: 4, moralFuncionarios: -6 },
+        sectorEffects: { funcionarios: -5, investidores: 2 },
+        leaning: 1,
+      },
+    ],
+  },
+  {
+    id: "privacidade-radical",
+    title: "Oportunidade de Selo de Privacidade Premium",
+    category: "seguranca",
+    description:
+      "Pesquisas mostram que privacidade virou um diferencial competitivo real. Adotar um modelo que coleta muito menos dados de usuários é tecnicamente possível, mas custa receita de publicidade.",
+    choices: [
+      {
+        id: "investir-privacidade-radical",
+        label: "Investir pesado em privacidade radical",
+        consequence:
+          "A Orange se posiciona como a marca mais confiável do setor em dados, mas abre mão de uma fonte relevante de receita.",
+        effects: { relacoesRegulatorias: 7, financeiro: -6 },
+        sectorEffects: { clientes: 6, investidores: -4 },
+        leaning: -2,
+      },
+      {
+        id: "manter-coleta-atual",
+        label: "Manter o modelo atual de coleta de dados",
+        consequence:
+          "A receita de publicidade segue estável, mas a postura soa cada vez mais deslocada num mercado mais exigente com privacidade.",
+        effects: { financeiro: 5, relacoesRegulatorias: -5 },
+        sectorEffects: { investidores: 4, clientes: -4 },
+        leaning: 2,
+        triggersEventId: "boicote-redes-sociais",
+      },
+    ],
+  },
+  {
+    id: "greve-geral-industria",
+    title: "Greve Geral do Setor de Tecnologia",
+    category: "pessoas",
+    description:
+      "Um movimento trabalhista em todo o setor de tecnologia pressiona por mais benefícios e trabalho remoto permanente. A Orange precisa decidir se adere à pauta ou segura a posição.",
+    choices: [
+      {
+        id: "aderir-pauta-trabalhista",
+        label: "Aderir à pauta e ampliar benefícios",
+        consequence:
+          "A moral do time dispara e a Orange ganha manchetes positivas, mas o pacote de benefícios pesa no orçamento.",
+        effects: { moralFuncionarios: 6, financeiro: -5 },
+        sectorEffects: { funcionarios: 6, investidores: -3 },
+        leaning: -1,
+      },
+      {
+        id: "manter-politica-atual",
+        label: "Manter a política atual sem mudanças",
+        consequence:
+          "O orçamento fica protegido, mas o time vê a Orange ficando para trás em relação à concorrência.",
+        effects: { financeiro: 2, moralFuncionarios: -6 },
+        sectorEffects: { funcionarios: -7 },
+        leaning: 1,
+      },
+    ],
+  },
+  {
+    id: "parceria-governamental-ia",
+    title: "Parceria Governamental em IA",
+    category: "institucional",
+    description:
+      "O governo convida a Orange para um programa estratégico de inteligência artificial, com acesso a dados públicos em troca de maior supervisão regulatória sobre os modelos da empresa.",
+    choices: [
+      {
+        id: "aceitar-parceria",
+        label: "Aceitar a parceria com contrapartidas de transparência",
+        consequence:
+          "A Orange ganha acesso privilegiado e capital político com reguladores, mas o Conselho teme as amarras de supervisão externa.",
+        effects: { relacoesRegulatorias: 6, conselho: -4 },
+        sectorEffects: { reguladores: 5, investidores: -2 },
+        leaning: -1,
+      },
+      {
+        id: "recusar-parceria",
+        label: "Recusar para preservar a autonomia da empresa",
+        consequence: "O Conselho elogia a independência mantida, mas a relação com o governo esfria.",
+        effects: { conselho: 4, relacoesRegulatorias: -5 },
+        sectorEffects: { investidores: 2, reguladores: -4 },
+        leaning: 1,
+      },
+    ],
+  },
+  {
+    id: "recorde-trimestral-vendas",
+    title: "Recorde Trimestral de Vendas",
+    category: "financeiro",
+    description:
+      "Um lançamento bem-sucedido gera o melhor trimestre de vendas da história da Orange. A pergunta agora é o que fazer com o excedente.",
+    choices: [
+      {
+        id: "reinvestir-pd",
+        label: "Reinvestir o excedente em P&D",
+        consequence:
+          "O investimento extra acelera o próximo ciclo de produtos, mas reduz o quanto sobra para distribuir aos acionistas.",
+        effects: { inovacao: 6, financeiro: -2 },
+        sectorEffects: { desenvolvedores: 4, investidores: -2 },
+        leaning: -1,
+      },
+      {
+        id: "distribuir-dividendos",
+        label: "Distribuir dividendos extraordinários aos acionistas",
+        consequence:
+          "Os investidores comemoram o retorno imediato, mas o time questiona por que o resultado recorde não virou bônus para quem o construiu.",
+        effects: { reputacao: 4, financeiro: -3, moralFuncionarios: -4 },
+        sectorEffects: { investidores: 8 },
+        leaning: 2,
+      },
+    ],
+  },
 ];

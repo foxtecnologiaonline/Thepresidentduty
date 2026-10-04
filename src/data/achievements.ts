@@ -33,8 +33,11 @@ export const ACHIEVEMENTS: Achievement[] = [
   {
     id: "onipresente",
     label: "Onipresente",
-    description: "Emitiu uma diretiva em pelo menos 12 dos trimestres da gestão.",
-    check: (state) => state.history.filter((h) => h.action !== null).length >= 12,
+    description: "Emitiu uma diretiva em pelo menos 3 a cada 4 trimestres da gestão.",
+    // Proporcional a totalTurns (3/4 = 12 de 16, calibrado para a gestão padrão) em vez de um
+    // número fixo — numa sessão Sprint de 8 turnos, exigir 12 tornaria a conquista inalcançável.
+    check: (state) =>
+      state.history.filter((h) => h.action !== null).length >= Math.ceil(state.totalTurns * 0.75),
   },
   {
     id: "gestao-tranquila",

@@ -11,6 +11,20 @@ export interface TenureLegacy {
 }
 
 export const TOTAL_TURNS = 16;
+/** Duração alternativa para uma sessão mais curta ("Sprint"), ~metade do tempo de jogo. */
+export const SPRINT_TOTAL_TURNS = 8;
+
+export type SessionLength = "padrao" | "sprint";
+
+export const SESSION_LENGTH_TURNS: Record<SessionLength, number> = {
+  padrao: TOTAL_TURNS,
+  sprint: SPRINT_TOTAL_TURNS,
+};
+
+export const SESSION_LENGTH_LABELS: Record<SessionLength, string> = {
+  padrao: "Padrão · 16 trimestres",
+  sprint: "Sprint · 8 trimestres",
+};
 
 const QUARTER_LABELS = ["T1", "T2", "T3", "T4"];
 
@@ -20,6 +34,22 @@ export const DIFFICULTY_MULTIPLIERS: Record<Difficulty, number> = {
   normal: 1,
   dificil: 1.35,
 };
+
+/**
+ * Fator extra aplicado só na duração Sprint, por cima do multiplicador de dificuldade.
+ * Sem isso, a mesma magnitude por turno calibrada para 16 turnos simplesmente não tem
+ * tempo de se acumular em 8 — validado por Monte Carlo: ×1 deixava o pior caso (sabotagem)
+ * falhar raramente (~6% a dificuldade normal, vs. ~99% nos 16 turnos), e ×1.7 reproduz de
+ * perto a mesma proporção de risco (taxa de falha do acaso e do pior caso, turno mínimo de
+ * falha como fração de T) que o modo padrão.
+ */
+const SPRINT_INTENSITY = 1.7;
+
+/** Multiplicador efetivo de uma partida: dificuldade, e o reforço de ritmo quando é Sprint. */
+export function effectiveMultiplier(difficulty: Difficulty, totalTurns: number): number {
+  const base = DIFFICULTY_MULTIPLIERS[difficulty];
+  return totalTurns === TOTAL_TURNS ? base : base * SPRINT_INTENSITY;
+}
 
 export const DIFFICULTY_LABELS: Record<Difficulty, string> = {
   facil: "Fácil",
@@ -75,8 +105,8 @@ function avoidConsecutiveCategories(events: GameEvent[]): GameEvent[] {
   return result;
 }
 
-export function buildDeck(): GameEvent[] {
-  const drawn = shuffle(EVENTS).slice(0, TOTAL_TURNS);
+export function buildDeck(totalTurns: number): GameEvent[] {
+  const drawn = shuffle(EVENTS).slice(0, totalTurns);
   return avoidConsecutiveCategories(orderByEscalatingIntensity(drawn));
 }
 
@@ -100,8 +130,12 @@ export function createStartState(): GameState {
   };
 }
 
-export function createNewGame(difficulty: Difficulty = "normal", legacy?: TenureLegacy): GameState {
-  const deck = buildDeck();
+export function createNewGame(
+  difficulty: Difficulty = "normal",
+  legacy?: TenureLegacy,
+  totalTurns: number = TOTAL_TURNS
+): GameState {
+  const deck = buildDeck(totalTurns);
   const baseIndicators = createInitialIndicators();
   const initialIndicators = legacy ? applyEffects(baseIndicators, legacy.indicatorBonus) : baseIndicators;
   const initialSectors = createInitialSectors();
@@ -111,7 +145,7 @@ export function createNewGame(difficulty: Difficulty = "normal", legacy?: Tenure
     indicators: initialIndicators,
     sectors: initialSectors,
     turn: 1,
-    totalTurns: TOTAL_TURNS,
+    totalTurns,
     deck: deck.slice(1),
     currentEvent: deck[0] ?? null,
     history: [],
@@ -237,7 +271,7 @@ export function applyChoice(
     return state;
   }
 
-  const multiplier = DIFFICULTY_MULTIPLIERS[state.difficulty];
+  const multiplier = effectiveMultiplier(state.difficulty, state.totalTurns);
   const combinedEffects = scaleEffects(mergeEffects(choice.effects, action?.effects), multiplier);
   const indicators = applyEffects(state.indicators, combinedEffects);
   const history = [...state.history, { event: state.currentEvent, choice, action }];
@@ -307,6 +341,19 @@ function applyEventTrigger(deck: GameEvent[], triggersEventId: string | undefine
   const [triggered] = reordered.splice(index, 1);
   reordered.unshift(triggered);
   return reordered;
+}
+
+/**
+ * Turno mínimo de uma diretiva, escalado proporcionalmente à duração da sessão. O
+ * `minTurn` de cada diretiva (data/actions.ts) é calibrado para a gestão padrão de 16
+ * turnos; numa sessão mais curta (Sprint), a mesma fração do jogo precisa se passar
+ * antes do desbloqueio, em vez do turno absoluto — senão a diretiva ficaria trancada
+ * por mais da metade de uma sessão de 8 turnos.
+ */
+export function scaledMinTurn(action: ExecutiveAction, totalTurns: number): number | undefined {
+  if (!action.minTurn) return undefined;
+  if (totalTurns === TOTAL_TURNS) return action.minTurn;
+  return Math.max(2, Math.round((action.minTurn / TOTAL_TURNS) * totalTurns));
 }
 
 export function formatTurnLabel(turn: number): string {
