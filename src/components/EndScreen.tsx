@@ -43,6 +43,7 @@ interface Props {
   indicatorSnapshots: Indicators[];
   totalTurns: number;
   dynastyTerm: number;
+  consecutiveTerms: number;
   earnedAchievementIds: Set<string>;
   newAchievementIds: Set<string>;
   onContinueDynasty: () => void;
@@ -57,14 +58,16 @@ export function EndScreen({
   indicatorSnapshots,
   totalTurns,
   dynastyTerm,
+  consecutiveTerms,
   earnedAchievementIds,
   newAchievementIds,
   onContinueDynasty,
   onNewDynasty,
 }: Props) {
-  // Art. 14 §5º da CF: só é permitida uma reeleição consecutiva. A partir daí, continuar
-  // a dinastia significa eleger um(a) sucessor(a) da mesma base política, não o titular.
-  const isSuccession = dynastyTerm >= CONSECUTIVE_REELECTION_LIMIT;
+  // Art. 14 §5º da CF: só é permitida uma reeleição consecutiva. Usa consecutiveTerms (quantos
+  // mandatos seguidos o titular ATUAL já tem), não dynastyTerm — senão a sucessão, uma vez
+  // disparada, nunca desligaria e nenhum sucessor teria direito à própria reeleição.
+  const isSuccession = consecutiveTerms >= CONSECUTIVE_REELECTION_LIMIT;
 
   return (
     <div className={`screen end-screen ${result.victory ? "victory" : "defeat"}`}>
@@ -89,9 +92,10 @@ export function EndScreen({
 
       <p className="dynasty-hint">
         {isSuccession
-          ? `Mandato nº ${dynastyTerm} da sua dinastia. Pela Constituição, você não pode concorrer a um \
-terceiro mandato seguido — ao continuar, um(a) aliado(a) de confiança assume a candidatura. Ele(a) herda \
-uma fração menor do seu legado e começa com menos força na Assembleia por não ser o titular.`
+          ? `Mandato nº ${dynastyTerm} da sua dinastia. Você já cumpriu uma reeleição seguida e, pela \
+Constituição, não pode concorrer a mais um mandato direto — ao continuar, um(a) aliado(a) de confiança \
+assume a candidatura. Ele(a) herda uma fração menor do seu legado e começa com menos força na Assembleia \
+por não ser o titular.`
           : `Mandato nº ${dynastyTerm} da sua dinastia. Ao continuar, você concorre à reeleição e herda um \
 pouco da sua popularidade final.`}
       </p>

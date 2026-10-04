@@ -107,7 +107,10 @@ function App() {
   }
 
   function handleContinueDynasty() {
-    const isSuccession = game.dynastyTerm >= CONSECUTIVE_REELECTION_LIMIT;
+    // Baseado em consecutiveTerms (mandatos seguidos do titular ATUAL), não em dynastyTerm
+    // (total da dinastia, que só cresce) — senão a sucessão, uma vez disparada, nunca mais
+    // desligaria e todo sucessor perderia o direito à própria reeleição.
+    const isSuccession = game.consecutiveTerms >= CONSECUTIVE_REELECTION_LIMIT;
     const carryoverFactor = DYNASTY_CARRYOVER * (isSuccession ? SUCCESSOR_CARRYOVER_FACTOR : 1);
     const legacy: DynastyLegacy = {
       indicatorBonus: {
@@ -115,6 +118,7 @@ function App() {
         ...(isSuccession ? { governabilidade: SUCCESSOR_GOVERNABILIDADE_PENALTY } : {}),
       },
       dynastyTerm: game.dynastyTerm + 1,
+      consecutiveTerms: isSuccession ? 1 : game.consecutiveTerms + 1,
     };
     setGame(createNewGame(game.difficulty, legacy));
     setResolution(null);
@@ -259,6 +263,7 @@ function App() {
                 indicatorSnapshots={game.indicatorSnapshots}
                 totalTurns={game.totalTurns}
                 dynastyTerm={game.dynastyTerm}
+                consecutiveTerms={game.consecutiveTerms}
                 earnedAchievementIds={earnedAchievementIds}
                 newAchievementIds={newAchievementIds}
                 onContinueDynasty={handleContinueDynasty}

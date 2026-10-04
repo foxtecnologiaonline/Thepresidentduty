@@ -8,15 +8,20 @@ export interface DynastyLegacy {
   /** Delta aplicado aos indicadores iniciais do novo mandato (já pronto para somar, sem precisar reclampar antes). */
   indicatorBonus: Partial<Record<keyof Indicators, number>>;
   dynastyTerm: number;
+  /** Quantos mandatos seguidos o titular do novo mandato já terá cumprido — ver `GameState.consecutiveTerms`. */
+  consecutiveTerms: number;
 }
 
 export const TOTAL_TURNS = 16;
 
 /**
  * Pelo Art. 14 §5º da Constituição, um governador só pode se reeleger uma única vez em
- * sequência — a partir do 3º mandato seguido da mesma dinastia, quem assume a candidatura
- * já não é mais o titular, e sim um(a) sucessor(a) da mesma base política (ver
- * `handleContinueDynasty` em App.tsx e o aviso correspondente em EndScreen).
+ * sequência: depois de 2 mandatos seguidos, esse titular não pode concorrer de novo, e
+ * quem assume é um(a) sucessor(a) da mesma base política. A regra não é "a partir do 3º
+ * mandato da dinastia é sempre sucessão" — ela alterna: o(a) sucessor(a) também tem
+ * direito à sua própria reeleição antes de precisar passar a vez adiante. Por isso a
+ * checagem usa `GameState.consecutiveTerms` (mandatos seguidos do titular ATUAL, que
+ * reseta a cada sucessão), não `dynastyTerm` (total de mandatos da dinastia, que só cresce).
  */
 export const CONSECUTIVE_REELECTION_LIMIT = 2;
 
@@ -105,6 +110,7 @@ export function createStartState(): GameState {
     sectorSnapshots: [initialSectors],
     endResult: null,
     dynastyTerm: 1,
+    consecutiveTerms: 1,
   };
 }
 
@@ -127,6 +133,7 @@ export function createNewGame(difficulty: Difficulty = "normal", legacy?: Dynast
     sectorSnapshots: [initialSectors],
     endResult: null,
     dynastyTerm: legacy?.dynastyTerm ?? 1,
+    consecutiveTerms: legacy?.consecutiveTerms ?? 1,
   };
 }
 

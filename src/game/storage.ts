@@ -178,6 +178,7 @@ function isLikelyGameState(value: unknown): value is GameState {
     typeof candidate.sectors === "object" &&
     candidate.sectors !== null &&
     typeof candidate.dynastyTerm === "number" &&
+    typeof candidate.consecutiveTerms === "number" &&
     Array.isArray(candidate.deck) &&
     Array.isArray(candidate.history)
   );

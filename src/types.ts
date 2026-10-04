@@ -140,4 +140,13 @@ export interface GameState {
   endResult: EndResult | null;
   /** Quantos mandatos consecutivos dessa dinastia já foram jogados (1 = o primeiro). */
   dynastyTerm: number;
+  /**
+   * Quantos mandatos seguidos o titular ATUAL já cumpriu (1 = primeiro mandato dele;
+   * 2 = está em seu mandato de reeleição). Reseta para 1 sempre que a dinastia passa
+   * para um(a) sucessor(a) — diferente de `dynastyTerm`, que só cresce e nunca reseta.
+   * É esse contador, não `dynastyTerm`, que decide se a PRÓXIMA continuação é uma
+   * reeleição do titular ou uma sucessão (Art. 14 §5º da CF só veda reeleição seguida
+   * além da primeira, não limita quantas sucessões a dinastia pode ter).
+   */
+  consecutiveTerms: number;
 }

@@ -86,7 +86,12 @@
   text-overflow: clip;
   min-width: 0;
   line-height: 1.25;
-  word-break: break-word;
+  /* overflow-wrap só quebra no meio da palavra como último recurso (quando ela sozinha já
+     estoura a largura do card); hyphens insere um hífen num ponto de sílaba válido em vez de
+     um corte cru — sem isso "Governabilidade" virava "Governabilidad" + "e" numa grade de
+     4 colunas. O <html lang="pt-BR"> do index.html é o que dá ao hyphens a sílaba certa. */
+  overflow-wrap: break-word;
+  hyphens: auto;
 }
 
 .indicator-icon {
