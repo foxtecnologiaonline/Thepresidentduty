@@ -1147,3 +1147,104 @@ summary:focus-visible {
   font-size: 12.5px;
   font-style: italic;
 }
+
+/* Relatório impresso (Fórmula 8 — fim de sessão): .print-only aparece só no papel,
+   .no-print some só no papel. Nenhum dos dois faz nada na tela. */
+.print-only {
+  display: none;
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  .print-only {
+    display: block;
+  }
+
+  /* Paleta de impressão: reaproveita os mesmos tokens que todo componente já lê, então
+     o relatório sai claro e com bom contraste de tinta independente do tema escolhido
+     na tela (claro ou escuro). !important porque `:root[data-theme="light"]` tem mais
+     especificidade que este `:root` puro e, sem isso, venceria mesmo dentro do @media
+     print quando o jogador estiver no tema claro. */
+  :root {
+    --bg: #ffffff !important;
+    --bg-elevated: #ffffff !important;
+    --surface-2: #f3f3f3 !important;
+    --text: #141414 !important;
+    --text-muted: #4a4a4a !important;
+    --border: #cfcfcf !important;
+    --gold: #8a5a00 !important;
+    --accent-ink: #ffffff !important;
+    --ok: #0f6b3f !important;
+    --warning: #8a5a00 !important;
+    --danger: #a3242b !important;
+  }
+
+  body {
+    background: #fff;
+  }
+
+  .app-shell {
+    max-width: none;
+    padding: 0;
+    gap: 14px;
+  }
+
+  /* Só a tela de resultado é "o relatório" — o resto do jogo nunca aparece no papel. */
+  .top-bar,
+  .onboarding-overlay,
+  .start-screen,
+  .event-card-wrap,
+  .indicators-panel,
+  .sectors-panel,
+  .stats-tabs,
+  .app-header .turn-counter {
+    display: none !important;
+  }
+
+  .report-section {
+    border: 1px solid var(--border);
+    break-inside: avoid;
+    box-shadow: none;
+  }
+
+  /* O <details> precisa estar genuinamente aberto (atributo `open`, setado via JS no
+     clique de "Imprimir Relatório" em EndScreen.tsx) para a lista de decisões aparecer
+     no papel — o navegador recolhe o conteúdo fechado por um mecanismo interno que
+     `display` sozinho não derruba. Aqui só escondemos o "Ver todas as decisões", que
+     não faz sentido como rótulo clicável numa página estática. */
+  .timeline-details summary {
+    display: none !important;
+  }
+
+  .timeline-list {
+    max-height: none;
+    overflow: visible;
+  }
+
+  /* Popovers são estado de interação da tela; num relatório estático não fazem sentido. */
+  .info-toggle,
+  .info-popover,
+  .achievement-popover {
+    display: none !important;
+  }
+
+  .achievement-badge {
+    cursor: default;
+  }
+
+  .trajectory-chart,
+  .achievements-grid {
+    break-inside: avoid;
+  }
+}
+
+.print-report-meta {
+  color: var(--text-muted);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
+}

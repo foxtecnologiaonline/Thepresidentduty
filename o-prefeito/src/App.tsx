@@ -251,6 +251,7 @@ function App() {
                 indicatorSnapshots={game.indicatorSnapshots}
                 totalTurns={game.totalTurns}
                 dynastyTerm={game.dynastyTerm}
+                difficulty={game.difficulty}
                 earnedAchievementIds={earnedAchievementIds}
                 newAchievementIds={newAchievementIds}
                 onContinueDynasty={handleContinueDynasty}
