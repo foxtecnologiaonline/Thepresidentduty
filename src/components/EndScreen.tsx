@@ -106,6 +106,14 @@ pouco da sua popularidade final.`}
         <button type="button" className="secondary-button" onClick={onNewDynasty}>
           Começar nova dinastia
         </button>
+        <button
+          type="button"
+          className="secondary-button"
+          onClick={() => window.print()}
+          title="Abre a caixa de impressão do navegador — escolha 'Salvar como PDF' para baixar o relatório"
+        >
+          Imprimir Relatório
+        </button>
         <ShareButton text={buildShareText(result, indicators, history)} />
       </div>
     </div>

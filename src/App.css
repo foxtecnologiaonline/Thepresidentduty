@@ -971,6 +971,12 @@
   background: rgba(242, 193, 78, 0.12);
 }
 
+/* A aba fora de foco fica fora da tela, mas o relatório impresso traz as duas de volta
+   (ver bloco @media print) — sem isso, imprimir no celular cortava Setores ou Indicadores. */
+.stats-tab-inactive {
+  display: none;
+}
+
 /* Onboarding modal */
 
 .onboarding-overlay {
@@ -1083,4 +1089,52 @@
   color: var(--text-muted);
   font-size: 12.5px;
   font-style: italic;
+}
+
+/* Impressão do relatório final (botão "Imprimir Relatório" no EndScreen, window.print()) —
+   a paleta clara de impressão em si (sobrescrevendo as variáveis de cor, escuras ou claras
+   conforme o tema em tela) fica em index.css, perto de onde o tema claro normal é definido. */
+@media print {
+  * {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  /* Chrome/controles que não fazem sentido no papel: toggle de tema, modal de onboarding,
+     diretiva do trimestre (não se aplica à tela final), seletor de dificuldade e os botões
+     de ação do próprio relatório (inclusive o botão "Imprimir Relatório" que o abriu). */
+  .top-bar,
+  .onboarding-overlay,
+  .actions-panel,
+  .difficulty-picker,
+  .end-screen-actions,
+  .stats-tab-buttons {
+    display: none !important;
+  }
+
+  .stats-tab-inactive {
+    display: flex;
+  }
+
+  .app-shell {
+    max-width: none;
+    padding: 0;
+  }
+
+  /* Evita que um card de conquista ou uma seção do relatório seja cortado ao meio entre
+     duas páginas. */
+  .report-section,
+  .achievement-badge,
+  .history-item {
+    break-inside: avoid;
+  }
+
+  .indicator.critical-warning {
+    animation: none;
+    box-shadow: none;
+  }
+}
+
+@page {
+  margin: 14mm 12mm;
 }

@@ -39,14 +39,17 @@ export function StatsTabs({ sectors, sectorDeltas, indicators, indicatorDeltas }
           Indicadores
         </button>
       </div>
-      {tab === "sectors" ? (
-        <SectorsPanel sectors={sectors} lastDeltas={sectorDeltas} />
-      ) : (
-        <div className="indicators-panel">
-          <span className="panel-heading">Indicadores</span>
-          <Dashboard indicators={indicators} lastDeltas={indicatorDeltas} />
-        </div>
-      )}
+      {/* As duas abas ficam sempre montadas (só uma é mostrada por vez) para que o relatório
+          impresso saia completo mesmo neste layout mobile — ver .stats-tab-inactive no CSS. */}
+      <SectorsPanel
+        sectors={sectors}
+        lastDeltas={sectorDeltas}
+        className={tab === "sectors" ? undefined : "stats-tab-inactive"}
+      />
+      <div className={`indicators-panel${tab === "indicators" ? "" : " stats-tab-inactive"}`}>
+        <span className="panel-heading">Indicadores</span>
+        <Dashboard indicators={indicators} lastDeltas={indicatorDeltas} />
+      </div>
     </div>
   );
 }

@@ -62,3 +62,29 @@ p {
 button {
   font: inherit;
 }
+
+/* Paleta de impressão: força fundo branco e texto escuro no papel, não importa se o tema
+   em tela era claro ou escuro no momento do Ctrl+P — sem isso, o tema escuro padrão do jogo
+   imprimiria texto quase branco sobre fundo escuro, ilegível e consumindo muita tinta.
+   Vem depois do bloco [data-theme="light"] (mesma especificidade: :root) para vencer a
+   cascata em qualquer um dos dois temas de tela. */
+@media print {
+  :root {
+    --bg: #ffffff;
+    --bg-elevated: #ffffff;
+    --surface-2: #f2f2f2;
+    --text: #141414;
+    --text-muted: #4a4a4a;
+    --border: #cccccc;
+    --gold: #8a5a00;
+    --accent-ink: #ffffff;
+    --ok: #1f7a4d;
+    --warning: #8a5a00;
+    --danger: #b3282f;
+    color-scheme: light;
+  }
+
+  body {
+    background: #ffffff;
+  }
+}
