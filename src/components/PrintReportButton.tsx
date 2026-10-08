@@ -18,7 +18,7 @@ export function PrintReportButton() {
 
   return (
     <button type="button" className="secondary-button" onClick={handlePrint}>
-      🖨️ Imprimir / Salvar PDF
+      🖨️ Gerar Print
     </button>
   );
 }
