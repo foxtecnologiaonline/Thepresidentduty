@@ -95,7 +95,7 @@ export function EndScreen({
         </button>
         <ShareButton text={buildShareText(result, indicators, history)} />
         <button type="button" className="secondary-button" onClick={() => window.print()}>
-          Imprimir relatório
+          Gerar Print
         </button>
       </div>
     </div>
