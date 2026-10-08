@@ -112,7 +112,7 @@ pouco da sua popularidade final.`}
           onClick={() => window.print()}
           title="Abre a caixa de impressão do navegador — escolha 'Salvar como PDF' para baixar o relatório"
         >
-          Imprimir Relatório
+          Gerar Print
         </button>
         <ShareButton text={buildShareText(result, indicators, history)} />
       </div>
