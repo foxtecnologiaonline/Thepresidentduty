@@ -1,3 +1,4 @@
+import { PrintReportButton } from "../../components/PrintReportButton";
 import { computeDynastyTier, TOTAL_REIGNS } from "../game/engine";
 import type { ReignSummary } from "../types";
 import { DynastyTree } from "./DynastyTree";
@@ -69,6 +70,7 @@ export function ChronicleScreen({ chronicle, onNewDynasty }: Props) {
         <button type="button" className="primary-button" onClick={onNewDynasty}>
           Começar Nova Dinastia
         </button>
+        <PrintReportButton />
       </div>
     </div>
   );

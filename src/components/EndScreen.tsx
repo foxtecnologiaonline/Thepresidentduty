@@ -1,4 +1,5 @@
 import { Component, lazy, Suspense, type ReactNode } from "react";
+import { PrintReportButton } from "./PrintReportButton";
 import { ShareButton } from "./ShareButton";
 import { buildShareText } from "../game/share";
 import type { EndResult, GameState, Indicators, Sectors } from "../types";
@@ -94,6 +95,7 @@ export function EndScreen({
           Começar nova dinastia
         </button>
         <ShareButton text={buildShareText(result, indicators, history)} />
+        <PrintReportButton />
       </div>
     </div>
   );

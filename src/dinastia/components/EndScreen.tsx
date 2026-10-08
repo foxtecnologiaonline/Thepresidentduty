@@ -1,4 +1,5 @@
 import { Component, lazy, Suspense, type ReactNode } from "react";
+import { PrintReportButton } from "../../components/PrintReportButton";
 import { ShareButton } from "../../components/ShareButton";
 import { TOTAL_REIGNS, grantedFlagsThisReign, isDynastyFinished } from "../game/engine";
 import { buildShareText } from "../game/share";
@@ -115,6 +116,7 @@ export function EndScreen({
               Começar nova dinastia
             </button>
             <ShareButton text={buildShareText(result, indicators, history, reignNumber)} shareTitle="A Dinastia" />
+            <PrintReportButton />
           </div>
         </>
       ) : (
@@ -125,6 +127,7 @@ export function EndScreen({
               Ver Crônica da Dinastia
             </button>
             <ShareButton text={buildShareText(result, indicators, history, reignNumber)} shareTitle="A Dinastia" />
+            <PrintReportButton />
           </div>
         </>
       )}

@@ -15,6 +15,18 @@ function nodeIcon(state: NodeState): string {
   return "·";
 }
 
+/**
+ * Rótulo de texto por baixo do ícone — além de ajudar quem não enxerga bem o emoji
+ * (ou a cor do contorno do nó), é a rede de segurança para a impressão/PDF: alguns
+ * motores de impressão não embutem a fonte colorida de emoji e o 👑/💀 saem como um
+ * contorno vazio, mas o texto "Vitória"/"Colapso" continua legível de qualquer jeito.
+ */
+function nodeOutcomeLabel(state: NodeState): string | null {
+  if (state === "victory") return "Vitória";
+  if (state === "collapse") return "Colapso";
+  return null;
+}
+
 /** Linha de nós — um por reinado da dinastia — com coroa/caveira para reinados já
     jogados e um marcador tracejado para os que ainda não chegaram. Usado tanto no fim
     de um reinado (mostra o progresso até aqui) quanto na crônica final (os 5 completos). */
@@ -38,6 +50,7 @@ export function DynastyTree({ completedReigns, totalReigns }: Props) {
                 <span aria-hidden="true">{nodeIcon(state)}</span>
               </div>
               <span className="dynasty-node-label">Reinado {reignNumber}</span>
+              {nodeOutcomeLabel(state) && <span className="dynasty-node-outcome">{nodeOutcomeLabel(state)}</span>}
               {summary && summary.grantedFlags.length > 0 && (
                 <span className="dynasty-node-flags" aria-hidden="true">
                   {"📜".repeat(Math.min(summary.grantedFlags.length, 3))}
