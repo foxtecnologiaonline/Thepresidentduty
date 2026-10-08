@@ -94,6 +94,9 @@ export function EndScreen({
           Começar nova dinastia
         </button>
         <ShareButton text={buildShareText(result, indicators, history)} />
+        <button type="button" className="secondary-button" onClick={() => window.print()}>
+          Imprimir relatório
+        </button>
       </div>
     </div>
   );

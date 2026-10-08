@@ -869,6 +869,44 @@
   padding: 20px 0;
 }
 
+/* Impressão do relatório final — acionada pelo botão "Imprimir relatório" na
+   tela de fim de mandato. Força cores claras independente do tema ativo (o
+   tema escuro padrão gastaria tinta e teria baixo contraste no papel) e
+   esconde tudo que não é o relatório em si (barra de tema, painéis ao vivo
+   de indicadores/setores, botões de ação). */
+@media print {
+  :root {
+    --bg: #ffffff;
+    --bg-elevated: #ffffff;
+    --surface-2: #f4f4f4;
+    --text: #141414;
+    --text-muted: #4a4a4a;
+    --border: #cccccc;
+    --gold: #8a5a00;
+    --ok: #146c43;
+    --danger: #a3242b;
+  }
+
+  body {
+    background: #ffffff;
+  }
+
+  .top-bar,
+  .sectors-panel,
+  .indicators-panel,
+  .stats-tabs,
+  .end-screen-actions,
+  .dynasty-hint,
+  .onboarding-modal {
+    display: none !important;
+  }
+
+  .report-section {
+    border: 1px solid var(--border);
+    break-inside: avoid;
+  }
+}
+
 /* Theme toggle */
 
 .top-bar {
