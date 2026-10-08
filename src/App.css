@@ -1078,3 +1078,70 @@
   font-size: 12.5px;
   font-style: italic;
 }
+
+/* Printed report header — só existe no papel/PDF (ver @media print abaixo), dá contexto
+   ao relatório fora do app (marca, resultado, data, dificuldade). */
+.print-header {
+  display: none;
+}
+
+/* Relatório impresso (botão "Gerar relatório" na tela final) */
+
+@media print {
+  /* Chrome só do app, sem sentido fora da tela: toggle de tema, botões de ação, estado
+     de carregamento do chunk lazy (sempre já carregado antes do jogador conseguir imprimir).
+     O dashboard de stakeholders/indicadores (fixo acima do conteúdo da fase, mesmo com a
+     gestão já encerrada) também some — os mesmos números já aparecem, com contexto de
+     início→fim, em "Como a Orange mudou" dentro do relatório. */
+  .top-bar,
+  .end-screen-actions,
+  .report-loading,
+  .sectors-panel,
+  .indicators-panel,
+  .stats-tabs {
+    display: none !important;
+  }
+
+  /* A coluna de 720px faz sentido numa tela de celular/desktop, mas desperdiça a largura
+     do papel — usa a página inteira para o relatório. */
+  .app-shell {
+    max-width: none;
+  }
+
+  .print-header {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding-bottom: 12px;
+    margin-bottom: 8px;
+    border-bottom: 2px solid var(--border);
+  }
+
+  .print-header-brand {
+    font-weight: 700;
+    font-size: 15px;
+  }
+
+  .print-header-date {
+    color: var(--text-muted);
+    font-size: 12px;
+  }
+
+  /* Evita cortar um card ou linha ao meio entre duas páginas. */
+  .report-section,
+  .indicator,
+  .comparison-row,
+  .lean-highlight,
+  .achievement-badge,
+  .history-item,
+  .timeline-item {
+    break-inside: avoid;
+  }
+
+  /* O pulso de alerta crítico e a animação de contagem não fazem sentido numa página
+     estática — e a cor do pulso deixada rodando bagunçaria a captura de impressão. */
+  .indicator.critical-warning {
+    animation: none !important;
+    box-shadow: none !important;
+  }
+}

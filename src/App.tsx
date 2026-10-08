@@ -251,6 +251,7 @@ function App() {
                 indicatorSnapshots={game.indicatorSnapshots}
                 totalTurns={game.totalTurns}
                 tenureTerm={game.tenureTerm}
+                difficulty={game.difficulty}
                 earnedAchievementIds={earnedAchievementIds}
                 newAchievementIds={newAchievementIds}
                 onContinueTenure={handleContinueTenure}

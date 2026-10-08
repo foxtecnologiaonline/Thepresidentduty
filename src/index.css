@@ -38,6 +38,29 @@
   color-scheme: light;
 }
 
+/* Relatório impresso (botão "Gerar relatório" na tela final) — sempre no papel claro,
+   independente do tema escolhido na tela. !important em cada variável porque, sem isso,
+   a especificidade maior de `:root[data-theme="light"]` (fora da media query) venceria
+   esta regra quando o jogador imprime estando no tema claro, deixando o escuro como o
+   único caso coberto. O resto do app já lê cor via estas variáveis, então reescrevê-las
+   aqui já retema a página inteira para impressão sem tocar em cada componente. */
+@media print {
+  :root {
+    --bg: #ffffff !important;
+    --bg-elevated: #ffffff !important;
+    --surface-2: #f4f5f8 !important;
+    --text: #15181f !important;
+    --text-muted: #4b5163 !important;
+    --border: #c7cad4 !important;
+    --accent: #c2410c !important;
+    --accent-ink: #ffffff !important;
+    --ok: #1f7a4d !important;
+    --warning: #c2410c !important;
+    --danger: #c81e1e !important;
+    color-scheme: light;
+  }
+}
+
 * {
   box-sizing: border-box;
 }

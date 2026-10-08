@@ -1,7 +1,9 @@
 import { Component, lazy, Suspense, type ReactNode } from "react";
 import { ShareButton } from "./ShareButton";
 import { buildShareText } from "../game/share";
-import type { EndResult, GameState, Indicators, Sectors } from "../types";
+import { DIFFICULTY_LABELS } from "../game/engine";
+import { printReport } from "../game/print";
+import type { Difficulty, EndResult, GameState, Indicators, Sectors } from "../types";
 
 // O relatório (gráfico + timeline + conquistas) só é necessário quando o
 // mandato termina, então fica num chunk separado em vez de pesar no
@@ -42,10 +44,40 @@ interface Props {
   indicatorSnapshots: Indicators[];
   totalTurns: number;
   tenureTerm: number;
+  difficulty: Difficulty;
   earnedAchievementIds: Set<string>;
   newAchievementIds: Set<string>;
   onContinueTenure: () => void;
   onNewTenure: () => void;
+}
+
+/** Só aparece no papel/PDF (ver @media print) — dá contexto ao relatório fora do app. */
+function PrintHeader({
+  result,
+  totalTurns,
+  turnsPlayed,
+  difficulty,
+}: {
+  result: EndResult;
+  totalTurns: number;
+  turnsPlayed: number;
+  difficulty: Difficulty;
+}) {
+  const generatedAt = new Date().toLocaleDateString("pt-BR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
+  return (
+    <div className="print-header">
+      <span className="print-header-brand">🍊 O CEO: Orange — Relatório de Gestão</span>
+      <span>
+        {result.title} · média {Math.round(result.average)} · {turnsPlayed} de {totalTurns} trimestres ·
+        dificuldade {DIFFICULTY_LABELS[difficulty]}
+      </span>
+      <span className="print-header-date">Gerado em {generatedAt}</span>
+    </div>
+  );
 }
 
 export function EndScreen({
@@ -56,6 +88,7 @@ export function EndScreen({
   indicatorSnapshots,
   totalTurns,
   tenureTerm,
+  difficulty,
   earnedAchievementIds,
   newAchievementIds,
   onContinueTenure,
@@ -63,6 +96,7 @@ export function EndScreen({
 }: Props) {
   return (
     <div className={`screen end-screen ${result.victory ? "victory" : "defeat"}`}>
+      <PrintHeader result={result} totalTurns={totalTurns} turnsPlayed={history.length} difficulty={difficulty} />
       <h1>{result.title}</h1>
       <p className="tagline">{result.narrative}</p>
       <p className="turn-reached">
@@ -94,6 +128,9 @@ export function EndScreen({
           Começar um novo ciclo
         </button>
         <ShareButton text={buildShareText(result, indicators, history)} />
+        <button type="button" className="secondary-button" onClick={printReport}>
+          Gerar relatório (imprimir / PDF)
+        </button>
       </div>
     </div>
   );
