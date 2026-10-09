@@ -837,6 +837,19 @@
   width: 100%;
 }
 
+/* Variante compacta capturada pelo botão "Gerar print resumido" — fica fora da tela
+   (não faz parte do layout visível), com largura fixa e padding próprios para a
+   imagem gerada ficar enxuta e com cara de página, não um recorte sem contexto. */
+.mandate-summary-capture {
+  position: absolute;
+  top: 0;
+  left: -9999px;
+  width: 480px;
+  padding: 24px;
+  background: var(--bg);
+  box-sizing: border-box;
+}
+
 /* Theme toggle */
 
 .top-bar {

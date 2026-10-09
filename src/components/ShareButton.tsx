@@ -2,14 +2,17 @@ import { useEffect, useRef, useState, type RefObject } from "react";
 
 interface Props {
   text: string;
-  /** Nó que contém toda a tela de resultado a capturar — não só o que está visível sem rolar. */
+  /** Nó a capturar — pode ser a tela de resultado inteira ou só o resumo de 1 página. */
   targetRef: RefObject<HTMLElement | null>;
+  /** Rótulo do botão em repouso (ex.: "Gerar print completo", "Gerar print resumido"). */
+  idleLabel: string;
+  /** Nome do arquivo baixado/compartilhado, sem extensão. */
+  filename: string;
 }
 
 type Status = "idle" | "working" | "shared" | "downloaded" | "error";
 
-const STATUS_LABEL: Record<Status, string> = {
-  idle: "Compartilhar resultado",
+const STATUS_LABEL: Record<Exclude<Status, "idle">, string> = {
   working: "Gerando imagem…",
   shared: "Compartilhado!",
   downloaded: "Imagem salva!",
@@ -49,7 +52,7 @@ async function withFullyExpanded<T>(root: HTMLElement, run: () => Promise<T>): P
   }
 }
 
-export function ShareButton({ text, targetRef }: Props) {
+export function ShareButton({ text, targetRef, idleLabel, filename }: Props) {
   const [status, setStatus] = useState<Status>("idle");
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -83,7 +86,7 @@ export function ShareButton({ text, targetRef }: Props) {
       const blob: Blob | null = await new Promise((resolve) => canvas.toBlob(resolve, "image/png"));
       if (!blob) throw new Error("toBlob failed");
 
-      const file = new File([blob], "a-presidencia-resultado.png", { type: "image/png" });
+      const file = new File([blob], `${filename}.png`, { type: "image/png" });
 
       if (navigator.canShare?.({ files: [file] })) {
         try {
@@ -99,7 +102,7 @@ export function ShareButton({ text, targetRef }: Props) {
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.download = "a-presidencia-resultado.png";
+      link.download = `${filename}.png`;
       link.click();
       URL.revokeObjectURL(url);
       setStatus("downloaded");
@@ -111,7 +114,7 @@ export function ShareButton({ text, targetRef }: Props) {
 
   return (
     <button type="button" className="secondary-button" onClick={handleClick} disabled={status === "working"}>
-      {STATUS_LABEL[status]}
+      {status === "idle" ? idleLabel : STATUS_LABEL[status]}
     </button>
   );
 }
