@@ -1,7 +1,7 @@
 import { EVENTS } from "../data/events";
 import { CRITICAL_INDICATORS, INDICATOR_META, INDICATOR_ORDER, createInitialIndicators } from "../data/indicators";
-import { createInitialSectors } from "../data/sectors";
-import type { Difficulty, EndResult, EventChoice, GameEvent, GameState, Indicators, PresidentialAction } from "../types";
+import { SECTOR_META, SECTOR_ORDER, createInitialSectors } from "../data/sectors";
+import type { Difficulty, EndResult, EventChoice, GameEvent, GameState, Indicators, PresidentialAction, Sectors } from "../types";
 
 /** Legado que um mandato concluído transmite ao próximo da mesma dinastia (Nova Partida+). */
 export interface DynastyLegacy {
@@ -189,6 +189,21 @@ function checkCriticalFailure(indicators: Indicators): EndResult | null {
   return null;
 }
 
+/** Setor zerar encerra o mandato imediatamente, com a reação narrativa própria daquele grupo. */
+function checkSectorCollapse(sectors: Sectors, indicators: Indicators): EndResult | null {
+  for (const key of SECTOR_ORDER) {
+    if (sectors[key] <= 0) {
+      return {
+        victory: false,
+        title: SECTOR_META[key].collapseTitle,
+        narrative: SECTOR_META[key].loseMessage,
+        average: computeAverage(indicators),
+      };
+    }
+  }
+  return null;
+}
+
 function computeLegado(indicators: Indicators): EndResult {
   const average = computeAverage(indicators);
 
@@ -262,6 +277,21 @@ export function applyChoice(
       phase: "ended",
       currentEvent: null,
       endResult: failure,
+    };
+  }
+
+  const collapse = checkSectorCollapse(sectors, indicators);
+  if (collapse) {
+    return {
+      ...state,
+      indicators,
+      sectors,
+      history,
+      indicatorSnapshots,
+      sectorSnapshots,
+      phase: "ended",
+      currentEvent: null,
+      endResult: collapse,
     };
   }
 

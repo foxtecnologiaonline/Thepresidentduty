@@ -25,9 +25,10 @@ export interface IndicatorMeta {
 
 /**
  * Setores da sociedade: camada separada dos indicadores de governo, acompanhando a
- * aprovação de grupos específicos. Não tem limiar crítico nem afeta vitória/derrota
- * (que continua baseada só nos indicadores) — é um retrato à parte de quem o governo
- * está agradando ou afastando, visível no dashboard e no relatório final.
+ * aprovação de grupos específicos. Cada setor zerar encerra o mandato imediatamente,
+ * com uma reação narrativa própria (golpe militar, impeachment, manifestações...) —
+ * é o grupo específico que se volta contra o governo, não uma métrica institucional
+ * abstrata chegando a zero.
  */
 export type SectorKey =
   | "politicos"
@@ -45,6 +46,10 @@ export interface SectorMeta {
   icon: string;
   /** Explicação curta do que o setor representa, usada em tooltip. */
   description: string;
+  /** Título do desfecho quando este setor zera (ex.: "Impeachment", "Revolta Armada"). */
+  collapseTitle: string;
+  /** Narrativa do desfecho quando este setor zera. */
+  loseMessage: string;
 }
 
 /**

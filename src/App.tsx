@@ -11,16 +11,7 @@ import { StatsTabs } from "./components/StatsTabs";
 import { ThemeToggle } from "./components/ThemeToggle";
 import { ACHIEVEMENTS } from "./data/achievements";
 import { ACTIONS } from "./data/actions";
-import {
-  applyChoice,
-  createNewGame,
-  createStartState,
-  DIFFICULTY_MULTIPLIERS,
-  formatTurnLabel,
-  mergeEffects,
-  scaleEffects,
-  type DynastyLegacy,
-} from "./game/engine";
+import { applyChoice, createNewGame, createStartState, formatTurnLabel, type DynastyLegacy } from "./game/engine";
 import {
   addMandateHistoryEntry,
   clearInProgressGame,
@@ -169,16 +160,6 @@ function App() {
     isProcessingChoice.current = false;
   }
 
-  const multiplier = DIFFICULTY_MULTIPLIERS[game.difficulty];
-
-  const dashboardDeltas = resolution
-    ? scaleEffects(mergeEffects(resolution.choice.effects, resolution.action?.effects), multiplier)
-    : undefined;
-
-  const sectorDeltas = resolution
-    ? scaleEffects(mergeEffects(resolution.choice.sectorEffects ?? {}, resolution.action?.sectorEffects), multiplier)
-    : undefined;
-
   return (
     <div className="app-shell">
       <div className="top-bar">
@@ -203,18 +184,13 @@ function App() {
           </header>
 
           {isNarrowViewport ? (
-            <StatsTabs
-              sectors={game.sectors}
-              sectorDeltas={sectorDeltas}
-              indicators={game.indicators}
-              indicatorDeltas={dashboardDeltas}
-            />
+            <StatsTabs sectors={game.sectors} indicators={game.indicators} />
           ) : (
             <>
-              <SectorsPanel sectors={game.sectors} lastDeltas={sectorDeltas} />
+              <SectorsPanel sectors={game.sectors} />
               <div className="indicators-panel">
                 <span className="panel-heading">Indicadores</span>
-                <Dashboard indicators={game.indicators} lastDeltas={dashboardDeltas} />
+                <Dashboard indicators={game.indicators} />
               </div>
             </>
           )}
@@ -225,7 +201,6 @@ function App() {
                 event={resolution.event}
                 choice={resolution.choice}
                 action={resolution.action}
-                multiplier={multiplier}
                 onContinue={handleContinue}
               />
             ) : game.phase === "playing" && game.currentEvent ? (
@@ -235,7 +210,6 @@ function App() {
                 turn={game.turn}
                 actions={ACTIONS}
                 selectedAction={selectedAction}
-                multiplier={multiplier}
                 onSelectAction={handleSelectAction}
                 onChoose={handleChoose}
               />

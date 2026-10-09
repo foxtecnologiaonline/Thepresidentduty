@@ -1,20 +1,18 @@
 import { useState } from "react";
 import { Dashboard } from "./Dashboard";
 import { SectorsPanel } from "./SectorsPanel";
-import type { IndicatorKey, Indicators, SectorKey, Sectors } from "../types";
+import type { Indicators, Sectors } from "../types";
 
 interface Props {
   sectors: Sectors;
-  sectorDeltas?: Partial<Record<SectorKey, number>>;
   indicators: Indicators;
-  indicatorDeltas?: Partial<Record<IndicatorKey, number>>;
 }
 
 type Tab = "sectors" | "indicators";
 
 /** Em telas muito estreitas, alterna entre os dois painéis por abas em vez de empilhar
     os dois sempre — as duas grades juntas já ocupam a tela inteira nesses aparelhos. */
-export function StatsTabs({ sectors, sectorDeltas, indicators, indicatorDeltas }: Props) {
+export function StatsTabs({ sectors, indicators }: Props) {
   const [tab, setTab] = useState<Tab>("sectors");
 
   return (
@@ -40,11 +38,11 @@ export function StatsTabs({ sectors, sectorDeltas, indicators, indicatorDeltas }
         </button>
       </div>
       {tab === "sectors" ? (
-        <SectorsPanel sectors={sectors} lastDeltas={sectorDeltas} />
+        <SectorsPanel sectors={sectors} />
       ) : (
         <div className="indicators-panel">
           <span className="panel-heading">Indicadores</span>
-          <Dashboard indicators={indicators} lastDeltas={indicatorDeltas} />
+          <Dashboard indicators={indicators} />
         </div>
       )}
     </div>

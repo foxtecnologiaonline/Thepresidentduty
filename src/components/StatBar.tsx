@@ -12,13 +12,12 @@ interface Props {
   label: string;
   description: string;
   value: number;
-  delta?: number;
-  /** Marca visualmente um indicador crítico em risco; setores nunca usam isso. */
+  /** Marca visualmente um indicador ou setor perto do colapso que encerraria o mandato. */
   critical?: boolean;
 }
 
 /** Barra de progresso genérica usada tanto pelos indicadores de governo quanto pelos setores da sociedade. */
-export function StatBar({ icon, label, description, value, delta, critical }: Props) {
+export function StatBar({ icon, label, description, value, critical }: Props) {
   const displayedValue = useCountUp(Math.round(value));
 
   return (
@@ -28,14 +27,7 @@ export function StatBar({ icon, label, description, value, delta, critical }: Pr
           {icon}
         </span>
         <span>{label}</span>
-        <span className="indicator-value">
-          {displayedValue}
-          {typeof delta === "number" && delta !== 0 && (
-            <span className={`indicator-delta ${delta > 0 ? "positive" : "negative"}`}>
-              {delta > 0 ? `+${delta}` : delta}
-            </span>
-          )}
-        </span>
+        <span className="indicator-value">{displayedValue}</span>
       </div>
       <div className="indicator-track">
         <div className="indicator-fill" style={{ width: `${value}%` }} />
