@@ -743,6 +743,14 @@
   color: var(--gold);
   font-size: 13px;
   font-weight: 600;
+  list-style: none;
+}
+
+/* Chrome ainda desenha o triângulo padrão via ::marker mesmo com list-style:none no
+   elemento — essa regra separada é a única forma de removê-lo nos dois motores. */
+.timeline-details summary::marker,
+.timeline-details summary::-webkit-details-marker {
+  display: none;
 }
 
 .timeline-list {
@@ -869,42 +877,28 @@
   padding: 20px 0;
 }
 
-/* Impressão do relatório final — acionada pelo botão "Imprimir relatório" na
-   tela de fim de mandato. Força cores claras independente do tema ativo (o
-   tema escuro padrão gastaria tinta e teria baixo contraste no papel) e
-   esconde tudo que não é o relatório em si (barra de tema, painéis ao vivo
-   de indicadores/setores, botões de ação). */
-@media print {
-  :root {
-    --bg: #ffffff;
-    --bg-elevated: #ffffff;
-    --surface-2: #f4f4f4;
-    --text: #141414;
-    --text-muted: #4a4a4a;
-    --border: #cccccc;
-    --gold: #8a5a00;
-    --ok: #146c43;
-    --danger: #a3242b;
-  }
+/* Wrapper só do conteúdo de resultado (sem os botões de ação nem a dica de dinastia) —
+   é o que os botões "Gerar print" capturam como imagem; mesmo espaçamento que esses
+   elementos tinham como filhos diretos de .screen antes deste wrapper existir. */
+.end-screen-capture {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  width: 100%;
+}
 
-  body {
-    background: #ffffff;
-  }
-
-  .top-bar,
-  .sectors-panel,
-  .indicators-panel,
-  .stats-tabs,
-  .end-screen-actions,
-  .dynasty-hint,
-  .onboarding-modal {
-    display: none !important;
-  }
-
-  .report-section {
-    border: 1px solid var(--border);
-    break-inside: avoid;
-  }
+/* Variante compacta capturada pelo botão "Gerar print resumido" — fica fora da tela
+   (não faz parte do layout visível), com largura fixa e padding próprios para a
+   imagem gerada ficar enxuta e com cara de página, não um recorte sem contexto. */
+.mandate-summary-capture {
+  position: absolute;
+  top: 0;
+  left: -9999px;
+  width: 480px;
+  padding: 24px;
+  background: var(--bg);
+  box-sizing: border-box;
 }
 
 /* Theme toggle */
@@ -1059,6 +1053,12 @@
   font-size: 13px;
   font-weight: 600;
   text-align: center;
+  list-style: none;
+}
+
+.history-details summary::marker,
+.history-details summary::-webkit-details-marker {
+  display: none;
 }
 
 .history-list {

@@ -3,6 +3,7 @@ import { SECTOR_META, SECTOR_ORDER, createInitialSectors } from "../data/sectors
 import { computeLeanProfile, describeLean, leanToPercent } from "../game/leaning";
 import type { GameState, IndicatorKey, Indicators, SectorKey, Sectors } from "../types";
 import { AchievementsPanel } from "./AchievementsPanel";
+import { ComparisonList } from "./ComparisonList";
 import { MandateTimeline } from "./MandateTimeline";
 import { TrajectoryChart } from "./TrajectoryChart";
 
@@ -23,42 +24,6 @@ function trendMessage(trend: "direita" | "esquerda" | "estavel"): string {
     return "Ao longo do mandato, suas decisões avançaram para a esquerda e recuaram da direita.";
   }
   return "Sua linha ideológica se manteve estável do início ao fim do mandato.";
-}
-
-interface ComparisonListProps<K extends string> {
-  order: K[];
-  meta: Record<K, { label: string; icon: string }>;
-  initial: Record<K, number>;
-  current: Record<K, number>;
-}
-
-function ComparisonList<K extends string>({ order, meta, initial, current }: ComparisonListProps<K>) {
-  return (
-    <div className="comparison-list">
-      {order.map((key) => {
-        const start = Math.round(initial[key]);
-        const end = Math.round(current[key]);
-        const delta = end - start;
-        const trendClass = delta > 0 ? "up" : delta < 0 ? "down" : "flat";
-        return (
-          <div key={key} className="comparison-row">
-            <span className="indicator-icon" aria-hidden="true">
-              {meta[key].icon}
-            </span>
-            <span className="comparison-label">{meta[key].label}</span>
-            <span className="comparison-values">
-              {start} → {end}
-            </span>
-            <span className={`comparison-delta ${trendClass}`}>
-              {trendClass === "up" && `▲ avançou +${delta}`}
-              {trendClass === "down" && `▼ recuou ${delta}`}
-              {trendClass === "flat" && "• estável"}
-            </span>
-          </div>
-        );
-      })}
-    </div>
-  );
 }
 
 export function MandateReport({
