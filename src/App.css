@@ -692,6 +692,14 @@
   color: var(--gold);
   font-size: 13px;
   font-weight: 600;
+  list-style: none;
+}
+
+/* Chrome ainda desenha o triângulo padrão via ::marker mesmo com list-style:none no
+   elemento — essa regra separada é a única forma de removê-lo nos dois motores. */
+.timeline-details summary::marker,
+.timeline-details summary::-webkit-details-marker {
+  display: none;
 }
 
 .timeline-list {
@@ -818,42 +826,15 @@
   padding: 20px 0;
 }
 
-/* Impressão do relatório final — acionada pelo botão "Imprimir relatório" na
-   tela de fim de mandato. Força cores claras independente do tema ativo (o
-   tema escuro padrão gastaria tinta e teria baixo contraste no papel) e
-   esconde tudo que não é o relatório em si (barra de tema, painéis ao vivo
-   de indicadores/setores, botões de ação). */
-@media print {
-  :root {
-    --bg: #ffffff;
-    --bg-elevated: #ffffff;
-    --surface-2: #f4f4f4;
-    --text: #141414;
-    --text-muted: #4a4a4a;
-    --border: #cccccc;
-    --gold: #8a5a00;
-    --ok: #146c43;
-    --danger: #a3242b;
-  }
-
-  body {
-    background: #ffffff;
-  }
-
-  .top-bar,
-  .sectors-panel,
-  .indicators-panel,
-  .stats-tabs,
-  .end-screen-actions,
-  .dynasty-hint,
-  .onboarding-modal {
-    display: none !important;
-  }
-
-  .report-section {
-    border: 1px solid var(--border);
-    break-inside: avoid;
-  }
+/* Wrapper só do conteúdo de resultado (sem os botões de ação nem a dica de dinastia) —
+   é o que o botão "Compartilhar resultado" captura como imagem; mesmo espaçamento que
+   esses elementos tinham como filhos diretos de .screen antes deste wrapper existir. */
+.end-screen-capture {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  width: 100%;
 }
 
 /* Theme toggle */
@@ -1008,6 +989,12 @@
   font-size: 13px;
   font-weight: 600;
   text-align: center;
+  list-style: none;
+}
+
+.history-details summary::marker,
+.history-details summary::-webkit-details-marker {
+  display: none;
 }
 
 .history-list {
