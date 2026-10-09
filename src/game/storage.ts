@@ -7,7 +7,14 @@ export interface BestResult {
   victory: boolean;
 }
 
-const STORAGE_KEY = "presidencia:best-result";
+/** Isola os dados de PARTIDA (melhor resultado, histórico, jogo em andamento) quando
+    múltiplas versões do jogo convivem no mesmo domínio (localStorage é por origem, não
+    por caminho) — configurável via VITE_STORAGE_NAMESPACE no build; sem isso, cada
+    versão sobrescreveria o progresso de partida da outra. Ausente = comportamento de
+    sempre, um jogo só por domínio. */
+const NAMESPACE = import.meta.env.VITE_STORAGE_NAMESPACE || "presidencia";
+
+const STORAGE_KEY = `${NAMESPACE}:best-result`;
 
 function isBestResult(value: unknown): value is BestResult {
   if (!value || typeof value !== "object") return false;
@@ -50,6 +57,8 @@ export function saveBestResultIfBetter(result: BestResult): BestResult {
   return result;
 }
 
+// Conquistas, tema e onboarding ficam de propósito fora do namespace — são preferência
+// de UI/progresso cosmético que faz sentido compartilhar entre versões no mesmo domínio.
 const ACHIEVEMENTS_KEY = "presidencia:achievements";
 
 export function loadUnlockedAchievements(): Set<string> {
@@ -123,7 +132,7 @@ export interface MandateHistoryEntry {
   playedAt: number;
 }
 
-const MANDATE_HISTORY_KEY = "presidencia:mandate-history";
+const MANDATE_HISTORY_KEY = `${NAMESPACE}:mandate-history`;
 const MANDATE_HISTORY_LIMIT = 5;
 
 function isMandateHistoryEntry(value: unknown): value is MandateHistoryEntry {
@@ -161,7 +170,7 @@ export function addMandateHistoryEntry(entry: MandateHistoryEntry): MandateHisto
   return next;
 }
 
-const IN_PROGRESS_KEY = "presidencia:in-progress";
+const IN_PROGRESS_KEY = `${NAMESPACE}:in-progress`;
 
 /**
  * Checagem leve de forma, não exaustiva: o bastante para recusar um save de uma versão
