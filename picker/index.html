@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0b1220" />
+    <title>A Presidência — Escolha a versão</title>
+    <link rel="icon" type="image/svg+xml" href="/v2/favicon.svg" />
+    <style>
+      :root {
+        --bg: #0b1220;
+        --bg-elevated: #131c30;
+        --surface-2: #182236;
+        --text: #e6e9f2;
+        --text-muted: #9aa4bb;
+        --border: #263149;
+        --gold: #f2c14e;
+        --accent-ink: #1a1200;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        min-height: 100svh;
+        background: var(--bg);
+        color: var(--text);
+        font: 16px/1.5 system-ui, "Segoe UI", Roboto, sans-serif;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+      }
+      .shell {
+        max-width: 560px;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 28px;
+        text-align: center;
+      }
+      h1 {
+        margin: 0;
+        font-size: 30px;
+        color: var(--gold);
+      }
+      .tagline {
+        margin: 0;
+        color: var(--text-muted);
+        max-width: 420px;
+        line-height: 1.6;
+      }
+      .versions {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        width: 100%;
+      }
+      .version-card {
+        display: block;
+        text-decoration: none;
+        color: var(--text);
+        background: var(--bg-elevated);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 18px 20px;
+        text-align: left;
+        transition: border-color 0.15s ease, transform 0.1s ease;
+      }
+      .version-card:hover {
+        border-color: var(--gold);
+        transform: translateY(-1px);
+      }
+      .version-tag {
+        display: inline-block;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--gold);
+        margin-bottom: 6px;
+      }
+      .version-title {
+        font-size: 18px;
+        font-weight: 700;
+        margin-bottom: 4px;
+      }
+      .version-desc {
+        color: var(--text-muted);
+        font-size: 14px;
+        line-height: 1.5;
+      }
+      .footnote {
+        color: var(--text-muted);
+        font-size: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <div>
+        <h1>A Presidência</h1>
+        <p class="tagline">Escolha a versão do simulador presidencial que você quer jogar.</p>
+      </div>
+      <div class="versions">
+        <a class="version-card" href="/v1/">
+          <span class="version-tag">v1.0</span>
+          <div class="version-title">Versão Clássica</div>
+          <div class="version-desc">
+            Veja o impacto numérico de cada decisão antes de escolher. Indicadores críticos zerarem encerra o
+            mandato.
+          </div>
+        </a>
+        <a class="version-card" href="/v2/">
+          <span class="version-tag">v2.0</span>
+          <div class="version-title">Versão com Setores Críticos</div>
+          <div class="version-desc">
+            Decisões sem prévia numérica — guie-se pela narrativa. Cada setor da sociedade (militares, políticos,
+            população...) também pode derrubar seu governo se chegar a zero.
+          </div>
+        </a>
+      </div>
+      <p class="footnote">Cada versão salva seu progresso separadamente neste navegador.</p>
+    </div>
+  </body>
+</html>
