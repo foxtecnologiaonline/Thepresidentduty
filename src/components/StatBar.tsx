@@ -37,7 +37,14 @@ export function StatBar({ icon, label, description, value, delta, critical }: Pr
           )}
         </span>
       </div>
-      <div className="indicator-track">
+      <div
+        className="indicator-track"
+        role="progressbar"
+        aria-label={label}
+        aria-valuenow={Math.round(value)}
+        aria-valuemin={0}
+        aria-valuemax={100}
+      >
         <div className="indicator-fill" style={{ width: `${value}%` }} />
       </div>
     </div>

@@ -554,4 +554,385 @@ export const EVENTS: GameEvent[] = [
       },
     ],
   },
+  {
+    id: "greve-professores",
+    title: "Greve de Professores",
+    category: "educacao",
+    description:
+      "Professores da rede pública entram em greve por salários defasados e falta de estrutura nas escolas. O ano letivo de milhões de alunos está em risco.",
+    choices: [
+      {
+        id: "reajustar",
+        label: "Conceder reajuste salarial para encerrar a greve",
+        consequence:
+          "As aulas voltam rápido e a categoria se sente valorizada, mas o orçamento da educação fica mais apertado para investimentos futuros.",
+        effects: { educacao: 8, popularidade: 3, economia: -5 },
+        sectorEffects: { academicos: 8, populacao: 4 },
+        leaning: -1,
+      },
+      {
+        id: "resistir-greve",
+        label: "Não ceder e aguardar o desgaste da greve",
+        consequence:
+          "Você preserva o orçamento, mas o ano letivo é perdido em diversas escolas e a categoria fica ressentida.",
+        effects: { educacao: -8, popularidade: -4 },
+        sectorEffects: { academicos: -9, movimentosSociais: -4 },
+        leaning: 2,
+      },
+    ],
+  },
+  {
+    id: "universidades-publicas",
+    title: "Corte de Bolsas em Universidades Públicas",
+    category: "educacao",
+    description:
+      "A equipe econômica propõe cortar bolsas de pesquisa e assistência estudantil para equilibrar o orçamento. Reitores e estudantes alertam para o risco de evasão.",
+    choices: [
+      {
+        id: "manter-bolsas",
+        label: "Manter o financiamento integral das bolsas",
+        consequence:
+          "Universidades seguem funcionando plenamente e a comunidade acadêmica agradece, mas o ajuste fiscal fica mais difícil.",
+        effects: { educacao: 6, economia: -4 },
+        sectorEffects: { academicos: 9, movimentosSociais: 3 },
+        leaning: -2,
+      },
+      {
+        id: "cortar-bolsas",
+        label: "Aplicar o corte proposto",
+        consequence:
+          "As contas públicas respiram um pouco, mas a evasão nas universidades federais aumenta e a classe acadêmica se revolta.",
+        effects: { educacao: -7, economia: 4 },
+        sectorEffects: { academicos: -10, populacao: -2 },
+        leaning: 2,
+      },
+    ],
+  },
+  {
+    id: "tecnologia-escolas",
+    title: "Programa de Tecnologia nas Escolas",
+    category: "educacao",
+    description:
+      "Um projeto propõe levar tablets e internet de alta velocidade a escolas públicas de todo o país, com custo alto mas potencial de modernizar o ensino.",
+    choices: [
+      {
+        id: "investir-tecnologia",
+        label: "Lançar o programa em escala nacional",
+        consequence:
+          "O ensino público dá um salto de qualidade e ganha repercussão positiva, mas o investimento pesa bastante no orçamento deste ano.",
+        effects: { educacao: 10, popularidade: 3, economia: -7 },
+        sectorEffects: { academicos: 7, empresariado: 3 },
+        leaning: -1,
+      },
+      {
+        id: "piloto-tecnologia",
+        label: "Rodar um piloto reduzido em poucas escolas",
+        consequence:
+          "Custo controlado, mas o impacto na educação é modesto e localizado.",
+        effects: { educacao: 3, economia: -1 },
+        sectorEffects: { academicos: 2 },
+        leaning: 0,
+      },
+    ],
+  },
+  {
+    id: "evasao-escolar",
+    title: "Crise de Evasão Escolar",
+    category: "educacao",
+    description:
+      "Dados mostram que milhares de adolescentes abandonaram a escola para trabalhar e ajudar no sustento da família durante a crise econômica.",
+    choices: [
+      {
+        id: "bolsa-permanencia",
+        label: "Criar bolsa de permanência escolar para famílias de baixa renda",
+        consequence:
+          "A evasão cai e famílias pobres recebem um alívio imediato, mas o programa exige um gasto social recorrente.",
+        effects: { educacao: 7, popularidade: 5, economia: -4 },
+        sectorEffects: { populacao: 8, movimentosSociais: 5 },
+        leaning: -2,
+      },
+      {
+        id: "sem-programa",
+        label: "Deixar a questão para os governos estaduais resolverem",
+        consequence:
+          "Você evita o gasto federal, mas a evasão escolar continua subindo e cobra um preço educacional no longo prazo.",
+        effects: { educacao: -6, popularidade: -2 },
+        sectorEffects: { populacao: -4 },
+        leaning: 1,
+      },
+    ],
+  },
+  {
+    id: "moradia-popular",
+    title: "Ocupações por Moradia",
+    category: "social",
+    description:
+      "Famílias sem-teto ocupam terrenos ociosos em grandes cidades, reivindicando um programa habitacional. Proprietários pedem reintegração de posse imediata.",
+    choices: [
+      {
+        id: "programa-habitacional",
+        label: "Lançar programa habitacional e negociar a saída pacífica",
+        consequence:
+          "As famílias saem das ocupações com destino garantido e o governo ganha apoio popular, mas o programa é caro.",
+        effects: { popularidade: 7, economia: -6 },
+        sectorEffects: { populacao: 9, movimentosSociais: 7, empresariado: -4 },
+        leaning: -2,
+      },
+      {
+        id: "reintegracao-posse",
+        label: "Determinar reintegração de posse imediata",
+        consequence:
+          "A propriedade privada é respeitada e o empresariado aprova, mas as cenas de remoção forçada chocam parte da população.",
+        effects: { popularidade: -8, seguranca: 2 },
+        sectorEffects: { empresariado: 7, movimentosSociais: -10, populacao: -5 },
+        leaning: 2,
+      },
+    ],
+  },
+  {
+    id: "greve-geral",
+    title: "Greve Geral dos Trabalhadores",
+    category: "social",
+    description:
+      "Centrais sindicais convocam uma greve geral contra uma proposta de reforma trabalhista que tramita no Congresso, paralisando transporte e indústrias.",
+    choices: [
+      {
+        id: "negociar-reforma",
+        label: "Suspender a tramitação e abrir negociação com os sindicatos",
+        consequence:
+          "A greve é suspensa e os trabalhadores veem o governo como aliado, mas setores empresariais acusam o governo de recuo.",
+        effects: { popularidade: 5, governabilidade: -3 },
+        sectorEffects: { movimentosSociais: 9, populacao: 4, empresariado: -6 },
+        leaning: -1,
+      },
+      {
+        id: "manter-reforma",
+        label: "Manter a reforma e deixar a greve seguir seu curso",
+        consequence:
+          "O mercado reage bem à firmeza do governo, mas a paralisação prolongada gera perdas econômicas e desgasta sua imagem.",
+        effects: { economia: -4, popularidade: -6 },
+        sectorEffects: { empresariado: 6, movimentosSociais: -9, populacao: -3 },
+        leaning: 2,
+        triggersEventId: "protesto-popular",
+      },
+    ],
+  },
+  {
+    id: "violencia-domestica",
+    title: "Crise de Violência contra a Mulher",
+    category: "social",
+    description:
+      "Dados mostram aumento alarmante de casos de violência doméstica. Organizações de defesa dos direitos das mulheres pedem ação federal urgente.",
+    choices: [
+      {
+        id: "rede-protecao",
+        label: "Criar rede nacional de proteção e delegacias especializadas",
+        consequence:
+          "A medida é bem recebida e salva vidas no médio prazo, mas exige investimento contínuo e estruturação rápida.",
+        effects: { seguranca: 4, popularidade: 6, economia: -4 },
+        sectorEffects: { movimentosSociais: 10, populacao: 5 },
+        leaning: -1,
+      },
+      {
+        id: "campanha-sem-estrutura",
+        label: "Lançar apenas uma campanha de conscientização, sem nova estrutura",
+        consequence:
+          "O gesto simbólico custa pouco, mas organizações de defesa das mulheres criticam a falta de ação concreta.",
+        effects: { popularidade: -3 },
+        sectorEffects: { movimentosSociais: -7 },
+        leaning: 1,
+      },
+    ],
+  },
+  {
+    id: "fome-crise",
+    title: "Aumento da Fome e Insegurança Alimentar",
+    category: "social",
+    description:
+      "Levantamentos apontam que milhões de famílias voltaram a enfrentar insegurança alimentar. Movimentos sociais pedem a retomada de programas de distribuição de renda e alimentos.",
+    choices: [
+      {
+        id: "expandir-programas",
+        label: "Expandir programas de transferência de renda e distribuição de alimentos",
+        consequence:
+          "A fome recua e o governo ganha apoio popular forte, mas o gasto social pressiona as contas públicas.",
+        effects: { popularidade: 9, economia: -7 },
+        sectorEffects: { populacao: 10, movimentosSociais: 6 },
+        leaning: -2,
+      },
+      {
+        id: "ajuda-pontual",
+        label: "Manter apenas ajuda pontual e emergencial",
+        consequence:
+          "O impacto fiscal é menor, mas a fome continua afetando famílias vulneráveis e a crítica social cresce.",
+        effects: { economia: 2, popularidade: -6 },
+        sectorEffects: { populacao: -6, movimentosSociais: -5 },
+        leaning: 1,
+      },
+    ],
+  },
+  {
+    id: "vacina-obrigatoria",
+    title: "Campanha de Vacinação Obrigatória",
+    category: "saude",
+    description:
+      "Diante da queda nas taxas de imunização infantil, o Ministério da Saúde propõe tornar um conjunto de vacinas obrigatório, o que enfrenta resistência de grupos antivacina.",
+    choices: [
+      {
+        id: "tornar-obrigatoria",
+        label: "Tornar a vacinação obrigatória por lei",
+        consequence:
+          "As taxas de imunização sobem rapidamente, mas grupos antivacina organizam protestos contra a medida.",
+        effects: { saude: 9, popularidade: -3 },
+        sectorEffects: { academicos: 6, movimentosSociais: -3 },
+        leaning: -1,
+      },
+      {
+        id: "campanha-voluntaria",
+        label: "Manter a vacinação voluntária com campanha de incentivo",
+        consequence:
+          "Você evita o atrito político, mas a cobertura vacinal melhora pouco e o risco de surtos continua alto.",
+        effects: { saude: 2 },
+        sectorEffects: { academicos: 1 },
+        leaning: 1,
+      },
+    ],
+  },
+  {
+    id: "fila-cirurgias",
+    title: "Fila de Cirurgias Eletivas",
+    category: "saude",
+    description:
+      "A fila por cirurgias eletivas no sistema público ultrapassa um milhão de pacientes. Pacientes e associações médicas pressionam por uma solução rápida.",
+    choices: [
+      {
+        id: "mutirao-cirurgico",
+        label: "Financiar mutirões cirúrgicos emergenciais",
+        consequence:
+          "A fila diminui significativamente e pacientes agradecem, mas o custo extra pesa no orçamento da saúde.",
+        effects: { saude: 9, popularidade: 4, economia: -5 },
+        sectorEffects: { populacao: 6, academicos: 3 },
+        leaning: -1,
+      },
+      {
+        id: "triagem-criterios",
+        label: "Apenas endurecer os critérios de triagem para conter a demanda",
+        consequence:
+          "O gasto público é controlado, mas pacientes esperam ainda mais e a insatisfação cresce.",
+        effects: { saude: -5, popularidade: -4 },
+        sectorEffects: { populacao: -5 },
+        leaning: 1,
+      },
+    ],
+  },
+  {
+    id: "inflacao-alimentos",
+    title: "Disparada do Preço dos Alimentos",
+    category: "economia",
+    description:
+      "Uma quebra de safra combinada à alta do dólar faz o preço dos alimentos básicos subir de forma acelerada, pressionando o orçamento das famílias.",
+    choices: [
+      {
+        id: "controle-precos",
+        label: "Impor controle temporário de preços sobre itens básicos",
+        consequence:
+          "As famílias sentem alívio imediato, mas produtores reduzem a oferta e economistas alertam para desabastecimento futuro.",
+        effects: { popularidade: 6, economia: -5 },
+        sectorEffects: { populacao: 7, empresariado: -8 },
+        leaning: -2,
+      },
+      {
+        id: "livre-mercado",
+        label: "Deixar o mercado se ajustar livremente",
+        consequence:
+          "A oferta se normaliza com o tempo, mas o custo de vida pesado no curto prazo gera forte insatisfação popular.",
+        effects: { economia: 3, popularidade: -7 },
+        sectorEffects: { empresariado: 5, populacao: -7 },
+        leaning: 2,
+      },
+    ],
+  },
+  {
+    id: "crime-organizado",
+    title: "Avanço do Crime Organizado",
+    category: "seguranca",
+    description:
+      "Facções criminosas ampliam o controle territorial em periferias e estradas, desafiando abertamente a autoridade do Estado em diversas regiões.",
+    choices: [
+      {
+        id: "operacao-militar",
+        label: "Lançar operação militar de grande escala",
+        consequence:
+          "O Estado reage com força e recupera território, mas a operação é cara e aumenta o risco de confrontos violentos.",
+        effects: { seguranca: 9, economia: -5, popularidade: -2 },
+        sectorEffects: { militares: 8, populacao: -4 },
+        leaning: 2,
+        triggersEventId: "motim-militar",
+      },
+      {
+        id: "investimento-social-periferia",
+        label: "Priorizar investimento social e presença do Estado nas periferias",
+        consequence:
+          "A estratégia reduz a adesão ao crime no longo prazo, mas não traz resultados imediatos e a crítica por fraqueza aumenta.",
+        effects: { seguranca: -3, popularidade: -3, educacao: 3 },
+        sectorEffects: { populacao: 6, movimentosSociais: 6, militares: -4 },
+        leaning: -2,
+      },
+    ],
+  },
+  {
+    id: "disputa-territorial",
+    title: "Disputa Territorial com País Vizinho",
+    category: "internacional",
+    description:
+      "Um país vizinho reivindica uma faixa de fronteira rica em recursos naturais, aumentando a tensão diplomática e pressão por uma resposta firme.",
+    choices: [
+      {
+        id: "via-diplomatica",
+        label: "Buscar mediação internacional e resolver pela via diplomática",
+        consequence:
+          "O conflito é contido sem custos militares e o país ganha reputação de maturidade diplomática, mas parte da opinião pública vê como fraqueza.",
+        effects: { relacoesInternacionais: 7, popularidade: -3 },
+        sectorEffects: { politicos: 3, empresariado: 2 },
+        leaning: -1,
+      },
+      {
+        id: "mostrar-forca",
+        label: "Reforçar a presença militar na fronteira",
+        consequence:
+          "A postura firme agrada a opinião pública interna, mas eleva a tensão com o vizinho e preocupa parceiros internacionais.",
+        effects: { seguranca: 3, popularidade: 4, relacoesInternacionais: -6 },
+        sectorEffects: { militares: 7, politicos: -3 },
+        leaning: 2,
+      },
+    ],
+  },
+  {
+    id: "confronto-poderes",
+    title: "Confronto entre Poderes",
+    category: "institucional",
+    description:
+      "Uma decisão do Supremo Tribunal contraria uma política central do seu governo. Aliados pressionam por uma reação dura contra o Judiciário.",
+    choices: [
+      {
+        id: "respeitar-decisao",
+        label: "Respeitar publicamente a decisão da Corte",
+        consequence:
+          "As instituições saem fortalecidas e você ganha respeito como democrata, mas parte da sua base se sente traída.",
+        effects: { governabilidade: -4, popularidade: 4 },
+        sectorEffects: { academicos: 7, politicos: -5 },
+        leaning: -1,
+      },
+      {
+        id: "pressionar-judiciario",
+        label: "Articular no Congresso para limitar os poderes da Corte",
+        consequence:
+          "Sua base aliada se anima com a reação, mas o episódio é lido como ataque à democracia e gera forte repercussão negativa.",
+        effects: { governabilidade: 5, popularidade: -9, relacoesInternacionais: -4 },
+        sectorEffects: { politicos: 8, academicos: -9, movimentosSociais: -5 },
+        leaning: 2,
+        triggersEventId: "cpi-investigacao",
+      },
+    ],
+  },
 ];

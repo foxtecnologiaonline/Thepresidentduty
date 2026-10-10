@@ -1,13 +1,15 @@
 {
   "name": "thepresidentduty",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "description": "A Presidência: simulador de decisões presidenciais e seus impactos na economia, popularidade, segurança e mais.",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "vitest run"
   },
   "dependencies": {
     "html2canvas": "^1.4.1",
@@ -19,9 +21,11 @@
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.7",
     "@vitejs/plugin-react": "^6.1.1",
+    "jsdom": "^29.1.1",
     "oxlint": "^1.81.0",
     "typescript": "~6.0.2",
     "vite": "^8.3.0",
-    "vite-plugin-pwa": "^1.3.0"
+    "vite-plugin-pwa": "^1.3.0",
+    "vitest": "^5.0.3"
   }
 }
