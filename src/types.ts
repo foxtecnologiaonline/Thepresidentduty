@@ -112,6 +112,26 @@ export interface PresidentialAction {
   minTurn?: number;
 }
 
+/**
+ * Caminhos de queda do presidente: risco acumulado de ser retirado do poder por vias
+ * diferentes do colapso de um indicador crítico isolado. Cada um é calculado a partir de
+ * indicadores e setores diferentes, então reagir à crise certa (não só "subir tudo") importa.
+ */
+export type ThreatKey = "impeachment" | "golpe" | "levante";
+
+export type Threats = Record<ThreatKey, number>;
+
+export interface ThreatMeta {
+  key: ThreatKey;
+  label: string;
+  icon: string;
+  /** Explicação curta do que alimenta esse risco, usada em tooltip. */
+  description: string;
+  /** Narrativa de derrota quando esse risco chega ao limite e encerra o mandato. */
+  fallTitle: string;
+  fallNarrative: string;
+}
+
 export type GamePhase = "start" | "playing" | "ended";
 
 export type Difficulty = "facil" | "normal" | "dificil";
@@ -128,6 +148,8 @@ export interface GameState {
   difficulty: Difficulty;
   indicators: Indicators;
   sectors: Sectors;
+  /** Risco atual de queda por via (impeachment, golpe, levante), recalculado a cada turno. */
+  threats: Threats;
   turn: number;
   totalTurns: number;
   deck: GameEvent[];
@@ -137,6 +159,8 @@ export interface GameState {
   indicatorSnapshots: Indicators[];
   /** Retrato dos setores ao final de cada turno (índice 0 = estado inicial). */
   sectorSnapshots: Sectors[];
+  /** Retrato do risco de queda ao final de cada turno (índice 0 = estado inicial). */
+  threatSnapshots: Threats[];
   endResult: EndResult | null;
   /** Quantos mandatos consecutivos dessa dinastia já foram jogados (1 = o primeiro). */
   dynastyTerm: number;

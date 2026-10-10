@@ -1,7 +1,17 @@
 import { EVENTS } from "../data/events";
 import { CRITICAL_INDICATORS, INDICATOR_META, INDICATOR_ORDER, createInitialIndicators } from "../data/indicators";
 import { createInitialSectors } from "../data/sectors";
-import type { Difficulty, EndResult, EventChoice, GameEvent, GameState, Indicators, PresidentialAction } from "../types";
+import { computeThreats, DOWNFALL_THRESHOLD, THREAT_META, THREAT_ORDER } from "../data/threats";
+import type {
+  Difficulty,
+  EndResult,
+  EventChoice,
+  GameEvent,
+  GameState,
+  Indicators,
+  PresidentialAction,
+  Threats,
+} from "../types";
 
 /** Legado que um mandato concluído transmite ao próximo da mesma dinastia (Nova Partida+). */
 export interface DynastyLegacy {
@@ -83,11 +93,13 @@ export function buildDeck(): GameEvent[] {
 export function createStartState(): GameState {
   const initialIndicators = createInitialIndicators();
   const initialSectors = createInitialSectors();
+  const initialThreats = computeThreats(initialIndicators, initialSectors);
   return {
     phase: "start",
     difficulty: "normal",
     indicators: initialIndicators,
     sectors: initialSectors,
+    threats: initialThreats,
     turn: 0,
     totalTurns: TOTAL_TURNS,
     deck: [],
@@ -95,6 +107,7 @@ export function createStartState(): GameState {
     history: [],
     indicatorSnapshots: [initialIndicators],
     sectorSnapshots: [initialSectors],
+    threatSnapshots: [initialThreats],
     endResult: null,
     dynastyTerm: 1,
   };
@@ -105,11 +118,13 @@ export function createNewGame(difficulty: Difficulty = "normal", legacy?: Dynast
   const baseIndicators = createInitialIndicators();
   const initialIndicators = legacy ? applyEffects(baseIndicators, legacy.indicatorBonus) : baseIndicators;
   const initialSectors = createInitialSectors();
+  const initialThreats = computeThreats(initialIndicators, initialSectors);
   return {
     phase: "playing",
     difficulty,
     indicators: initialIndicators,
     sectors: initialSectors,
+    threats: initialThreats,
     turn: 1,
     totalTurns: TOTAL_TURNS,
     deck: deck.slice(1),
@@ -117,6 +132,7 @@ export function createNewGame(difficulty: Difficulty = "normal", legacy?: Dynast
     history: [],
     indicatorSnapshots: [initialIndicators],
     sectorSnapshots: [initialSectors],
+    threatSnapshots: [initialThreats],
     endResult: null,
     dynastyTerm: legacy?.dynastyTerm ?? 1,
   };
@@ -189,6 +205,26 @@ function checkCriticalFailure(indicators: Indicators): EndResult | null {
   return null;
 }
 
+/**
+ * Verifica se alguma via de queda (impeachment, golpe, levante) atingiu o limite que
+ * encerra o mandato — checado separadamente do colapso de indicador porque o risco pode
+ * virar crítico bem antes de qualquer indicador isolado chegar a zero.
+ */
+function checkDownfall(threats: Threats, indicators: Indicators): EndResult | null {
+  for (const key of THREAT_ORDER) {
+    if (threats[key] >= DOWNFALL_THRESHOLD) {
+      const meta = THREAT_META[key];
+      return {
+        victory: false,
+        title: meta.fallTitle,
+        narrative: meta.fallNarrative,
+        average: computeAverage(indicators),
+      };
+    }
+  }
+  return null;
+}
+
 function computeLegado(indicators: Indicators): EndResult {
   const average = computeAverage(indicators);
 
@@ -250,15 +286,20 @@ export function applyChoice(
   const sectors = applyEffects(state.sectors, combinedSectorEffects);
   const sectorSnapshots = [...state.sectorSnapshots, sectors];
 
-  const failure = checkCriticalFailure(indicators);
+  const threats = computeThreats(indicators, sectors);
+  const threatSnapshots = [...state.threatSnapshots, threats];
+
+  const failure = checkCriticalFailure(indicators) ?? checkDownfall(threats, indicators);
   if (failure) {
     return {
       ...state,
       indicators,
       sectors,
+      threats,
       history,
       indicatorSnapshots,
       sectorSnapshots,
+      threatSnapshots,
       phase: "ended",
       currentEvent: null,
       endResult: failure,
@@ -270,9 +311,11 @@ export function applyChoice(
       ...state,
       indicators,
       sectors,
+      threats,
       history,
       indicatorSnapshots,
       sectorSnapshots,
+      threatSnapshots,
       phase: "ended",
       currentEvent: null,
       endResult: computeLegado(indicators),
@@ -284,9 +327,11 @@ export function applyChoice(
     ...state,
     indicators,
     sectors,
+    threats,
     history,
     indicatorSnapshots,
     sectorSnapshots,
+    threatSnapshots,
     turn: state.turn + 1,
     deck: restDeck,
     currentEvent: nextEvent ?? null,

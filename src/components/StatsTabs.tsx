@@ -1,20 +1,23 @@
 import { useState } from "react";
 import { Dashboard } from "./Dashboard";
 import { SectorsPanel } from "./SectorsPanel";
-import type { IndicatorKey, Indicators, SectorKey, Sectors } from "../types";
+import { ThreatsPanel } from "./ThreatsPanel";
+import type { IndicatorKey, Indicators, SectorKey, Sectors, ThreatKey, Threats } from "../types";
 
 interface Props {
   sectors: Sectors;
   sectorDeltas?: Partial<Record<SectorKey, number>>;
   indicators: Indicators;
   indicatorDeltas?: Partial<Record<IndicatorKey, number>>;
+  threats: Threats;
+  threatDeltas?: Partial<Record<ThreatKey, number>>;
 }
 
-type Tab = "sectors" | "indicators";
+type Tab = "sectors" | "indicators" | "threats";
 
-/** Em telas muito estreitas, alterna entre os dois painéis por abas em vez de empilhar
-    os dois sempre — as duas grades juntas já ocupam a tela inteira nesses aparelhos. */
-export function StatsTabs({ sectors, sectorDeltas, indicators, indicatorDeltas }: Props) {
+/** Em telas muito estreitas, alterna entre os três painéis por abas em vez de empilhar
+    os três sempre — juntos já ocupam a tela inteira nesses aparelhos. */
+export function StatsTabs({ sectors, sectorDeltas, indicators, indicatorDeltas, threats, threatDeltas }: Props) {
   const [tab, setTab] = useState<Tab>("sectors");
 
   return (
@@ -38,14 +41,25 @@ export function StatsTabs({ sectors, sectorDeltas, indicators, indicatorDeltas }
         >
           Indicadores
         </button>
+        <button
+          type="button"
+          role="tab"
+          aria-selected={tab === "threats"}
+          className={tab === "threats" ? "active" : ""}
+          onClick={() => setTab("threats")}
+        >
+          Risco
+        </button>
       </div>
       {tab === "sectors" ? (
         <SectorsPanel sectors={sectors} lastDeltas={sectorDeltas} />
-      ) : (
+      ) : tab === "indicators" ? (
         <div className="indicators-panel">
           <span className="panel-heading">Indicadores</span>
           <Dashboard indicators={indicators} lastDeltas={indicatorDeltas} />
         </div>
+      ) : (
+        <ThreatsPanel threats={threats} lastDeltas={threatDeltas} />
       )}
     </div>
   );

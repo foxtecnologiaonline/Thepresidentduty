@@ -9,8 +9,10 @@ import { SectorsPanel } from "./components/SectorsPanel";
 import { StartScreen } from "./components/StartScreen";
 import { StatsTabs } from "./components/StatsTabs";
 import { ThemeToggle } from "./components/ThemeToggle";
+import { ThreatsPanel } from "./components/ThreatsPanel";
 import { ACHIEVEMENTS } from "./data/achievements";
 import { ACTIONS } from "./data/actions";
+import { computeThreatDeltas } from "./data/threats";
 import {
   applyChoice,
   createNewGame,
@@ -179,6 +181,11 @@ function App() {
     ? scaleEffects(mergeEffects(resolution.choice.sectorEffects ?? {}, resolution.action?.sectorEffects), multiplier)
     : undefined;
 
+  const threatDeltas =
+    resolution && game.threatSnapshots.length >= 2
+      ? computeThreatDeltas(game.threats, game.threatSnapshots[game.threatSnapshots.length - 2])
+      : undefined;
+
   return (
     <div className="app-shell">
       <div className="top-bar">
@@ -208,6 +215,8 @@ function App() {
               sectorDeltas={sectorDeltas}
               indicators={game.indicators}
               indicatorDeltas={dashboardDeltas}
+              threats={game.threats}
+              threatDeltas={threatDeltas}
             />
           ) : (
             <>
@@ -216,6 +225,7 @@ function App() {
                 <span className="panel-heading">Indicadores</span>
                 <Dashboard indicators={game.indicators} lastDeltas={dashboardDeltas} />
               </div>
+              <ThreatsPanel threats={game.threats} lastDeltas={threatDeltas} />
             </>
           )}
 

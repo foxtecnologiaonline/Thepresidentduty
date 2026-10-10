@@ -1,3 +1,4 @@
+import { computeThreats } from "../data/threats";
 import type { Difficulty, GameState } from "../types";
 
 export interface BestResult {
@@ -192,12 +193,26 @@ function isLikelyGameState(value: unknown): value is GameState {
   );
 }
 
+/** Preenche `threats`/`threatSnapshots` num save de uma versão anterior à introdução do
+    risco de queda, para não travar ao retomar um mandato em andamento salvo antes dessa
+    mecânica existir. */
+function withThreats(state: GameState): GameState {
+  if (state.threats && state.threatSnapshots) return state;
+  return {
+    ...state,
+    threats: computeThreats(state.indicators, state.sectors),
+    threatSnapshots: state.indicatorSnapshots.map((indicators, index) =>
+      computeThreats(indicators, state.sectorSnapshots[index] ?? state.sectors)
+    ),
+  };
+}
+
 export function loadInProgressGame(): GameState | null {
   try {
     const raw = localStorage.getItem(IN_PROGRESS_KEY);
     if (!raw) return null;
     const parsed = JSON.parse(raw);
-    return isLikelyGameState(parsed) && parsed.phase === "playing" ? parsed : null;
+    return isLikelyGameState(parsed) && parsed.phase === "playing" ? withThreats(parsed) : null;
   } catch {
     return null;
   }

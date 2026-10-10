@@ -40,7 +40,8 @@
 }
 
 .sectors-panel,
-.indicators-panel {
+.indicators-panel,
+.threats-panel {
   display: flex;
   flex-direction: column;
 }
