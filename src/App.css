@@ -558,11 +558,11 @@
 }
 
 .lean-highlight-tag.left {
-  color: #e5484d;
+  color: var(--danger);
 }
 
 .lean-highlight-tag.right {
-  color: #3b82f6;
+  color: var(--lean-right);
 }
 
 /* Difficulty picker (start screen) */
@@ -840,7 +840,7 @@
   position: absolute;
   top: -6px;
   right: -6px;
-  background: var(--danger);
+  background: var(--danger-strong);
   color: #fff;
   font-size: 9px;
   font-weight: 800;
