@@ -63,7 +63,11 @@ jobs:
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
         run: |
-          curl -fsS -X POST "https://api.vercel.com/v13/deployments?teamId=team_aoEQmiMuXBXiuF7HKl9u2BTX" \
+          # forceNew=1 é obrigatório: sem ele a Vercel deduplica contra o
+          # preview build que o próprio git integration já disparou pra
+          # esse mesmo commit, e devolve ESSE deployment (target: preview)
+          # em vez de criar um novo com target: production.
+          curl -fsS -X POST "https://api.vercel.com/v13/deployments?teamId=team_aoEQmiMuXBXiuF7HKl9u2BTX&forceNew=1" \
             -H "Authorization: Bearer $VERCEL_TOKEN" \
             -H "Content-Type: application/json" \
             -d '{
