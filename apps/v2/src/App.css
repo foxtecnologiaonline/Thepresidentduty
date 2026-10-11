@@ -854,8 +854,27 @@
 
 .top-bar {
   display: flex;
+  align-items: center;
   justify-content: flex-end;
+  gap: 8px;
   margin-bottom: -8px;
+}
+
+.exit-button {
+  height: 34px;
+  padding: 0 14px;
+  border-radius: 10px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.exit-button:hover {
+  border-color: var(--gold);
+  color: var(--gold);
 }
 
 .theme-toggle {
@@ -987,6 +1006,25 @@
 
 .onboarding-modal .primary-button {
   align-self: center;
+}
+
+.confirm-modal {
+  max-width: 380px;
+  text-align: center;
+  align-items: center;
+}
+
+.confirm-text {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.confirm-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
 }
 
 /* Mandate history (start screen) */

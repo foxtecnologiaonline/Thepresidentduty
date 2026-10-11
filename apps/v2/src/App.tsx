@@ -3,6 +3,7 @@ import "./App.css";
 import { Dashboard } from "./components/Dashboard";
 import { EndScreen } from "./components/EndScreen";
 import { EventCard } from "./components/EventCard";
+import { ExitConfirmModal } from "./components/ExitConfirmModal";
 import { OnboardingModal } from "./components/OnboardingModal";
 import { ResolutionPanel } from "./components/ResolutionPanel";
 import { SectorsPanel } from "./components/SectorsPanel";
@@ -56,6 +57,7 @@ function App() {
   const [earnedAchievementIds, setEarnedAchievementIds] = useState<Set<string>>(new Set());
   const [newAchievementIds, setNewAchievementIds] = useState<Set<string>>(new Set());
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [showExitConfirm, setShowExitConfirm] = useState(false);
   const [theme, toggleTheme] = useTheme();
   const isNarrowViewport = useNarrowViewport(NARROW_TABS_BREAKPOINT);
   // Trava síncrona contra duplo clique/duplo disparo do evento antes do próximo render:
@@ -160,13 +162,30 @@ function App() {
     isProcessingChoice.current = false;
   }
 
+  function handleConfirmExit() {
+    clearInProgressGame();
+    setGame(createStartState());
+    setResolution(null);
+    setSelectedAction(null);
+    setShowExitConfirm(false);
+    isProcessingChoice.current = false;
+  }
+
   return (
     <div className="app-shell">
       <div className="top-bar">
+        {game.phase !== "start" && (
+          <button type="button" className="exit-button" onClick={() => setShowExitConfirm(true)}>
+            Sair
+          </button>
+        )}
         <ThemeToggle theme={theme} onToggle={toggleTheme} />
       </div>
 
       {showOnboarding && <OnboardingModal onDismiss={handleDismissOnboarding} />}
+      {showExitConfirm && (
+        <ExitConfirmModal onConfirm={handleConfirmExit} onCancel={() => setShowExitConfirm(false)} />
+      )}
 
       {game.phase === "start" && (
         <StartScreen onStart={startFresh} bestResult={bestResult} mandateHistory={mandateHistory} />
