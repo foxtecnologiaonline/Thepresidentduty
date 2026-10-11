@@ -1,0 +1,56 @@
+name: Sync to deploy/combined
+
+# Mantém o deploy combinado (v1.0 + v2.0 + tela de escolha) atualizado sem
+# precisar de passo manual: cada push aqui substitui só a pasta apps/v1 ou
+# apps/v2 correspondente em deploy/combined — nunca mexe na outra versão
+# nem na tela de escolha. Produção na Vercel segue a partir daí (Production
+# Branch = deploy/combined).
+on:
+  push:
+    branches:
+      - claude/presidential-simulation-game-xyl92d
+      - feature/v2.0-reacoes-setoriais
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Determine target app directory
+        id: vars
+        run: |
+          if [ "${{ github.ref_name }}" = "claude/presidential-simulation-game-xyl92d" ]; then
+            echo "appdir=apps/v1" >> "$GITHUB_OUTPUT"
+          else
+            echo "appdir=apps/v2" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Checkout deploy/combined
+        uses: actions/checkout@v4
+        with:
+          ref: deploy/combined
+          fetch-depth: 1
+
+      - name: Replace ${{ steps.vars.outputs.appdir }} with this branch's content
+        run: |
+          git fetch origin "${{ github.ref_name }}" --depth=1
+          rm -rf "${{ steps.vars.outputs.appdir }}"
+          mkdir -p "${{ steps.vars.outputs.appdir }}"
+          git archive "origin/${{ github.ref_name }}" | tar -x -C "${{ steps.vars.outputs.appdir }}"
+          # vercel.json (quando presente) é config de deploy da branch de
+          # origem, não faz sentido dentro da subpasta do app combinado.
+          rm -f "${{ steps.vars.outputs.appdir }}/vercel.json"
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add "${{ steps.vars.outputs.appdir }}"
+          if git diff --cached --quiet; then
+            echo "Nada para sincronizar."
+            exit 0
+          fi
+          git commit -m "Sincroniza ${{ steps.vars.outputs.appdir }} a partir de ${{ github.ref_name }} (${{ github.sha }})"
+          git push origin HEAD:deploy/combined
