@@ -78,7 +78,7 @@ export function EventCard({
 
       <div
         className={`event-card${event.crisisFor ? " crisis" : ""}`}
-        style={{ borderTopColor: CATEGORY_META[event.category].color }}
+        style={event.crisisFor ? undefined : { borderTopColor: CATEGORY_META[event.category].color }}
       >
         {event.crisisFor && (
           <span className="crisis-badge">

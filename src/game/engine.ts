@@ -328,7 +328,6 @@ export function applyChoice(
 
   const { deck: deckWithCrises, triggeredCrises } = forceNewCrisisEvents(
     applyEventTrigger(state.deck, choice.triggersEventId),
-    state.threats,
     threats,
     state.triggeredCrises
   );
@@ -350,21 +349,20 @@ export function applyChoice(
 }
 
 /**
- * Força no topo do baralho o evento de crise de cada via que cruzou para o estágio
- * Crítico nesse turno pela primeira vez no mandato — a chance concreta de reagir antes
- * que o risco vire queda de fato. No máximo uma vez por via por mandato.
+ * Força no topo do baralho o evento de crise de cada via que está em estágio Crítico e
+ * ainda não teve seu evento disparado nesse mandato — a chance concreta de reagir antes
+ * que o risco vire queda de fato. No máximo uma vez por via por mandato: não depende de
+ * flagrar o cruzamento exato do limiar num único turno (o que deixaria de fora, por
+ * exemplo, um risco que já nasce crítico por um bônus de dinastia ou um save migrado de
+ * uma versão anterior a essa mecânica), só de "está crítico agora e ainda não disparou".
  */
 function forceNewCrisisEvents(
   deck: GameEvent[],
-  previousThreats: Threats,
   currentThreats: Threats,
   triggeredSoFar: ThreatKey[]
 ): { deck: GameEvent[]; triggeredCrises: ThreatKey[] } {
   const newlyCritical = THREAT_ORDER.filter(
-    (key) =>
-      currentThreats[key] >= CRITICO_THRESHOLD &&
-      previousThreats[key] < CRITICO_THRESHOLD &&
-      !triggeredSoFar.includes(key)
+    (key) => currentThreats[key] >= CRITICO_THRESHOLD && !triggeredSoFar.includes(key)
   );
   if (newlyCritical.length === 0) {
     return { deck, triggeredCrises: triggeredSoFar };
