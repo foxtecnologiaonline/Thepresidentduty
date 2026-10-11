@@ -26,11 +26,13 @@ export const TOTAL_TURNS = 16;
 
 const QUARTER_MONTHS = ["Jan–Mar", "Abr–Jun", "Jul–Set", "Out–Dez"];
 
-/** Multiplica a magnitude de todos os efeitos (escolha + diretiva); dificuldade não muda as regras, só o quanto cada decisão pesa. */
+/** Multiplica a magnitude de todos os efeitos (escolha + diretiva); dificuldade não muda as regras, só o quanto cada decisão pesa.
+    Valores revisados para cima: o jogo original raramente ameaçava de verdade um mandato em
+    partidas com decisões variadas — cada escolha precisa doer, inclusive no Normal. */
 export const DIFFICULTY_MULTIPLIERS: Record<Difficulty, number> = {
-  facil: 0.7,
-  normal: 1,
-  dificil: 1.35,
+  facil: 0.85,
+  normal: 1.3,
+  dificil: 1.75,
 };
 
 export const DIFFICULTY_LABELS: Record<Difficulty, string> = {
