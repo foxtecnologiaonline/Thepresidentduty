@@ -3,8 +3,8 @@ name: Sync to deploy/combined
 # Mantém o deploy combinado (v1.0 + v2.0 + tela de escolha) atualizado sem
 # precisar de passo manual: cada push aqui substitui só a pasta apps/v1 ou
 # apps/v2 correspondente em deploy/combined — nunca mexe na outra versão
-# nem na tela de escolha. Produção na Vercel segue a partir daí (Production
-# Branch = deploy/combined).
+# nem na tela de escolha — e, se algo mudou, publica direto em produção na
+# Vercel via API (secret VERCEL_TOKEN).
 on:
   push:
     branches:
@@ -44,13 +44,36 @@ jobs:
           rm -f "${{ steps.vars.outputs.appdir }}/vercel.json"
 
       - name: Commit and push if changed
+        id: sync
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add "${{ steps.vars.outputs.appdir }}"
           if git diff --cached --quiet; then
             echo "Nada para sincronizar."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
           git commit -m "Sincroniza ${{ steps.vars.outputs.appdir }} a partir de ${{ github.ref_name }} (${{ github.sha }})"
           git push origin HEAD:deploy/combined
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Trigger Vercel production deployment
+        if: steps.sync.outputs.changed == 'true'
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          curl -fsS -X POST "https://api.vercel.com/v13/deployments?teamId=team_aoEQmiMuXBXiuF7HKl9u2BTX" \
+            -H "Authorization: Bearer $VERCEL_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "name": "thepresidentduty",
+              "project": "thepresidentduty",
+              "target": "production",
+              "gitSource": {
+                "type": "github",
+                "org": "foxtecnologiaonline",
+                "repo": "Thepresidentduty",
+                "ref": "deploy/combined"
+              }
+            }'
