@@ -486,7 +486,7 @@
   position: relative;
   height: 8px;
   border-radius: 4px;
-  background: linear-gradient(90deg, #e5484d, #8b8f99, #3b82f6);
+  background: linear-gradient(90deg, var(--danger), #8b8f99, var(--lean-right));
   margin-bottom: 6px;
 }
 

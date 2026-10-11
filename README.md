@@ -14,10 +14,10 @@ indicador crítico zerar.
 - Além de reagir ao evento do turno, você pode emitir uma diretiva presidencial por
   conta própria (no máximo uma por trimestre) para empurrar algum indicador na direção
   que quiser — com uma contrapartida real.
-- Três indicadores são críticos (**economia**, **popularidade** e **governabilidade**):
-  zerar qualquer um deles encerra o mandato imediatamente. Chegar ao fim dos 16
-  trimestres sem isso acontecer é uma vitória, com um título final que varia conforme a
-  média geral dos indicadores.
+- Quatro indicadores são críticos (**economia**, **popularidade**, **segurança** e
+  **governabilidade**): zerar qualquer um deles encerra o mandato imediatamente. Chegar
+  ao fim dos 16 trimestres sem isso acontecer é uma vitória, com um título final que
+  varia conforme a média geral dos indicadores.
 - Escolha a dificuldade (fácil, normal, difícil) antes de começar: ela multiplica o
   quanto cada decisão pesa, sem mudar as regras do jogo.
 - Ao final, um relatório mostra a trajetória dos indicadores, comparação com seu

@@ -7,5 +7,8 @@ export default defineConfig({
     environment: "jsdom",
     include: ["src/**/*.test.{ts,tsx}"],
     setupFiles: ["src/test/setup.ts"],
+    // Reaproveita um único ambiente jsdom entre arquivos em vez de recriá-lo a cada um
+    // (já isolamos entre testes com cleanup()/localStorage.clear() no setup/arquivos).
+    isolate: false,
   },
 });

@@ -12,6 +12,7 @@ export default defineConfig({
         name: 'A Presidência',
         short_name: 'Presidência',
         description: 'Simulador presidencial de decisões e indicadores de governo.',
+        lang: 'pt-BR',
         theme_color: '#0b1220',
         background_color: '#0b1220',
         display: 'standalone',
