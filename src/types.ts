@@ -114,10 +114,12 @@ export interface PresidentialAction {
 
 /**
  * Caminhos de queda do presidente: risco acumulado de ser retirado do poder por vias
- * diferentes do colapso de um indicador crítico isolado. Cada um é calculado a partir de
- * indicadores e setores diferentes, então reagir à crise certa (não só "subir tudo") importa.
+ * diferentes do colapso de um indicador crítico isolado. Cada setor da sociedade tem o seu
+ * próprio instrumento, coerente com sua posição (Congresso vota impeachment, Forças Armadas
+ * dão golpe, empresariado promove fuga de capitais etc.) — reagir à crise certa (não só
+ * "subir tudo") importa.
  */
-export type ThreatKey = "impeachment" | "golpe" | "levante";
+export type ThreatKey = "impeachment" | "golpe" | "levante" | "greveGeral" | "fugaCapitais" | "cassacaoJudicial";
 
 export type Threats = Record<ThreatKey, number>;
 

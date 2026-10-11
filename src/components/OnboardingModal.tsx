@@ -19,10 +19,11 @@ export function OnboardingModal({ onDismiss }: Props) {
             mas moldam o relatório final, algumas conquistas e o risco de queda.
           </li>
           <li>
-            <strong>Risco de Queda</strong> — Impeachment, Golpe Militar e Levante Popular são três caminhos
-            independentes para o fim do seu governo, cada um alimentado por indicadores e setores diferentes.
-            Eles sobem e descem com suas decisões; se algum chegar ao limite, seu mandato acaba por aquela via
-            — mesmo sem nenhum indicador ter zerado.
+            <strong>Risco de Queda</strong> — cada setor da sociedade tem seu próprio instrumento para
+            tirá-lo do poder: Políticos articulam Impeachment, Militares dão Golpe, População faz Levante,
+            Movimentos Sociais decretam Greve Geral, Empresariado promove Fuga de Capitais e Acadêmicos
+            sustentam uma Cassação Judicial. Os seis sobem e descem com suas decisões; se algum chegar ao
+            limite, seu mandato acaba por aquela via — mesmo sem nenhum indicador ter zerado.
           </li>
           <li>
             <strong>Diretivas</strong> — a cada trimestre você também pode emitir uma diretiva própria
