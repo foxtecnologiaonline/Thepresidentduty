@@ -1,7 +1,8 @@
 {
   "name": "thepresidentduty",
   "private": true,
-  "version": "0.0.0",
+  "version": "2.0.0",
+  "description": "A Presidência — Seis Setores, Seis Ameaças: simulador de decisões presidenciais com risco de queda gradual por setor.",
   "type": "module",
   "scripts": {
     "dev": "vite",
