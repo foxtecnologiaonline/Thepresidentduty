@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type RefObject } from "react";
+import { track } from "@vercel/analytics/react";
 
 interface Props {
   text: string;
@@ -8,6 +9,8 @@ interface Props {
   idleLabel: string;
   /** Nome do arquivo baixado/compartilhado, sem extensão. */
   filename: string;
+  /** Identifica qual botão foi usado, só para o evento de analytics. */
+  kind: "resumido" | "completo";
 }
 
 type Status = "idle" | "working" | "shared" | "downloaded" | "error";
@@ -52,7 +55,7 @@ async function withFullyExpanded<T>(root: HTMLElement, run: () => Promise<T>): P
   }
 }
 
-export function ShareButton({ text, targetRef, idleLabel, filename }: Props) {
+export function ShareButton({ text, targetRef, idleLabel, filename, kind }: Props) {
   const [status, setStatus] = useState<Status>("idle");
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -92,6 +95,7 @@ export function ShareButton({ text, targetRef, idleLabel, filename }: Props) {
         try {
           await navigator.share({ files: [file], title: "A Presidência", text });
           setStatus("shared");
+          track("Print gerado", { tipo: kind, metodo: "compartilhado" });
           scheduleReset();
           return;
         } catch {
@@ -106,6 +110,7 @@ export function ShareButton({ text, targetRef, idleLabel, filename }: Props) {
       link.click();
       URL.revokeObjectURL(url);
       setStatus("downloaded");
+      track("Print gerado", { tipo: kind, metodo: "download" });
     } catch {
       setStatus("error");
     }

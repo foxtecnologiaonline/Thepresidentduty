@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { Analytics, track } from "@vercel/analytics/react";
 import "./App.css";
 import { Dashboard } from "./components/Dashboard";
 import { EndScreen } from "./components/EndScreen";
@@ -57,6 +58,10 @@ const INITIAL_POPULARIDADE = createInitialIndicators().popularidade;
 
 const NARROW_TABS_BREAKPOINT = 380;
 
+/** Identifica a versão nos eventos de analytics — fixo por branch, cada versão é
+    publicada a partir do seu próprio código-fonte. */
+const VERSION = "v1";
+
 function App() {
   const [game, setGame] = useState<GameState>(() => loadInProgressGame() ?? createStartState());
   const [resolution, setResolution] = useState<Resolution | null>(null);
@@ -95,6 +100,7 @@ function App() {
     if (!hasSeenOnboarding()) {
       setShowOnboarding(true);
     }
+    track("Jogo iniciado", { versao: VERSION, dificuldade: difficulty, tipo: "novo" });
   }
 
   function handleDismissOnboarding() {
@@ -115,6 +121,7 @@ function App() {
     setEarnedAchievementIds(new Set());
     setNewAchievementIds(new Set());
     isProcessingChoice.current = false;
+    track("Jogo iniciado", { versao: VERSION, dificuldade: game.difficulty, tipo: "dinastia" });
   }
 
   function handleNewDynasty() {
@@ -162,6 +169,13 @@ function App() {
       const isNew = new Set(earnedNow.filter((id) => !previouslyUnlocked.has(id)));
       setEarnedAchievementIds(new Set(earnedNow));
       setNewAchievementIds(isNew);
+
+      track("Mandato concluído", {
+        versao: VERSION,
+        resultado: next.endResult.victory ? "vitória" : "derrota",
+        titulo: next.endResult.title,
+        trimestresJogados: next.history.length,
+      });
     }
   }
 
@@ -172,6 +186,7 @@ function App() {
   }
 
   function handleConfirmExit() {
+    track("Mandato abandonado", { versao: VERSION, trimestreAbandonado: game.turn });
     clearInProgressGame();
     setGame(createStartState());
     setResolution(null);
@@ -192,6 +207,7 @@ function App() {
 
   return (
     <div className="app-shell">
+      <Analytics />
       <div className="top-bar">
         {game.phase !== "start" && (
           <button type="button" className="exit-button" onClick={() => setShowExitConfirm(true)}>
