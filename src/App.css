@@ -40,7 +40,8 @@
 }
 
 .sectors-panel,
-.indicators-panel {
+.indicators-panel,
+.threats-panel {
   display: flex;
   flex-direction: column;
 }
@@ -95,6 +96,21 @@
   display: flex;
   align-items: center;
   gap: 4px;
+}
+
+.indicator-delta {
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 4px;
+  padding: 1px 4px;
+}
+
+.indicator-delta.positive {
+  color: var(--ok);
+}
+
+.indicator-delta.negative {
+  color: var(--danger);
 }
 
 .indicator-track {
@@ -206,7 +222,21 @@
   line-height: 1.25;
 }
 
+.action-chip .effects-preview {
+  font-size: 11px;
+  gap: 5px;
+}
+
 .action-summary {
+  border-top: 1px dashed var(--border);
+  padding-top: 12px;
+  margin-top: 2px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sector-repercussion {
   border-top: 1px dashed var(--border);
   padding-top: 12px;
   margin-top: 2px;
@@ -275,6 +305,28 @@
 
 .choice-label {
   font-weight: 600;
+}
+
+.effects-preview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.effects-preview.large {
+  font-size: 14px;
+  gap: 10px;
+  margin: 4px 0 8px;
+}
+
+.effects-preview .positive {
+  color: var(--ok);
+}
+
+.effects-preview .negative {
+  color: var(--danger);
 }
 
 .resolution h2 {
@@ -827,8 +879,8 @@
 }
 
 /* Wrapper só do conteúdo de resultado (sem os botões de ação nem a dica de dinastia) —
-   é o que o botão "Compartilhar resultado" captura como imagem; mesmo espaçamento que
-   esses elementos tinham como filhos diretos de .screen antes deste wrapper existir. */
+   é o que os botões "Gerar print" capturam como imagem; mesmo espaçamento que esses
+   elementos tinham como filhos diretos de .screen antes deste wrapper existir. */
 .end-screen-capture {
   display: flex;
   flex-direction: column;
@@ -915,6 +967,28 @@
   text-transform: uppercase;
   letter-spacing: 0.04em;
   white-space: nowrap;
+}
+
+/* Evento de crise (forçado no baralho quando uma via de queda entra em estágio Crítico) */
+
+.event-card.crisis {
+  border-top-color: var(--danger);
+  box-shadow: 0 0 0 1px rgba(229, 72, 77, 0.35);
+}
+
+.crisis-badge {
+  display: inline-block;
+  align-self: flex-start;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--danger);
+  background: rgba(229, 72, 77, 0.12);
+  border: 1px solid var(--danger);
+  border-radius: 999px;
+  padding: 4px 10px;
+  margin-bottom: 10px;
 }
 
 /* Chain hint (consequência futura de uma escolha) */

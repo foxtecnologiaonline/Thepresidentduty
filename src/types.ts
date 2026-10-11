@@ -25,10 +25,9 @@ export interface IndicatorMeta {
 
 /**
  * Setores da sociedade: camada separada dos indicadores de governo, acompanhando a
- * aprovação de grupos específicos. Cada setor zerar encerra o mandato imediatamente,
- * com uma reação narrativa própria (golpe militar, impeachment, manifestações...) —
- * é o grupo específico que se volta contra o governo, não uma métrica institucional
- * abstrata chegando a zero.
+ * aprovação de grupos específicos. Não tem limiar crítico nem afeta vitória/derrota
+ * (que continua baseada só nos indicadores) — é um retrato à parte de quem o governo
+ * está agradando ou afastando, visível no dashboard e no relatório final.
  */
 export type SectorKey =
   | "politicos"
@@ -46,10 +45,6 @@ export interface SectorMeta {
   icon: string;
   /** Explicação curta do que o setor representa, usada em tooltip. */
   description: string;
-  /** Título do desfecho quando este setor zera (ex.: "Impeachment", "Revolta Armada"). */
-  collapseTitle: string;
-  /** Narrativa do desfecho quando este setor zera. */
-  loseMessage: string;
 }
 
 /**
@@ -99,6 +94,9 @@ export interface GameEvent {
   description: string;
   category: EventCategory;
   choices: EventChoice[];
+  /** Presente só nos eventos de crise: via de queda que esse evento responde — o jogo o
+      força no baralho assim que essa via entra em estágio Crítico pela primeira vez. */
+  crisisFor?: ThreatKey;
 }
 
 /**
@@ -117,6 +115,28 @@ export interface PresidentialAction {
   minTurn?: number;
 }
 
+/**
+ * Caminhos de queda do presidente: risco acumulado de ser retirado do poder por vias
+ * diferentes do colapso de um indicador crítico isolado. Cada setor da sociedade tem o seu
+ * próprio instrumento, coerente com sua posição (Congresso vota impeachment, Forças Armadas
+ * dão golpe, empresariado promove fuga de capitais etc.) — reagir à crise certa (não só
+ * "subir tudo") importa.
+ */
+export type ThreatKey = "impeachment" | "golpe" | "levante" | "greveGeral" | "fugaCapitais" | "cassacaoJudicial";
+
+export type Threats = Record<ThreatKey, number>;
+
+export interface ThreatMeta {
+  key: ThreatKey;
+  label: string;
+  icon: string;
+  /** Explicação curta do que alimenta esse risco, usada em tooltip. */
+  description: string;
+  /** Narrativa de derrota quando esse risco chega ao limite e encerra o mandato. */
+  fallTitle: string;
+  fallNarrative: string;
+}
+
 export type GamePhase = "start" | "playing" | "ended";
 
 export type Difficulty = "facil" | "normal" | "dificil";
@@ -133,6 +153,8 @@ export interface GameState {
   difficulty: Difficulty;
   indicators: Indicators;
   sectors: Sectors;
+  /** Risco atual de queda por via (impeachment, golpe, levante), recalculado a cada turno. */
+  threats: Threats;
   turn: number;
   totalTurns: number;
   deck: GameEvent[];
@@ -142,6 +164,10 @@ export interface GameState {
   indicatorSnapshots: Indicators[];
   /** Retrato dos setores ao final de cada turno (índice 0 = estado inicial). */
   sectorSnapshots: Sectors[];
+  /** Retrato do risco de queda ao final de cada turno (índice 0 = estado inicial). */
+  threatSnapshots: Threats[];
+  /** Vias cujo evento de crise já foi forçado no baralho nesse mandato — no máximo um por via. */
+  triggeredCrises: ThreatKey[];
   endResult: EndResult | null;
   /** Quantos mandatos consecutivos dessa dinastia já foram jogados (1 = o primeiro). */
   dynastyTerm: number;

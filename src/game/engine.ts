@@ -1,7 +1,19 @@
+import { CRISIS_EVENTS } from "../data/crisisEvents";
 import { EVENTS } from "../data/events";
 import { CRITICAL_INDICATORS, INDICATOR_META, INDICATOR_ORDER, createInitialIndicators } from "../data/indicators";
-import { SECTOR_META, SECTOR_ORDER, createInitialSectors } from "../data/sectors";
-import type { Difficulty, EndResult, EventChoice, GameEvent, GameState, Indicators, PresidentialAction, Sectors } from "../types";
+import { createInitialSectors } from "../data/sectors";
+import { computeThreats, CRITICO_THRESHOLD, DOWNFALL_THRESHOLD, THREAT_META, THREAT_ORDER } from "../data/threats";
+import type {
+  Difficulty,
+  EndResult,
+  EventChoice,
+  GameEvent,
+  GameState,
+  Indicators,
+  PresidentialAction,
+  ThreatKey,
+  Threats,
+} from "../types";
 
 /** Legado que um mandato concluído transmite ao próximo da mesma dinastia (Nova Partida+). */
 export interface DynastyLegacy {
@@ -14,11 +26,13 @@ export const TOTAL_TURNS = 16;
 
 const QUARTER_MONTHS = ["Jan–Mar", "Abr–Jun", "Jul–Set", "Out–Dez"];
 
-/** Multiplica a magnitude de todos os efeitos (escolha + diretiva); dificuldade não muda as regras, só o quanto cada decisão pesa. */
+/** Multiplica a magnitude de todos os efeitos (escolha + diretiva); dificuldade não muda as regras, só o quanto cada decisão pesa.
+    Valores revisados para cima: o jogo original raramente ameaçava de verdade um mandato em
+    partidas com decisões variadas — cada escolha precisa doer, inclusive no Normal. */
 export const DIFFICULTY_MULTIPLIERS: Record<Difficulty, number> = {
-  facil: 0.7,
-  normal: 1,
-  dificil: 1.35,
+  facil: 0.85,
+  normal: 1.3,
+  dificil: 1.75,
 };
 
 export const DIFFICULTY_LABELS: Record<Difficulty, string> = {
@@ -83,11 +97,13 @@ export function buildDeck(): GameEvent[] {
 export function createStartState(): GameState {
   const initialIndicators = createInitialIndicators();
   const initialSectors = createInitialSectors();
+  const initialThreats = computeThreats(initialIndicators, initialSectors);
   return {
     phase: "start",
     difficulty: "normal",
     indicators: initialIndicators,
     sectors: initialSectors,
+    threats: initialThreats,
     turn: 0,
     totalTurns: TOTAL_TURNS,
     deck: [],
@@ -95,6 +111,8 @@ export function createStartState(): GameState {
     history: [],
     indicatorSnapshots: [initialIndicators],
     sectorSnapshots: [initialSectors],
+    threatSnapshots: [initialThreats],
+    triggeredCrises: [],
     endResult: null,
     dynastyTerm: 1,
   };
@@ -105,11 +123,13 @@ export function createNewGame(difficulty: Difficulty = "normal", legacy?: Dynast
   const baseIndicators = createInitialIndicators();
   const initialIndicators = legacy ? applyEffects(baseIndicators, legacy.indicatorBonus) : baseIndicators;
   const initialSectors = createInitialSectors();
+  const initialThreats = computeThreats(initialIndicators, initialSectors);
   return {
     phase: "playing",
     difficulty,
     indicators: initialIndicators,
     sectors: initialSectors,
+    threats: initialThreats,
     turn: 1,
     totalTurns: TOTAL_TURNS,
     deck: deck.slice(1),
@@ -117,6 +137,8 @@ export function createNewGame(difficulty: Difficulty = "normal", legacy?: Dynast
     history: [],
     indicatorSnapshots: [initialIndicators],
     sectorSnapshots: [initialSectors],
+    threatSnapshots: [initialThreats],
+    triggeredCrises: [],
     endResult: null,
     dynastyTerm: legacy?.dynastyTerm ?? 1,
   };
@@ -189,14 +211,19 @@ function checkCriticalFailure(indicators: Indicators): EndResult | null {
   return null;
 }
 
-/** Setor zerar encerra o mandato imediatamente, com a reação narrativa própria daquele grupo. */
-function checkSectorCollapse(sectors: Sectors, indicators: Indicators): EndResult | null {
-  for (const key of SECTOR_ORDER) {
-    if (sectors[key] <= 0) {
+/**
+ * Verifica se alguma via de queda (impeachment, golpe, levante) atingiu o limite que
+ * encerra o mandato — checado separadamente do colapso de indicador porque o risco pode
+ * virar crítico bem antes de qualquer indicador isolado chegar a zero.
+ */
+function checkDownfall(threats: Threats, indicators: Indicators): EndResult | null {
+  for (const key of THREAT_ORDER) {
+    if (threats[key] >= DOWNFALL_THRESHOLD) {
+      const meta = THREAT_META[key];
       return {
         victory: false,
-        title: SECTOR_META[key].collapseTitle,
-        narrative: SECTOR_META[key].loseMessage,
+        title: meta.fallTitle,
+        narrative: meta.fallNarrative,
         average: computeAverage(indicators),
       };
     }
@@ -265,33 +292,23 @@ export function applyChoice(
   const sectors = applyEffects(state.sectors, combinedSectorEffects);
   const sectorSnapshots = [...state.sectorSnapshots, sectors];
 
-  const failure = checkCriticalFailure(indicators);
+  const threats = computeThreats(indicators, sectors);
+  const threatSnapshots = [...state.threatSnapshots, threats];
+
+  const failure = checkCriticalFailure(indicators) ?? checkDownfall(threats, indicators);
   if (failure) {
     return {
       ...state,
       indicators,
       sectors,
+      threats,
       history,
       indicatorSnapshots,
       sectorSnapshots,
+      threatSnapshots,
       phase: "ended",
       currentEvent: null,
       endResult: failure,
-    };
-  }
-
-  const collapse = checkSectorCollapse(sectors, indicators);
-  if (collapse) {
-    return {
-      ...state,
-      indicators,
-      sectors,
-      history,
-      indicatorSnapshots,
-      sectorSnapshots,
-      phase: "ended",
-      currentEvent: null,
-      endResult: collapse,
     };
   }
 
@@ -300,26 +317,61 @@ export function applyChoice(
       ...state,
       indicators,
       sectors,
+      threats,
       history,
       indicatorSnapshots,
       sectorSnapshots,
+      threatSnapshots,
       phase: "ended",
       currentEvent: null,
       endResult: computeLegado(indicators),
     };
   }
 
-  const [nextEvent, ...restDeck] = applyEventTrigger(state.deck, choice.triggersEventId);
+  const { deck: deckWithCrises, triggeredCrises } = forceNewCrisisEvents(
+    applyEventTrigger(state.deck, choice.triggersEventId),
+    threats,
+    state.triggeredCrises
+  );
+  const [nextEvent, ...restDeck] = deckWithCrises;
   return {
     ...state,
     indicators,
     sectors,
+    threats,
     history,
     indicatorSnapshots,
     sectorSnapshots,
+    threatSnapshots,
+    triggeredCrises,
     turn: state.turn + 1,
     deck: restDeck,
     currentEvent: nextEvent ?? null,
+  };
+}
+
+/**
+ * Força no topo do baralho o evento de crise de cada via que está em estágio Crítico e
+ * ainda não teve seu evento disparado nesse mandato — a chance concreta de reagir antes
+ * que o risco vire queda de fato. No máximo uma vez por via por mandato: não depende de
+ * flagrar o cruzamento exato do limiar num único turno (o que deixaria de fora, por
+ * exemplo, um risco que já nasce crítico por um bônus de dinastia ou um save migrado de
+ * uma versão anterior a essa mecânica), só de "está crítico agora e ainda não disparou".
+ */
+function forceNewCrisisEvents(
+  deck: GameEvent[],
+  currentThreats: Threats,
+  triggeredSoFar: ThreatKey[]
+): { deck: GameEvent[]; triggeredCrises: ThreatKey[] } {
+  const newlyCritical = THREAT_ORDER.filter(
+    (key) => currentThreats[key] >= CRITICO_THRESHOLD && !triggeredSoFar.includes(key)
+  );
+  if (newlyCritical.length === 0) {
+    return { deck, triggeredCrises: triggeredSoFar };
+  }
+  return {
+    deck: [...newlyCritical.map((key) => CRISIS_EVENTS[key]), ...deck],
+    triggeredCrises: [...triggeredSoFar, ...newlyCritical],
   };
 }
 

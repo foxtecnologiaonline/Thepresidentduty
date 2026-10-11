@@ -5,9 +5,10 @@ import { StatBar } from "./StatBar";
 interface Props {
   meta: IndicatorMeta;
   value: number;
+  delta?: number;
 }
 
-export function IndicatorBar({ meta, value }: Props) {
+export function IndicatorBar({ meta, value, delta }: Props) {
   const isCriticalWarning = meta.critical && value <= CRITICAL_WARNING_THRESHOLD;
 
   return (
@@ -16,6 +17,7 @@ export function IndicatorBar({ meta, value }: Props) {
       label={meta.label}
       description={meta.description}
       value={value}
+      delta={delta}
       critical={isCriticalWarning}
     />
   );

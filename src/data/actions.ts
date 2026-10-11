@@ -61,6 +61,14 @@ export const ACTIONS: PresidentialAction[] = [
     minTurn: 5,
   },
   {
+    id: "fomento-cientifico",
+    label: "Fomento à Ciência e Pesquisa",
+    description: "Amplia bolsas, financiamento e autonomia para universidades e institutos de pesquisa.",
+    effects: { educacao: 4, economia: -3 },
+    sectorEffects: { academicos: 6 },
+    leaning: -1,
+  },
+  {
     id: "agenda-ambiental",
     label: "Agenda Ambiental",
     description: "Lança medidas de proteção ambiental e fiscalização do desmatamento.",
