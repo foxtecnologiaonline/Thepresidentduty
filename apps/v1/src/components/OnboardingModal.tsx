@@ -23,7 +23,7 @@ export function OnboardingModal({ onDismiss }: Props) {
             (opcional, no máximo uma), além de responder ao evento sorteado.
           </li>
         </ul>
-        <button type="button" className="primary-button" onClick={onDismiss}>
+        <button type="button" className="primary-button" onClick={onDismiss} autoFocus>
           Entendi, começar!
         </button>
       </div>
