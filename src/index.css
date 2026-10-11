@@ -9,16 +9,28 @@
   --accent-ink: #1a1200;
   --ok: #3ecf8e;
   --warning: #f2c14e;
-  --danger: #e5484d;
+  /* e5484d original lido como texto pequeno (indicator-delta, effects-preview etc.) só
+     atingia 4.06:1 contra --surface-2 — abaixo do mínimo 4.5:1 do WCAG AA para texto
+     pequeno. Clareado o quanto baste para passar sem perder a leitura de "perigo". */
+  --danger: #e75a5f;
+  /* Vermelho mais escuro reservado para fundo sólido com texto branco em cima (badge
+     "nova conquista"): com --danger clareado acima, branco sobre ele cairia a 3.3:1. */
+  --danger-strong: #b3282f;
+  /* Azul do espectro ideológico (direita): o antigo #3b82f6 só tinha 4.32:1 contra
+     --surface-2 no tema escuro. */
+  --lean-right: #4186f6;
 
   font: 16px/1.5 system-ui, "Segoe UI", Roboto, sans-serif;
   color-scheme: dark;
-  color: var(--text);
-  background: var(--bg);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
 }
 
 /* Tema claro opcional, alternado pelo jogador (ThemeToggle) e persistido — o escuro
@@ -30,11 +42,17 @@
   --text: #241d0f;
   --text-muted: #6d6248;
   --border: #ddd2b3;
-  --gold: #a3671b;
+  /* a3671b original só tinha 4.05:1 contra --bg e 4.13:1 contra --surface-2 — abaixo do
+     mínimo 4.5:1 do WCAG AA para texto pequeno (é usado como cor de texto em vários
+     labels, não só em títulos grandes). Escurecido para passar nos três fundos. */
+  --gold: #9e5b10;
   --accent-ink: #fffaf0;
   --ok: #1f7a4d;
-  --warning: #a3671b;
+  --warning: #9e5b10;
   --danger: #b3282f;
+  /* Azul do espectro ideológico (direita): o antigo #3b82f6 só tinha 3.26:1 contra
+     --surface-2 no tema claro. */
+  --lean-right: #0a5adb;
   color-scheme: light;
 }
 
@@ -44,6 +62,7 @@
 
 body {
   margin: 0;
+  color: var(--text);
   background: var(--bg);
   min-height: 100svh;
 }
