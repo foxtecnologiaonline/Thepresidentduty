@@ -23,5 +23,6 @@ echo "==> Building v2.0"
 
 echo "==> Copying version picker"
 cp "$root_dir/picker/index.html" "$dist_dir/index.html"
+cp "$root_dir/picker/sw.js" "$dist_dir/sw.js"
 
 echo "==> Combined build ready at $dist_dir"
