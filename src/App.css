@@ -950,6 +950,28 @@
   white-space: nowrap;
 }
 
+/* Evento de crise (forçado no baralho quando uma via de queda entra em estágio Crítico) */
+
+.event-card.crisis {
+  border-top-color: var(--danger);
+  box-shadow: 0 0 0 1px rgba(229, 72, 77, 0.35);
+}
+
+.crisis-badge {
+  display: inline-block;
+  align-self: flex-start;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--danger);
+  background: rgba(229, 72, 77, 0.12);
+  border: 1px solid var(--danger);
+  border-radius: 999px;
+  padding: 4px 10px;
+  margin-bottom: 10px;
+}
+
 /* Chain hint (consequência futura de uma escolha) */
 
 .chain-hint {

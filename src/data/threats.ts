@@ -91,9 +91,13 @@ export const THREAT_STAGE_LABELS: Record<ThreatStage, string> = {
   iminente: "Iminente",
 };
 
+/** Risco (0-100) a partir do qual uma via entra em estágio Crítico — e, pela primeira vez
+    que isso acontece num mandato, força o evento de crise daquela via no baralho. */
+export const CRITICO_THRESHOLD = 65;
+
 export function getThreatStage(value: number): ThreatStage {
   if (value >= DOWNFALL_THRESHOLD) return "iminente";
-  if (value >= 65) return "critico";
+  if (value >= CRITICO_THRESHOLD) return "critico";
   if (value >= 40) return "alerta";
   return "estavel";
 }

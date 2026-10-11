@@ -193,17 +193,20 @@ function isLikelyGameState(value: unknown): value is GameState {
   );
 }
 
-/** Preenche `threats`/`threatSnapshots` num save de uma versão anterior à introdução do
-    risco de queda, para não travar ao retomar um mandato em andamento salvo antes dessa
-    mecânica existir. */
+/** Preenche `threats`/`threatSnapshots`/`triggeredCrises` num save de uma versão anterior
+    à introdução do risco de queda (ou dos eventos de crise), para não travar ao retomar um
+    mandato em andamento salvo antes dessas mecânicas existirem. */
 function withThreats(state: GameState): GameState {
-  if (state.threats && state.threatSnapshots) return state;
+  const needsThreats = !state.threats || !state.threatSnapshots;
   return {
     ...state,
-    threats: computeThreats(state.indicators, state.sectors),
-    threatSnapshots: state.indicatorSnapshots.map((indicators, index) =>
-      computeThreats(indicators, state.sectorSnapshots[index] ?? state.sectors)
-    ),
+    threats: needsThreats ? computeThreats(state.indicators, state.sectors) : state.threats,
+    threatSnapshots: needsThreats
+      ? state.indicatorSnapshots.map((indicators, index) =>
+          computeThreats(indicators, state.sectorSnapshots[index] ?? state.sectors)
+        )
+      : state.threatSnapshots,
+    triggeredCrises: state.triggeredCrises ?? [],
   };
 }
 

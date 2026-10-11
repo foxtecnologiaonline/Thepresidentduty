@@ -1,7 +1,8 @@
+import { CRISIS_EVENTS } from "../data/crisisEvents";
 import { EVENTS } from "../data/events";
 import { CRITICAL_INDICATORS, INDICATOR_META, INDICATOR_ORDER, createInitialIndicators } from "../data/indicators";
 import { createInitialSectors } from "../data/sectors";
-import { computeThreats, DOWNFALL_THRESHOLD, THREAT_META, THREAT_ORDER } from "../data/threats";
+import { computeThreats, CRITICO_THRESHOLD, DOWNFALL_THRESHOLD, THREAT_META, THREAT_ORDER } from "../data/threats";
 import type {
   Difficulty,
   EndResult,
@@ -10,6 +11,7 @@ import type {
   GameState,
   Indicators,
   PresidentialAction,
+  ThreatKey,
   Threats,
 } from "../types";
 
@@ -108,6 +110,7 @@ export function createStartState(): GameState {
     indicatorSnapshots: [initialIndicators],
     sectorSnapshots: [initialSectors],
     threatSnapshots: [initialThreats],
+    triggeredCrises: [],
     endResult: null,
     dynastyTerm: 1,
   };
@@ -133,6 +136,7 @@ export function createNewGame(difficulty: Difficulty = "normal", legacy?: Dynast
     indicatorSnapshots: [initialIndicators],
     sectorSnapshots: [initialSectors],
     threatSnapshots: [initialThreats],
+    triggeredCrises: [],
     endResult: null,
     dynastyTerm: legacy?.dynastyTerm ?? 1,
   };
@@ -322,7 +326,13 @@ export function applyChoice(
     };
   }
 
-  const [nextEvent, ...restDeck] = applyEventTrigger(state.deck, choice.triggersEventId);
+  const { deck: deckWithCrises, triggeredCrises } = forceNewCrisisEvents(
+    applyEventTrigger(state.deck, choice.triggersEventId),
+    state.threats,
+    threats,
+    state.triggeredCrises
+  );
+  const [nextEvent, ...restDeck] = deckWithCrises;
   return {
     ...state,
     indicators,
@@ -332,9 +342,36 @@ export function applyChoice(
     indicatorSnapshots,
     sectorSnapshots,
     threatSnapshots,
+    triggeredCrises,
     turn: state.turn + 1,
     deck: restDeck,
     currentEvent: nextEvent ?? null,
+  };
+}
+
+/**
+ * Força no topo do baralho o evento de crise de cada via que cruzou para o estágio
+ * Crítico nesse turno pela primeira vez no mandato — a chance concreta de reagir antes
+ * que o risco vire queda de fato. No máximo uma vez por via por mandato.
+ */
+function forceNewCrisisEvents(
+  deck: GameEvent[],
+  previousThreats: Threats,
+  currentThreats: Threats,
+  triggeredSoFar: ThreatKey[]
+): { deck: GameEvent[]; triggeredCrises: ThreatKey[] } {
+  const newlyCritical = THREAT_ORDER.filter(
+    (key) =>
+      currentThreats[key] >= CRITICO_THRESHOLD &&
+      previousThreats[key] < CRITICO_THRESHOLD &&
+      !triggeredSoFar.includes(key)
+  );
+  if (newlyCritical.length === 0) {
+    return { deck, triggeredCrises: triggeredSoFar };
+  }
+  return {
+    deck: [...newlyCritical.map((key) => CRISIS_EVENTS[key]), ...deck],
+    triggeredCrises: [...triggeredSoFar, ...newlyCritical],
   };
 }
 

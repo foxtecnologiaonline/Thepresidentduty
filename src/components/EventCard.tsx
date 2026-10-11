@@ -1,5 +1,6 @@
 import { CATEGORY_META } from "../data/categories";
 import { INDICATOR_META } from "../data/indicators";
+import { THREAT_META } from "../data/threats";
 import { scaleEffects } from "../game/engine";
 import type { EventChoice, GameEvent, PresidentialAction } from "../types";
 
@@ -75,7 +76,15 @@ export function EventCard({
         </div>
       </div>
 
-      <div className="event-card" style={{ borderTopColor: CATEGORY_META[event.category].color }}>
+      <div
+        className={`event-card${event.crisisFor ? " crisis" : ""}`}
+        style={{ borderTopColor: CATEGORY_META[event.category].color }}
+      >
+        {event.crisisFor && (
+          <span className="crisis-badge">
+            ⚠️ Evento de crise — risco de {THREAT_META[event.crisisFor].label}
+          </span>
+        )}
         <div className="event-card-header">
           <span className="event-turn">{turnLabel}</span>
           <span className="event-category-tag" style={{ color: CATEGORY_META[event.category].color }}>

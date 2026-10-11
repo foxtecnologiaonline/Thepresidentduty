@@ -94,6 +94,9 @@ export interface GameEvent {
   description: string;
   category: EventCategory;
   choices: EventChoice[];
+  /** Presente só nos eventos de crise: via de queda que esse evento responde — o jogo o
+      força no baralho assim que essa via entra em estágio Crítico pela primeira vez. */
+  crisisFor?: ThreatKey;
 }
 
 /**
@@ -163,6 +166,8 @@ export interface GameState {
   sectorSnapshots: Sectors[];
   /** Retrato do risco de queda ao final de cada turno (índice 0 = estado inicial). */
   threatSnapshots: Threats[];
+  /** Vias cujo evento de crise já foi forçado no baralho nesse mandato — no máximo um por via. */
+  triggeredCrises: ThreatKey[];
   endResult: EndResult | null;
   /** Quantos mandatos consecutivos dessa dinastia já foram jogados (1 = o primeiro). */
   dynastyTerm: number;
