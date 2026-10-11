@@ -111,12 +111,14 @@ export function EndScreen({
           targetRef={summaryRef}
           idleLabel="Gerar print resumido"
           filename="a-presidencia-resumo"
+          kind="resumido"
         />
         <ShareButton
           text={shareText}
           targetRef={captureRef}
           idleLabel="Gerar print completo"
           filename="a-presidencia-resultado-completo"
+          kind="completo"
         />
       </div>
     </div>

@@ -6,6 +6,10 @@
     <meta name="theme-color" content="#0b1220" />
     <title>A Presidência — Escolha a versão</title>
     <link rel="icon" type="image/svg+xml" href="/v2/favicon.svg" />
+    <script>
+      window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+    </script>
+    <script defer src="/_vercel/insights/script.js"></script>
     <style>
       :root {
         --bg: #0b1220;
@@ -102,7 +106,7 @@
         <p class="tagline">Duas formas de governar. Duas formas de cair. Escolha a sua.</p>
       </div>
       <div class="versions">
-        <a class="version-card" href="/v1/">
+        <a class="version-card" href="/v1/" onclick="va('event', { name: 'Escolha de versão', data: { versao: 'v1' } })">
           <span class="version-tag">V1.0 · Decisão calculada</span>
           <div class="version-title">Versão Clássica</div>
           <div class="version-desc">
@@ -111,7 +115,7 @@
             nesse mesmo instante.
           </div>
         </a>
-        <a class="version-card" href="/v2/">
+        <a class="version-card" href="/v2/" onclick="va('event', { name: 'Escolha de versão', data: { versao: 'v2' } })">
           <span class="version-tag">V2.0 · Seis vias de queda</span>
           <div class="version-title">Seis Setores, Seis Ameaças</div>
           <div class="version-desc">
