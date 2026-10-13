@@ -94,6 +94,17 @@ export function buildDeck(): GameEvent[] {
   return avoidConsecutiveCategories(orderByEscalatingIntensity(drawn));
 }
 
+/**
+ * Embaralha a ordem das escolhas de um evento antes de virar o evento da vez — sem isso,
+ * esquerda/centro/direita sempre apareceriam na mesma posição (a ordem em que foram
+ * escritas em events.ts/crisisEvents.ts) e o jogador aprenderia a posição do botão em vez
+ * de ler a escolha. Só a ordem muda; os dados de cada escolha continuam os mesmos.
+ */
+function withShuffledChoices(event: GameEvent | null): GameEvent | null {
+  if (!event) return null;
+  return { ...event, choices: shuffle(event.choices) };
+}
+
 export function createStartState(): GameState {
   const initialIndicators = createInitialIndicators();
   const initialSectors = createInitialSectors();
@@ -133,7 +144,7 @@ export function createNewGame(difficulty: Difficulty = "normal", legacy?: Dynast
     turn: 1,
     totalTurns: TOTAL_TURNS,
     deck: deck.slice(1),
-    currentEvent: deck[0] ?? null,
+    currentEvent: withShuffledChoices(deck[0] ?? null),
     history: [],
     indicatorSnapshots: [initialIndicators],
     sectorSnapshots: [initialSectors],
@@ -346,7 +357,7 @@ export function applyChoice(
     triggeredCrises,
     turn: state.turn + 1,
     deck: restDeck,
-    currentEvent: nextEvent ?? null,
+    currentEvent: withShuffledChoices(nextEvent ?? null),
   };
 }
 
