@@ -1,7 +1,5 @@
 import { CATEGORY_META } from "../data/categories";
-import { INDICATOR_META } from "../data/indicators";
 import { THREAT_META } from "../data/threats";
-import { scaleEffects } from "../game/engine";
 import type { EventChoice, GameEvent, PresidentialAction } from "../types";
 
 interface Props {
@@ -10,24 +8,8 @@ interface Props {
   turn: number;
   actions: PresidentialAction[];
   selectedAction: PresidentialAction | null;
-  /** Multiplicador da dificuldade atual — a prévia precisa refletir o que será de fato aplicado. */
-  multiplier: number;
   onSelectAction: (action: PresidentialAction) => void;
   onChoose: (choice: EventChoice) => void;
-}
-
-function EffectsPreview({ effects }: { effects: EventChoice["effects"] }) {
-  const entries = Object.entries(effects) as [keyof typeof INDICATOR_META, number][];
-  if (entries.length === 0) return null;
-  return (
-    <div className="effects-preview">
-      {entries.map(([key, value]) => (
-        <span key={key} className={value > 0 ? "positive" : "negative"}>
-          {INDICATOR_META[key].icon} {value > 0 ? `+${value}` : value}
-        </span>
-      ))}
-    </div>
-  );
 }
 
 export function EventCard({
@@ -36,7 +18,6 @@ export function EventCard({
   turn,
   actions,
   selectedAction,
-  multiplier,
   onSelectAction,
   onChoose,
 }: Props) {
@@ -68,7 +49,7 @@ export function EventCard({
                     Disponível a partir do Ano {Math.ceil((action.minTurn ?? 1) / 4)}
                   </span>
                 ) : (
-                  <EffectsPreview effects={scaleEffects(action.effects, multiplier)} />
+                  <span className="actions-hint">{action.description}</span>
                 )}
               </button>
             );
@@ -102,7 +83,6 @@ export function EventCard({
               onClick={() => onChoose(choice)}
             >
               <span className="choice-label">{choice.label}</span>
-              <EffectsPreview effects={scaleEffects(choice.effects, multiplier)} />
             </button>
           ))}
         </div>

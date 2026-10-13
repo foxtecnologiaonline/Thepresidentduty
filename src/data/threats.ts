@@ -127,15 +127,3 @@ export function computeThreats(indicators: Indicators, sectors: Sectors): Threat
     cassacaoJudicial: Math.round(riskFrom(sectors.academicos, indicators.governabilidade)),
   };
 }
-
-/** Diferença real entre dois retratos de risco — ao contrário dos deltas de indicadores e
-    setores (que mostram o efeito bruto da escolha), o risco não está nos efeitos da escolha:
-    é recalculado do estado atual, então seu delta precisa comparar dois retratos de fato. */
-export function computeThreatDeltas(current: Threats, previous: Threats): Partial<Record<ThreatKey, number>> {
-  const deltas: Partial<Record<ThreatKey, number>> = {};
-  for (const key of THREAT_ORDER) {
-    const delta = current[key] - previous[key];
-    if (delta !== 0) deltas[key] = delta;
-  }
-  return deltas;
-}

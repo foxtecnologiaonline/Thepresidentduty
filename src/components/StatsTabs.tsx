@@ -2,22 +2,19 @@ import { useState } from "react";
 import { Dashboard } from "./Dashboard";
 import { SectorsPanel } from "./SectorsPanel";
 import { ThreatsPanel } from "./ThreatsPanel";
-import type { IndicatorKey, Indicators, SectorKey, Sectors, ThreatKey, Threats } from "../types";
+import type { Indicators, Sectors, Threats } from "../types";
 
 interface Props {
   sectors: Sectors;
-  sectorDeltas?: Partial<Record<SectorKey, number>>;
   indicators: Indicators;
-  indicatorDeltas?: Partial<Record<IndicatorKey, number>>;
   threats: Threats;
-  threatDeltas?: Partial<Record<ThreatKey, number>>;
 }
 
 type Tab = "sectors" | "indicators" | "threats";
 
 /** Em telas muito estreitas, alterna entre os três painéis por abas em vez de empilhar
     os três sempre — juntos já ocupam a tela inteira nesses aparelhos. */
-export function StatsTabs({ sectors, sectorDeltas, indicators, indicatorDeltas, threats, threatDeltas }: Props) {
+export function StatsTabs({ sectors, indicators, threats }: Props) {
   const [tab, setTab] = useState<Tab>("sectors");
 
   return (
@@ -52,14 +49,14 @@ export function StatsTabs({ sectors, sectorDeltas, indicators, indicatorDeltas, 
         </button>
       </div>
       {tab === "sectors" ? (
-        <SectorsPanel sectors={sectors} lastDeltas={sectorDeltas} />
+        <SectorsPanel sectors={sectors} />
       ) : tab === "indicators" ? (
         <div className="indicators-panel">
           <span className="panel-heading">Indicadores</span>
-          <Dashboard indicators={indicators} lastDeltas={indicatorDeltas} />
+          <Dashboard indicators={indicators} />
         </div>
       ) : (
-        <ThreatsPanel threats={threats} lastDeltas={threatDeltas} />
+        <ThreatsPanel threats={threats} />
       )}
     </div>
   );
